@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icons" >
+    <file>neural_sim_server.png</file>
+  </qresource>
+</RCC>

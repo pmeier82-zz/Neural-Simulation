@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddNeuronDialog</class>
+ <widget class="QDialog" name="AddNeuronDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>182</width>
+    <height>231</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Add Neuron</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="lo_vert0">
+   <item>
+    <layout class="QFormLayout" name="lo_form0_2">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+     </property>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lbl_position">
+       <property name="text">
+        <string>Position</string>
+       </property>
+       <property name="buddy">
+        <cstring>edt_position</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="edt_position">
+       <property name="toolTip">
+        <string>Enter the 3-dimensional scene position as a whitespace seperated sequence &quot;x, y, z&quot;. E.g. &quot;10.0 15.0 25.666&quot; (Default= [0, 0, 0])</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lbl_orientation">
+       <property name="text">
+        <string>Orientation</string>
+       </property>
+       <property name="buddy">
+        <cstring>edt_orientation</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="edt_orientation">
+       <property name="toolTip">
+        <string>Enter the 3-dimensional orientation vector as a whitespace seperated sequence (x, y, z). Also True gives a random orientation and False will ignore orientation. E.g. &quot;1.0 0.0 0.0&quot; (Default=False)</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lbl_data">
+       <property name="text">
+        <string>Data:</string>
+       </property>
+       <property name="buddy">
+        <cstring>cb_data</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="cb_data">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Choose a NeuronData instance for this neuron. IF there are no NeuronData in the list add them first!</string>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="lbl_frate">
+       <property name="text">
+        <string>Firing Rate</string>
+       </property>
+       <property name="buddy">
+        <cstring>edt_frate</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="edt_frate">
+       <property name="toolTip">
+        <string>Enter the firing rate in Hertz as a float. E.g. &quot;15.0&quot; (Default=10.0)</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lbl_ampl">
+       <property name="text">
+        <string>Amplitude</string>
+       </property>
+       <property name="buddy">
+        <cstring>edt_ampl</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="edt_ampl">
+       <property name="toolTip">
+        <string>Enter an independent scaling factor for the amplitude as a float. E.g. &quot;1.0&quot; (Default=1.0)</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="lbl_cluster">
+       <property name="toolTip">
+        <string>The index of the cluster this neuron will belong to as an integer. E.g &quot;1&quot; (Default=0)</string>
+       </property>
+       <property name="text">
+        <string>Cluster</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="edt_cluster">
+       <property name="toolTip">
+        <string>The index of the cluster the neuron will belong to as an interger. E.g. &quot;1&quot; (Default=0)</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lbl_name">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="edt_name">
+       <property name="toolTip">
+        <string>Optional name for the neuron as a string. E.g. &quot;Neuron A&quot;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="bbox_dialog">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Abort|QDialogButtonBox::Save</set>
+     </property>
+     <property name="centerButtons">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>edt_name</tabstop>
+  <tabstop>edt_position</tabstop>
+  <tabstop>edt_orientation</tabstop>
+  <tabstop>cb_data</tabstop>
+  <tabstop>edt_frate</tabstop>
+  <tabstop>edt_ampl</tabstop>
+  <tabstop>edt_cluster</tabstop>
+  <tabstop>bbox_dialog</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>bbox_dialog</sender>
+   <signal>accepted()</signal>
+   <receiver>AddNeuronDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>201</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bbox_dialog</sender>
+   <signal>rejected()</signal>
+   <receiver>AddNeuronDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>34</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
