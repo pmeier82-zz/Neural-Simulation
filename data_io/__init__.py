@@ -1,11 +1,27 @@
+################################################################################
+##
+##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
+##
+##  Licensed under the EUPL, Version 1.1 or – as soon they will be approved by
+##  the European Commission - subsequent versions of the EUPL (the "Licence");
+##  You may not use this work except in compliance with the Licence.
+##  You may obtain a copy of the Licence at:
+##
+##  http://ec.europa.eu/idabc/eupl
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the Licence is distributed on an "AS IS" basis,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the Licence for the specific language governing permissions and
+##  limitations under the Licence.
+##
+################################################################################
 # -*- coding: utf-8 -*-
 #
 # sim - data_io/__init__.py
 #
-# Philipp Meier - <pmeier82 at gmail dot com>
+# Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21
-#
-# $Id: __init__.py 4810 2010-05-26 10:28:38Z phil $
 #
 
 """data io classes for the simulation"""

@@ -1,11 +1,27 @@
+################################################################################
+##
+##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
+##
+##  Licensed under the EUPL, Version 1.1 or – as soon they will be approved by
+##  the European Commission - subsequent versions of the EUPL (the "Licence");
+##  You may not use this work except in compliance with the Licence.
+##  You may obtain a copy of the Licence at:
+##
+##  http://ec.europa.eu/idabc/eupl
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the Licence is distributed on an "AS IS" basis,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the Licence for the specific language governing permissions and
+##  limitations under the Licence.
+##
+################################################################################
 # -*- coding: utf-8 -*-
 #
 # sim - noise_gen.py
 #
-# Philipp Meier - <pmeier82 at gmail dot com>
+# Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-18
-#
-# $Id: ar_model.py 4602 2010-04-21 09:05:51Z phil $
 #
 
 """noise generation with multivariate autoregressive models"""
@@ -109,7 +125,7 @@ def _ar_model_select(R, m, ne, p_range):
     sbc = N.zeros(p_len)
     fpe = N.zeros(p_len)
     ldp = N.zeros(p_len)
-    
+
     np = N.zeros(p_len)
     np[-1] = m * p_max
 
@@ -128,7 +144,7 @@ def _ar_model_select(R, m, ne, p_range):
     for i in reversed(xrange(p_len)):
         np[i] = m * p_range[i]
         if p_range[i] < p_max:
-            
+
             # downdated part of R
             Rp = R[np[i]:np[i]+m,:][:,np[-1]:np[-1]+m]
 
@@ -162,7 +178,7 @@ def _ar_model_qr(data, p=1):
     ne = n - p                   # number of block equations of size m
     np = m * p                   # number of parameter vectors of size m
     K = N.zeros((ne, np + m))  # the lag shifted data matrix
-    
+
     # compute predictors
     for i in xrange(p):
         K[:,m*i:m*(i+1)] = data[p-i-1:n-i-1,:]
@@ -177,7 +193,7 @@ def _ar_model_qr(data, p=1):
         )),
         mode='r'
     )
-    
+
     # return
     del K
     return R
@@ -219,7 +235,7 @@ def _ar_model_sim(A, C, n=1, n_discard=0, mean=None, check=False):
     err = NR.multivariate_normal(mean, C, n_discard + n)
     x = N.zeros((p, m))
     rval = N.zeros((p + n_discard + n, m))
-    
+
     for k in xrange(p, p + n_discard + n):
         for j in xrange(p):
             x[j,:] = N.dot(rval[k-j-1,:], A[:,j*m:(j+1)*m])
@@ -261,13 +277,13 @@ def ar_model_check_stable(A):
 
 def get_noise_sample(idx=None, size=None, filename=None):
     """get some noise from a recording of maquaque prefrontal cortex"""
-    
+
     # inits and checks
     if filename is None:
         filename = '/home/phil/monkey-data/Louis/L011/L0110985.xpd'
     if size is None:
         size = 10000
-    
+
     # load data
     from spike.util.datafile import XpdFile
     data = XpdFile(filename).get_data(item=15)
@@ -288,7 +304,7 @@ if __name__ == '__main__':
     noise = get_noise_sample()
     noise = noise.astype('float64')
     noise = noise[:10000,:]
-    
+
     A, C, c = ar_fit(noise)
 
     from spike.gui.plot import P, dataplot
