@@ -190,13 +190,14 @@ class SimIOManager(object):
         """
 
         if self._q_writ is not None:
-            pkg = SimPkg(
-                tid=SimPkg.T_WFN,
-                ident=ident,
-                frame=frame,
-                cont=cont
+            self._q_writ.put(
+                SimPkg(
+                    tid=SimPkg.T_WFN,
+                    ident=ident,
+                    frame=frame,
+                    cont=cont
+                )
             )
-            self._q_writ.put(pkg)
 
     def send_groundtruth(self, frame, ident, cont):
         """receive noise data for recorder

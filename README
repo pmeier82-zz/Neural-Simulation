@@ -1,12 +1,3 @@
-F. FRANKE, P. MEIER, M. NATORA, E. HAGEN, K. H. PETTERSEN, H. LINDEN,
-G. EINEVOLL, M. H. MUNK, K. H. OBERMAYER
-
-
-A simulated extracellular recording environment for the
-evaluation of automated electrode positioning systems and spike
-sorting algorithms
-
-
 Extracellular recordings are a key tool to study the activity of
 neurons in vivo. Especially in the case of experiments with behaving
 animals, however, the tedious procedure of electrode placement can
@@ -27,8 +18,3 @@ adjacent grid positions. This way we can simulate a realistic
 recording environment in which an unconstrained movement of electrodes
 and neurons and an interaction with a positioning system and online
 spike sorter is possible.
-
-ACKNOWLEDGMENTS
-This work was supported by DFG GRK 1589/1 and the German Federal
-Ministry of Education and Research (BMBF) with the grants 01GQ0743 and
-01GQ0410 and by the Research Council of Norway (eScience,NeuroNor).
