@@ -149,7 +149,7 @@ class NeuronData(object):
 
     ## interface methods
 
-    def get_data(self, pos, phase=None, method='felix'):
+    def get_data(self, pos, phase=None):
         """return voltage data for position and phase
         pos is a relative position to the orientation of the neuron, i.e. pos is already in respect to the
         datagrid. We need the surrounding 8 grid positions and their waveforms for interpolation"""
@@ -174,29 +174,13 @@ class NeuronData(object):
         for i in xrange(8):
             v[i, :] = self.data[NeuronData.pos_kernel(N.array([x[i], y[i], z[i]]), self.grid_size), phase]
 
-        methods = ['phil', 'felix', 'espen']
-        if method not in methods:
-            method = 'felix'
+        alpha = scaled_pos - reference_pos
 
-        if method == 'espen':
-            # this interpolation is from espen but it takes hours since every sample of the waveform has to be
-            # interpolated individually
-            return interp3d(x, y, z, v, scaled_pos)
-
-        elif method == 'phil':
-
-            alpha = scaled_pos - reference_pos
-
-            return LERP3(
-                alpha[0], alpha[1], alpha[2],
-                v[0], v[4], v[1], v[5],
-                v[3], v[7], v[2], v[6]
-            )
-
-        elif method == 'felix':
-            # fast and stupid linear interpolation
-            return linear3dinterp(x, y, z, v, scaled_pos)
-
+        return LERP3(
+            alpha[0], alpha[1], alpha[2],
+            v[0], v[4], v[1], v[5],
+            v[3], v[7], v[2], v[6]
+        )
 
     ## position kernel
 
@@ -330,15 +314,7 @@ if __name__ == '__main__':
     from mpl_toolkits.mplot3d import Axes3D
     from datetime import datetime, timedelta
 
-    neuron = NeuronData(osp.join('..', '..', '..', '..', '..', 'Data', 'Einevoll', 'LFP-20100516_225124.h5'))
-
-    fig_espen = figure()
-    ax_espen = Axes3D(fig_espen)
-    times_espen = timedelta()
-
-    fig_felix = figure()
-    ax_felix = Axes3D(fig_felix)
-    times_felix = timedelta()
+    neuron = NeuronData('/home/phil/SVN/Data/Einevoll/LFP-20100516_225124.h5')
 
     fig_phil = figure()
     ax_phil = Axes3D(fig_phil)
@@ -348,38 +324,15 @@ if __name__ == '__main__':
 
     for i in xrange(200):
 
-        # plot espen interpolation
+        # plot phil interpolation
         t0 = datetime.now()
         wave = neuron.get_data(
-            N.array((-10+.1*i, -10+.1*i, -10+.1*i))*neuron.grid_step,
-            method='espen'
-        )
-        t1 = datetime.now()
-        times_espen += t1 - t0
-        ax_espen.plot(x_value, wave, i)
-
-        # plot felix interpolation
-        t0 = datetime.now()
-        wave = neuron.get_data(
-            N.array((-10+.1*i, -10+.1*i, -10+.1*i))*neuron.grid_step,
-            method='felix'
-        )
-        t1 = datetime.now()
-        times_felix += t1 - t0
-        ax_felix.plot(x_value, wave, i)
-
-        # plot espen interpolation
-        t0 = datetime.now()
-        wave = neuron.get_data(
-            N.array((-10+.1*i, -10+.1*i, -10+.1*i))*neuron.grid_step,
-            method='phil'
+            N.array((-10+.1*i, -10+.1*i, -10+.1*i))*neuron.grid_step
         )
         t1 = datetime.now()
         times_phil += t1 - t0
         ax_phil.plot(x_value, wave, i)
 
-    fig_espen.suptitle('Trilinear Interpolation - method="espen" - %s' % times_espen)
-    fig_felix.suptitle('Piecewise linear Interpolation - method="felix" - %s' % times_felix)
     fig_phil.suptitle('Trilinear Interpolation - method="phil" - %s' % times_phil)
 
     show()
