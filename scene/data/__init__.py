@@ -1,3 +1,4 @@
+﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -16,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - sim_objects/data/__init__.py
 #
@@ -38,7 +38,7 @@ from tables import openFile, NoSuchNodeError
 from scipy.special import cbrt
 
 #for interpolation
-from lerp import interp3d, linear3dinterp, LERP3
+from lerp import LERP3
 import numpy as N
 ##---CLASSES
 
