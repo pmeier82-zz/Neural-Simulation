@@ -118,7 +118,7 @@ class Recorder(SimObject):
                 Size of the frame in samples.
         """
 
-        # for each neuron rebuild superimposed frame per po
+        # for each neuron rebuild superimposed frame per position
         wf_neuron = N.zeros((frame_size, self.nchan))
         for c in xrange(self.nchan):
             pos = self.points[c]

@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - data_io/package.py
 #

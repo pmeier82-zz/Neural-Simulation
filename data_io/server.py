@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - data_io/server.py
 #
@@ -46,37 +45,32 @@ import scipy as N
 from package import SimPkg
 
 
-##---CONSTANTS
-
-HOST = gethostbyname(gethostname())
-PORT = 31337 # why not
-POLL = 0.01
-MAX_PKG_LEN = 32768
-
-
 ##---CLASSES
 
 class SimServer(Thread):
     """UDP server socket managing clients"""
 
-    ## class members
-
-    addr_fam  = AF_INET
-    sock_type = SOCK_DGRAM
-
     ## constructor
 
-    def __init__(self, q_read, q_writ, port=PORT, poll=POLL):
+    def __init__(self, q_read, q_writ, host='', port=31337, poll=0.001, maxlen=32768):
         """
         :Parameters:
             q_read : Queue
                 Threadsave Queue for reading (world->sim)
             q_writ : Queue
                 Threadsave Queue for writing (sim->world)
+            host : str
+                host address the server binds to
+                Default=''
             port : int
-                addressPort of the server.
+                host port the server binds to.
+                Default=31337
             poll : float
                 Polling timeout in seconds.
+                Default=0.01
+            malen : int
+                maxlength of package buffer for recvfrom calls
+                Default=
         """
 
         # checks
@@ -85,7 +79,7 @@ class SimServer(Thread):
         if not isinstance(q_writ, Queue):
             raise ValueError('q_writ is not of type(%s)!' % Queue.__class__.__name__)
 
-        # super (for paralell base class)
+        # super
         super(SimServer, self).__init__(name='NS_IOMANAGER')
         self.daemon = True
 
@@ -95,10 +89,10 @@ class SimServer(Thread):
         self.__is_shutdown.set()
         self.sock = None
         self.clients = []
-        self.poll = poll
+        self.poll = poll or POLL
         self.q_read = q_read
         self.q_writ = q_writ
-        self.addr = (HOST, port or PORT)
+        self.addr = (host or '', port or PORT)
         self.handshake = None
 
     ## properties
@@ -114,9 +108,8 @@ class SimServer(Thread):
 
         if self.sock is not None:
             self.sock_close()
-        self.sock = socket(self.addr_fam, self.sock_type)
+        self.sock = socket(AF_INET, SOCK_DGRAM)
         self.sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.sock.setblocking(0)
         self.sock.bind(self.addr)
 
     def sock_close(self):
@@ -157,7 +150,7 @@ class SimServer(Thread):
                     for addr in self.clients:
                         self.writ_pkg(addr, pkg)
                 except Exception, ex:
-                    print ex
+                    print ex, addr
                     continue
 
             # handle incomming packages
@@ -201,7 +194,7 @@ class SimServer(Thread):
 
         try:
 
-            data, addr = self.sock.recvfrom(MAX_PKG_LEN)
+            data, addr = self.sock.recvfrom(MAX_LEN)
             pkg = SimPkg.from_data(data)
 
             # switch for package type

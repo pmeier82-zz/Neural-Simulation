@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - data_io/__init__.py
 #
@@ -38,9 +37,6 @@ from server import SimServer
 __all__ = [
     # manager
     'SimIOManager',
-    'SimIOBase',
-    'SimIO2Hdf5File',
-    'SimIO2Net',
     # package
     'SimPkg',
     # server
