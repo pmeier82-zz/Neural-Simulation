@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - sim_objects/neuron.py
 #

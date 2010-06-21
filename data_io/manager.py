@@ -47,8 +47,8 @@ from server import SimServer
 class SimIOManager(object):
     """the singleton input/output manager
 
-    This class handles all input and output for a SimBase object. Input and
-    output is received from and sent to instances of SimIOBase. The manager is a
+    This class handles all data input and output for a SimBase object. Data is
+    received from and sent to instances of SimIOBase. The manager is a
     dict of SimIOBase instances.
     """
 
