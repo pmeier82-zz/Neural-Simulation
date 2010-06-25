@@ -221,15 +221,6 @@ class DataThread(Thread):
         except Exception, ex:
             print ex
 
-class DataClient(DataThread):
-    """class that abstract a client connection"""
-
-    def __init__(self, client_addr):
-        pass
-        q_writ
-
-
-
 
 ##---MAIN
 

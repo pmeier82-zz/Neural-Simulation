@@ -33,16 +33,33 @@ __docformat__ = 'restructuredtext'
 # builtins
 import os
 from os import path as osp
-from Queue import Queue
 # packages
 import scipy as N
 import tables
 # own imports
 from package import SimPkg
-from server import SimServer
+from data_thread import DataThread
 
 
 ##---CLASSES
+
+class SimClient(DataThread):
+    """client wrapper"""
+
+    def __init__(self, addr, ident):
+        """
+        :Parameters:
+            addr : tuple
+                Host address and port tuple
+            ident : long
+                ident of the recorder this client is attached to.
+        """
+
+        # super
+        super(SimClient, self).__init__(addr=addr)
+
+        # members
+        self.ident = ident
 
 class SimIOManager(object):
     """the singleton input/output manager
@@ -55,58 +72,41 @@ class SimIOManager(object):
     ## constructor
 
     def __init__(self, **kwargs):
+        """
+        :Parameters:
+            kwargs : keywords
+        :Keywords:
+            addr : str
+                Host address the server binds to.
+                Default=all
+            port : int
+                Host port the server binds to.
+                Default=31337
+        """
 
-        # status
-        self._status = kwargs.get('status', None)
+        # members
+        self._status = None
 
-        # queues and buffer
-        self._q_read = None
-        self._q_writ = None
-        self._pkg_buf = []
-
-        # server
+        # io members
+        self.addr = kwargs.get('addr', '')
         self.port = kwargs.get('port', None)
         self._srv = None
+        self._clt = []
 
     def initialize(self):
 
-        # setup server
-        self.setup_svr()
-
-        # reset members
-        self.pkg_buf = []
-        self.rcv_buf = []
+        if self._srv is not None:
+            self.finalize()
+        self._srv = DataThread(addr=('', self.port), is_server=True)
+        self._srv.start()
         self.status = None
 
-        # start server its thread/process
-        self._srv.start()
-        self._srv.handshake = self.get_status_pkg()
-
     def finalize(self):
-
-        self.cleanup_svr()
-
-    def setup_svr(self):
-
-        if self._srv is not None:
-            self.cleanup_svr()
-
-        self._q_read = Queue()
-        self._q_writ = Queue()
-        self._srv = SimServer(
-            port=self.port,
-            q_read=self._q_read,
-            q_writ=self._q_writ
-        )
-
-    def cleanup_svr(self):
 
         if not self._srv.is_shutdown:
             self._srv.stop()
             self._srv.join(5.0)
         self._srv = None
-        self._q_read = None
-        self._q_writ = None
 
     ## properties
 
@@ -155,6 +155,20 @@ class SimIOManager(object):
 
     ## io methods
 
+    def tick(self):
+
+        # inits
+        rval = []
+
+        # server socket query
+        while not self._srv.q_recv.empty():
+            pkg = self._srv.q_recv.get_nowait()
+            # TODO: handle client request
+        for clt in self._clt:
+            while not clt.q_recv.empty():
+                rval.append(clt.q_recv.get_nowait())
+        return rval
+
     def send_wf_neuron(self, frame, ident, cont):
         """pipe neuron waveform for recorder to server
 
@@ -167,7 +181,8 @@ class SimIOManager(object):
                 the waveform data
         """
 
-        if self._q_writ is not None:
+        if len(self._clt) > 0:
+
             self._q_writ.put(
                 SimPkg(
                     tid=SimPkg.T_WFU,
@@ -251,15 +266,6 @@ class SimIOManager(object):
                 self._q_writ.put(pkg)
             if self._srv is not None:
                 self._srv.handshake = pkg
-
-    def query_input(self):
-        """returns any input events since last query"""
-
-        rval = []
-        if self._q_read is not None:
-            while not self._q_read.empty():
-                rval.append(self._q_read.get_nowait())
-        return rval
 
 
 ##---MAIN

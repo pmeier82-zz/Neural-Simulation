@@ -285,8 +285,8 @@ def cluster_process(single_rates, nsmpls, srate, o2rate=5.0, o3rate=1.0):
 
     # overlaps of 2 units
     if o2rate > 0.0 and single_rates.size > 1 and events.size > cumrate / o2rate:
-        no2 = int(o2rate * nsmpls / srate)
-        for i in xrange(no2):
+        for i in xrange(int(o2rate * nsmpls / srate)):
+
             # find unit1 and unit2
             u1 = u2 = label_event(props)
             while u1 == u2:
@@ -310,8 +310,8 @@ def cluster_process(single_rates, nsmpls, srate, o2rate=5.0, o3rate=1.0):
 
     # overlaps of 3 units
     if o3rate > 0.0 and single_rates.size > 2 and events.size > cumrate / o3rate:
-        no3 = int(o3rate * nsmpls / srate)
-        for i in xrange(no3):
+        for i in xrange(int(o3rate * nsmpls / srate)):
+
             # find unit1, unit2 and unit3
             u1 = u2 = u3 = label_event(props)
             while u2 == u1:
@@ -474,7 +474,11 @@ if __name__ == '__main__':
     print events_wo_lbls
     print 'generated N =', len(events_wo_lbls), 'events,',
     print 'expected', nsmpls / srate * urates.sum()
-
+    print 'assert the refper in 100000 cycles:',
+    res = []
+    for i in xrange(100000):
+        res.append(N.any(N.diff(poi_pproc_refper(urates.sum(), srate, nsmpls)) < 40))
+    print sum(res), 'errors'
     print
     print '## BASICS ##'
     print 'testing label generator with [rates, props, labels]:',
@@ -501,7 +505,7 @@ if __name__ == '__main__':
     print '## CLUSTER DYNAMICS ##'
     class mynrn(object):
         def __init__(self, frate, name):
-            self.firing_rate = frate
+            self.fireing_rate = frate
             self.name = name
         def __str__(self):
             return 'neuron%02d' % self.name

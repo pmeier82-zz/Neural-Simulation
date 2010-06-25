@@ -52,8 +52,8 @@ class Neuron(SimObject):
                 Reference to a NeuronData object. This is required, not setting
                 the neuron_data will result in an exception.
                 Default=None
-            firing_rate : float
-                Firing rate in Hz.
+            rate_of_fire : float
+                Rate of fire in Hz.
                 Default=10.0
             amplitude : float
                 Amplitude of the waveform
@@ -73,7 +73,7 @@ class Neuron(SimObject):
         # members
         self._active = None
         self._amplitude = None
-        self._fireing_rate = None
+        self._rate_of_fire = None
         self._frame_size = None
         self._neuron_data = ndata
 
@@ -84,7 +84,7 @@ class Neuron(SimObject):
         # set from kwargs
         self.active = True
         self.amplitude = kwargs.get('amplitude', 1.0)
-        self.fireing_rate = kwargs.get('firing_rate', 10.0)
+        self.rate_of_fire = kwargs.get('rate_of_fire', 10.0)
 
     ## properties
 
@@ -103,13 +103,13 @@ class Neuron(SimObject):
         self._amplitude = float(value)
 
     @property
-    def fireing_rate(self):
-        return self._fireing_rate
-    @fireing_rate.setter
-    def fireing_rate(self, value):
-        self._fireing_rate = float(value)
-        if self._fireing_rate <= 0.0:
-            self._fireing_rate = 1.0
+    def rate_of_fire(self):
+        return self._rate_of_fire
+    @rate_of_fire.setter
+    def rate_of_fire(self, value):
+        self._rate_of_fire = float(value)
+        if self._rate_of_fire <= 0.0:
+            self._rate_of_fire = 1.0
 
     @property
     def sphere_radius(self):
@@ -118,18 +118,18 @@ class Neuron(SimObject):
     ## event slots
 
     def simulate(self, **kwargs):
-        """this method performs a tick on the Neuron
+        """this method simulates the neurons firing behavior
 
         :Keywords:
             frame_size : int
                 Size of the frame to simulate
-            fireing_times : list
+            firing_times : list
                 list of int representing sample where the neuron fires in the
                 frame. obviously fireing_times[i] < frame_size!
         """
 
         # get kwargs and init
-        self._fireing_times = kwargs.get('fireing_times', [])
+        self._firing_times = kwargs.get('firing_times', [])
         self._frame_size = kwargs.get('frame_size', 1)
         self._interv_waveform = []
 
@@ -142,15 +142,12 @@ class Neuron(SimObject):
             self._interv_waveform = self._interv_overshoot
             self._interv_overshoot = []
 
-        # new frame waveform intervals
-        for t in self._fireing_times:
+        # waveform intervals for this frame
+        for t in self._firing_times:
             start = [t, 0]
-            end = [
-                t + self._neuron_data.phase_max,
-                self._neuron_data.phase_max
-            ]
+            end = [t + self._neuron_data.phase_max, self._neuron_data.phase_max]
 
-            # check wether waveform overshoots
+            # check if waveform overshoots
             if end[0] >= self._frame_size:
                 residual = end[0] - self._frame_size
                 end = [self._frame_size, self._neuron_data.phase_max - residual]
@@ -192,37 +189,17 @@ class Neuron(SimObject):
             )
 
         # copy waveform stips
-        for i in xrange(0, len(self._interv_waveform), 2):
-            start = self._interv_waveform[i]
-            end = self._interv_waveform[i+1]
-            temp = self._neuron_data.get_data(
-                rel_pos,
-                xrange(start[1], end[1])
-            )
-            rval[start[0]:end[0]] = temp
+        if len(self._interv_waveform) > 0:
+            temp = self._neuron_data.get_data(rel_pos)
+            for i in xrange(0, len(self._interv_waveform), 2):
+                start = self._interv_waveform[i]
+                end = self._interv_waveform[i+1]
+                rval[start[0]:end[0]] = temp[start[1]:end[1]]
 
         # adjust for amplitude and return
         if self.amplitude != 1.0:
             rval *= self.amplitude
         return rval
-
-    ## methods private
-
-    def _adjust_internals(self):
-        """build firing statistics generator"""
-
-        try:
-            if self.sample_rate is None:
-                return
-            if self.fireing_rate is None:
-                return
-        except:
-            return
-
-        self._rand_gen = poisson(
-            self.fireing_rate /
-            (self.sample_rate - self.fireing_rate * self._neuron_data.phase_max )
-        )
 
 
 ##---PACKAGE
