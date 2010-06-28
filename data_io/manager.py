@@ -60,6 +60,7 @@ class SimClient(DataThread):
 
         # members
         self.ident = ident
+        self.pkg_cfg = None
 
 class SimIOManager(object):
     """the singleton input/output manager
@@ -89,15 +90,21 @@ class SimIOManager(object):
 
         # io members
         self.addr = kwargs.get('addr', '')
-        self.port = kwargs.get('port', None)
+        self.port = kwargs.get('port', 31337)
+        self._q_recv = Queue()
         self._srv = None
         self._clt = []
 
     def initialize(self):
 
-        if self._srv is not None:
-            self.finalize()
-        self._srv = DataThread(addr=('', self.port), is_server=True)
+        self.finalize()
+        while not self._q_recv.empty():
+            self._q_recv.get_nowait()
+        self._srv = DataThread(
+            addr_peer=(),
+            q_recv=self._q_recv,
+            addr_host=(self.addr, self.port)
+        )
         self._srv.start()
         self.status = None
 
@@ -107,6 +114,11 @@ class SimIOManager(object):
             self._srv.stop()
             self._srv.join(5.0)
         self._srv = None
+        while len(self._clt) > 0:
+            clt = self._clt.pop()
+            clt.stop()
+            clt.join
+            clt = None
 
     ## properties
 
@@ -121,7 +133,7 @@ class SimIOManager(object):
             self._status = value
             self.send_status()
 
-    ## methods interface
+    ## methods utility
 
     def get_status_pkg(self):
         """build a package from self.status
@@ -135,20 +147,14 @@ class SimIOManager(object):
 
         try:
             status = self.status
-            cont = N.array([
+            cont = [
                 [status['sample_rate'], 0],
                 [status['frame_size'], 1]
-            ])
+            ]
             if len(self.status['neurons']) > 0:
-                cont = N.vstack((
-                    cont,
-                    [[item, 10] for item in status['neurons']]
-                ))
+                cont.extend([[item, 10] for item in status['neurons']])
             if len(status['recorders']) > 0:
-                cont = N.vstack((
-                    cont,
-                    [[item, 20] for item in status['recorders']]
-                ))
+                cont.extend([[item, 20] for item in status['recorders']])
             return SimPkg(tid=SimPkg.T_STS, cont=cont.astype(long))
         except:
             return None
@@ -156,116 +162,35 @@ class SimIOManager(object):
     ## io methods
 
     def tick(self):
+        """querys the send-queue and handles incoming packages"""
 
-        # inits
-        rval = []
-
-        # server socket query
-        while not self._srv.q_recv.empty():
-            pkg = self._srv.q_recv.get_nowait()
+        # input packages
+        incomming = []
+        while not self._q_recv.empty():
+            incomming.append(self._q_recv.get_nowait())
             # TODO: handle client request
-        for clt in self._clt:
-            while not clt.q_recv.empty():
-                rval.append(clt.q_recv.get_nowait())
-        return rval
 
-    def send_wf_neuron(self, frame, ident, cont):
-        """pipe neuron waveform for recorder to server
+    def send_package(self, ident, package):
+        """send package to interested clients
 
         :Parameters:
-            frame : long
-                frame id
+            pkg : SimPkg
+                the SimPkg to send
             ident : long
-                recorder id
-            cont : ndarray
-                the waveform data
+                target ident or None of unrestricted
+                Default=None
         """
 
-        if len(self._clt) > 0:
+        for clt in self._clt:
 
-            self._q_writ.put(
-                SimPkg(
-                    tid=SimPkg.T_WFU,
-                    ident=ident,
-                    frame=frame,
-                    cont=cont
-                )
-            )
-
-    def send_wf_noise(self, frame, ident, cont):
-        """receive noise data for recorder
-
-        :Parameters:
-            frame : long
-                frame id
-            ident : int/long
-                recorder id
-            cont : ndarray
-                the noise data
-        """
-
-        if self._q_writ is not None:
-            pkg = SimPkg(
-                tid=SimPkg.T_WFN,
-                ident=ident,
-                frame=frame,
-                cont=cont
-            )
-            self._q_writ.put(pkg)
-
-    def send_groundtruth(self, frame, ident, cont):
-        """receive noise data for recorder
-
-        :Parameters:
-            frame : long
-                frame id
-            ident : int/long
-                neuron id
-            cont : ndarray
-                the waveform data
-        """
-
-        if self._q_writ is not None:
-            self._q_writ.put(
-                SimPkg(
-                    tid=SimPkg.T_GTR,
-                    ident=ident,
-                    frame=frame,
-                    cont=cont
-                )
-            )
-
-    def send_position(self, frame, ident, cont):
-        """receive noise data for recorder
-
-        :Parameters:
-            frame : long
-                frame id
-            ident : int/long
-                simobject id
-            cont : ndarray
-                position data
-        """
-
-        if self._q_writ is not None:
-            self._q_writ.put(
-                SimPkg(
-                    tid=SimPkg.T_POS,
-                    ident=ident,
-                    frame=frame,
-                    cont=cont
-                )
-            )
+            if pkg.ident is None or pkg.ident == clt.ident:
+                if pkg.tid in SimPkg.SEND_ALWAYS or pkg.tid in clt.pkg_cfg:
+                    clt.q_send.put_nowait(pkg)
 
     def send_status(self):
         """send the status package"""
 
-        pkg = self.get_status_pkg()
-        if pkg is not None:
-            if self._q_writ is not None:
-                self._q_writ.put(pkg)
-            if self._srv is not None:
-                self._srv.handshake = pkg
+        self.send_package(self.get_status_pkg())
 
 
 ##---MAIN

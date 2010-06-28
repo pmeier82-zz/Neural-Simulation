@@ -198,11 +198,10 @@ class ClientThread(Thread):
             data, addr = self.__sock.recvfrom(self.__maxlen)
             pkg = SimPkg.from_data(data)
             assert addr == self.__addr_peer
-            rval = pkg, addr
+            return pkg, addr
         except:
             print '%s == %s -> %s' % (addr, self.__addr_peer, addr == self.__addr_peer)
             rval = None
-        return rval
 
     def __send(self, pkg):
         """write package to the socket

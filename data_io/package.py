@@ -24,7 +24,7 @@
 # 2010-04-21
 #
 
-"""package definition for the simulation"""
+"""package protocol for the simulation"""
 __docformat__ = 'restructuredtext'
 
 
@@ -36,73 +36,49 @@ from struct import calcsize, pack, unpack
 import scipy as N
 
 
-##--DIST
-
-__all__ = ['SimPkg']
-
-
 ##---CLASSES
 
-class SimPkg(object):
-    """package protocoll for stream-based io"""
+class ContentItem(object):
+    """one item in a package"""
 
     ## class members
 
-    HLEN = calcsize('!BQQH4shh')
-
-    T_UKN = 0   # unknown package
-    T_STS = 1   # status package
-    T_POS = 2   # position package
-    T_WFN = 4   # waveform noise
-    T_WFU = 8   # waveform single unit
-    T_GTR = 16  # multiunit groundtruth
-    T_CON = 32  # connection attempt
-    T_END = 64  # connection closure
-
-    T_FRM = 255 # TODO: cleanup this status
+    HLEN = calcsize('!hhH4s') # dim[0], dim[1], nbytes, dtype
 
     ## constructor
 
-    def __init__(self, tid=T_UKN, ident=0L, frame=0L, cont=N.uint8(0)):
-        """
-        :Parameters:
-            tid : byte >= 0
-                The type of content (see package type ids).
-            ident : long >= 0
-                The object this package refers to (id of SimObject).
-            frame : long >= 0
-                The frame this package refers to.
-            cont : ndarray
-                The content of the package as numpy compatible object.
-        """
+    def __init__(self, cont):
 
-        # members
-        self.tid = tid
-        self.ident = ident
-        self.frame = frame
         self.cont = N.asarray(cont)
 
-    ## methods
+    ## properties
 
-    def payload(self):
-        """marshalling for bytestreams"""
-
-        # shape
-        shape = [-1, -1]
+    @property
+    def dim(self):
+        rval = [-1, -1]
         for i in xrange(len(self.cont.shape)):
-            shape[i] = self.cont.shape[i]
+            if i > 1:
+                break
+            rval[i] = self.cont.shape[i]
+        return  rval
 
-        # header
+    @property
+    def dtype(self):
+        return self.cont.dtype
+
+    @property
+    def header(self):
         return pack(
-            '!BQQH4shh',
-            self.tid,
-            self.ident,
-            self.frame,
+            '!hhH4s',
+            self.dim[0],
+            self.dim[1],
             self.cont.nbytes,
-            self.cont.dtype.str[:4],
-            shape[0],
-            shape[1]
-        ) + self.cont.tostring()
+            self.cont.dtype.str
+        )
+
+    @property
+    def payload(self):
+        return ''.join([self.header, self.cont.tostring()])
     __call__ = payload
 
     ## special methods
@@ -111,9 +87,72 @@ class SimPkg(object):
         return self.HLEN + self.cont.nbytes
 
     def __str__(self):
-        return 'SimIOPackage (%d) - frame %d - from %d\n%s' % (
-            self.tid, self.frame, self.ident, self.cont
-        )
+        return 'ContentItem[%d,%d] %d bytes (%s)' % (self.dim[0], self.dim[1], self.cont.nbytes, self.dtype.str)
+
+
+class SimPkg(object):
+    """package protocoll base class"""
+
+    ## class members
+
+    HLEN = calcsize('!BQQB') # tid, ident, frame, nitems
+
+    T_UKN = 0   # unknown
+    T_CON = 1   # connection new
+    T_END = 2   # connection end
+    T_STS = 4   # status
+
+    T_POS = 8   # position
+    T_REC = 16  # recorder
+
+    SEND_ALWAYS = [0, 1, 2, 4]
+
+    ## constructor
+
+    def __init__(self, tid=None, ident=None, frame=None, cont=None):
+        """
+        :Parameters:
+            tid : byte >= 0
+                The type of content (see package type ids).
+            ident : long >= 0 or None
+                The object this package refers to (id of SimObject).
+            frame : long >= 0 or None
+                The frame this package refers to.
+            cont : ndarray
+                The content of the package as numpy compatible object.
+        """
+
+
+
+        # members
+        self.tid = tid or self.T_UKN
+        self.ident = ident or 0L
+        self.frame = frame or 0L
+        self.cont = []
+
+        # contents
+        if not isinstance(cont, list):
+            if cont is not None:
+                cont = [cont]
+        for item in cont:
+            self.cont.append(ContentItem(item))
+
+    ## properties
+
+    @property
+    def header(self):
+        return pack('!BQQB', self.tid, self.ident, self.frame, self.nitems)
+
+    @property
+    def nitems(self):
+        return len(self.cont)
+
+    @property
+    def payload(self):
+        return ''.join([self.header] + [item.payload for item in self.cont])
+    __call__ = payload
+
+    ## special methods
 
     def __eq__(self, other):
 
@@ -125,11 +164,28 @@ class SimPkg(object):
             return False
         if self.frame != other.frame:
             return False
-        if not N.allclose(self.cont, other.cont):
+        if len(self.cont) != len(other.cont):
             return False
+        for i in xrange(len(self.cont)):
+            if not N.allclose(self.cont[i].cont, other.cont[i].cont):
+                return False
         return True
 
-    ## static factory
+    def __len__(self):
+        return self.HLEN + sum([len(self.cont[i]) for i in xrange(self.nitems)])
+
+    def __str__(self):
+        rval = 'SimIOPackage (%d) - frame %d - from %d' % (
+            self.tid, self.frame, self.ident
+        )
+        if self.nitems == 0:
+            rval += '\nempty'
+        else:
+            for item in self.cont:
+                rval += '\n%s' % item
+        return rval
+
+    ## from byte data factory
 
     @staticmethod
     def from_data(data):
@@ -137,33 +193,40 @@ class SimPkg(object):
 
         :Parameters:
             data : str
-                The data to produce the package from (w/o initial length
-                prefix!!).
+                The data to produce the package from.
         """
 
-        # length
+        # length check
         if len(data) < SimPkg.HLEN:
-            raise ValueError('length < SimPkg.HLEN')#return False
+            raise ValueError('length < SimPkg.HLEN')
 
         # read header
-        tid, ident, frame, nbytes, dtype, dim0, dim1 = unpack(
-            '!BQQH4shh',
-            data[:SimPkg.HLEN]
-        )
+        idx = SimPkg.HLEN
+        tid, ident, frame, nitems= unpack('!BQQB', data[:idx])
+        cont = []
 
-        # read content
-        if len(data) != SimPkg.HLEN + nbytes:
-            raise ValueError('length != SimPkg.HLEN + nbytes')#return False
-        cont = N.fromstring(
-            data[SimPkg.HLEN:SimPkg.HLEN+nbytes],
-            dtype=N.dtype(dtype)
-        )
-        dim = []
-        if dim0 >= 0:
-            dim.append(dim0)
-            if dim1 >= 0:
-                dim.append(dim1)
-            cont.shape = dim
+        # content loop
+        while idx < len(data):
+
+            # read contents header
+            dim0, dim1, nbytes, dtype_str = unpack('!hhH4s', data[idx:idx+ContentItem.HLEN])
+
+            idx += ContentItem.HLEN
+
+            # read content data
+            cont_item = N.fromstring(
+                data[idx:idx+nbytes],
+                dtype=N.dtype(dtype_str)
+            )
+            if dim0 >= 0:
+                if dim1 >= 0:
+                    dim = [dim0, dim1]
+                else:
+                    dim = [dim0]
+                cont_item.shape = dim
+
+            cont.append(cont_item)
+            idx += nbytes
 
         # return
         return SimPkg(tid, ident, frame, cont)
@@ -175,11 +238,11 @@ if __name__ == '__main__':
 
     print
     print 'PACKAGE TEST - constructor'
-    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, N.randn(4,4))
+    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, [N.randn(4,4), N.arange(10)])
     print mypkg
     print
     print 'PACKAGE TEST - from package'
-    newpkg = SimPkg.from_data(mypkg.payload())
+    newpkg = SimPkg.from_data(mypkg.payload)
     print newpkg
     print
     print 'mypkg == newpkg :', mypkg == newpkg
