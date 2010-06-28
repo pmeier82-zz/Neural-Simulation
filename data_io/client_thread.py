@@ -18,13 +18,13 @@
 ##
 ################################################################################
 #
-# sim - data_io/data_thread.py
+# sim - data_io/client_thread.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-06-21
 #
 
-"""socket select server for continuous connection"""
+"""socket select thread for data exchange"""
 __docformat__ = 'restructuredtext'
 
 
@@ -41,58 +41,53 @@ from package import SimPkg
 
 ##---CLASSES
 
-class DataThread(Thread):
-    """UDP socket thread, communicating via recv and send Queue"""
+class ClientThread(Thread):
+    """UDP socket thread, communicating via recv and send Queue using SimPkg"""
 
     ## constructor
 
     def __init__(
         self,
+        addr_peer,
+        q_recv,
+        q_send=None,
         poll=0.001,
         maxlen=32768,
-        addr=None,
-        is_server=False,
-        q_recv=None,
-        q_send=None,
+        addr_host=None
     ):
         """socket io thread for datagrams of the SimPkg type
 
         This class will start a new thread to handle communication with a remote
-        location. If the server parameter is set, this will be a listen only
-        server slot. If the client parameter is set, this will be a connection
-        dedicated to communicate to the gien client address. So give one or the
-        other.
+        location using SimPkg as the data format.
 
         :Parameters:
+            addr_peer: (host, port)
+                peer address and port tuple.
+                Required
+            q_recv: Queue
+                Queue for receiving packages.
+                Required
+            q_send : Queue
+                Queue for sending packages, if not supplied a new Queue will be
+                setup internally
             poll : float
                 Polling timeout in seconds.
                 Default=0.001
             maxlen : int
                 maxlength of package buffer for recvfrom calls
                 Default=32768
-            addr : (host, port)
-                host address and port tuple, if not supplied a generic generic
-                address will be chosen in server mode. Required for client mode.
+            addr_host : addr
+                Host address and port tuple. If not supplied or None, will not
+                bind at all.
                 Default=None
-            is_server : bool
-                Flag deciding client (False) or server (True) operation mode.
-                Default=False
-            q_recv : Queue
-                Queue for received packages, if not supplied a new Queue will be
-                setup internally
-            q_send : Queue
-                Queue for sending packages, if not supplied a new Queue will be
-                setup internally
         """
 
-        # default queues if not supplied
-        if q_recv is None:
-            q_recv = Queue()
-        if q_send is None and is_server is False:
+        # default queue if not supplied
+        if q_send is None:
             q_send = Queue()
 
         # thread init
-        super(DataThread, self).__init__(name='NS_DATA_THREAD')
+        super(ClientThread, self).__init__(name='NS_CLIENT_THREAD')
         self.daemon = True
 
         # members
@@ -103,8 +98,8 @@ class DataThread(Thread):
         self.__poll = float(poll)
         self.__q_recv = q_recv
         self.__q_send = q_send
-        self.__addr = addr
-        self.__is_server = is_server
+        self.__addr_host = addr_host
+        self.__addr_peer = addr_peer
         self.__maxlen = int(maxlen)
 
     ## properties
@@ -114,8 +109,12 @@ class DataThread(Thread):
         return self.__is_shutdown.is_set()
 
     @property
-    def addr(self):
-        return self.__addr
+    def addr_host(self):
+        return self.__addr_host
+
+    @property
+    def addr_peer(self):
+        return self.__addr_peer
 
     @property
     def q_recv(self):
@@ -134,29 +133,25 @@ class DataThread(Thread):
             self.__sock_close()
         self.__sock = socket(AF_INET, SOCK_DGRAM)
         self.__sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        if self.__is_server is True:
-            self.__sock.bind(self.__addr)
-            self.__addr = self.__sock.getsockname()
+        if self.__addr_host is None:
+            self.__sock.sendto(0, ('localhost', 80))
+        else:
+            self.__sock.bind(self.__addr_host)
+        self.__addr_host = self.__sock.getsockname()
 
     def __sock_close(self):
         """clean-up the socket"""
 
-        if self.__is_server is False:
-            self.__send(SimPkg(tid=SimPkg.T_END))
+        self.__send(SimPkg(tid=SimPkg.T_END))
         self.__sock.close()
         self.__sock = None
 
-    ## data thread interface
-
-    def fileno(self):
-        """return socket file number for select and co"""
-
-        return self.__sock.fileno()
+    ## thread interface
 
     def run(self):
-        """data thread main"""
+        """thread main"""
 
-        # set up
+        # init
         self.__sock_build()
         self.__online = True
         self.__is_shutdown.clear()
@@ -168,21 +163,23 @@ class DataThread(Thread):
                 read_rdy, _, _ = select([self.__sock], [], [], self.__poll)
 
                 if len(read_rdy) > 0:
-                    self.__q_recv.put_nowait(self.__recv())
+                    data = self.__recv()
+                    if data is not None:
+                        self.__q_recv.put_nowait(data)
 
-                if self.__is_server is False:
-                    while not self.__q_send.empty():
+                while not self.__q_send.empty():
                         self.__send(self.__q_send.get_nowait())
 
         except Exception, ex:
             print ex
+            self.__q_recv.put_nowait((ex, None))
 
         finally:
             self.__sock_close()
             self.__is_shutdown.set()
 
     def stop(self):
-        """stop the server thread"""
+        """stop the thread"""
 
         self.__online = False
         self.__is_shutdown.wait()
@@ -200,15 +197,15 @@ class DataThread(Thread):
         try:
             data, addr = self.__sock.recvfrom(self.__maxlen)
             pkg = SimPkg.from_data(data)
-            if self.__is_server is False:
-                assert addr == self.__addr
-            pkg = pkg, addr
+            assert addr == self.__addr_peer
+            rval = pkg, addr
         except:
-            pkg = None
-        return pkg
+            print '%s == %s -> %s' % (addr, self.__addr_peer, addr == self.__addr_peer)
+            rval = None
+        return rval
 
     def __send(self, pkg):
-        """write package to the socket if in client mode
+        """write package to the socket
 
         :Parameters:
             pkg : SimPkg
@@ -216,8 +213,7 @@ class DataThread(Thread):
         """
 
         try:
-            if self.__is_server is False:
-                self.__sock.sendto(pkg(), self.__addr)
+            self.__sock.sendto(pkg(), self.__addr_peer)
         except Exception, ex:
             print ex
 
@@ -228,13 +224,12 @@ if __name__ == '__main__':
 
     print
     print 'starting server..'
-    dt = DataThread(addr=('', 31337), is_server=True)
-    q_recv = dt.q_recv
+    q_recv = Queue()
+    dt = ClientThread(addr_peer=('127.0.0.1', 56415), q_recv=q_recv, addr_host=('', 31337))
     dt.start()
     select([], [], [], .2)
     print dt
-    print 'serving at:', dt.addr
-    print q_recv is dt.q_recv
+    print 'serving at:', dt.addr_host
 
     try:
         while True:

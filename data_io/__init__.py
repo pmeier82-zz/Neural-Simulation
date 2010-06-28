@@ -30,11 +30,14 @@ __docformat__ = 'restructuredtext'
 
 ##---DIST
 
+from data_thread import DataThread
 from manager import SimIOManager
 from package import SimPkg
 from server import SimServer
 
 __all__ = [
+    # data_thread
+    'DataThread'
     # manager
     'SimIOManager',
     # package

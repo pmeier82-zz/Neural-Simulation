@@ -421,7 +421,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             kwargs.update(neuron_data=str(dialog.cb_data.currentText()))
             if str(dialog.edt_frate.text()) != '':
                 val = float(dialog.edt_frate.text())
-                kwargs.update(fireing_rate=val)
+                kwargs.update(rate_of_fire=val)
             if str(dialog.edt_ampl.text()) != '':
                 val = float(dialog.edt_ampl.text())
                 kwargs.update(amplitude=val)

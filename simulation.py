@@ -448,8 +448,8 @@ class BaseSimulation(dict):
                 euler angles relative to the scene's positive z-axis. If it is
                 True a random rotation is created.
                 Default=False
-            firing_rate : float
-                Firing rate in Hz.
+            rate_of_fire : float
+                Rate of fire in Hz.
                 Default=50.0
             amplitude : float
                 Amplitude of the waveform.
@@ -658,7 +658,7 @@ class BaseSimulation(dict):
                     cfg.set(name, 'orientation', obj.orientation)
                 else:
                     cfg.set(name, 'orientation', npy2cfg(obj.orientation))
-                cfg.set(name, 'firing_rate', str(obj.firing_rate))
+                cfg.set(name, 'rate_of_fire', str(obj.rate_of_fire))
                 cfg.set(name, 'amplitude', str(obj.amplitude))
                 cfg.set(name, 'neuron_data', str(obj._neuron_data.filename))
 
