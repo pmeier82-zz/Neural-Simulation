@@ -196,13 +196,17 @@ class BaseSimulation(dict):
                 Frame to start at.
             frame_size : int
                 Frame size.
+            cfg : str
+                Path to a config file, readable by a ConfigParser instance.
         """
 
         # private property members
-        self._sample_rate = None
+        self._cfg = None
+        self._externals = []
         self._frame = None
         self._frame_size = None
-        self._externals = []
+        self._sample_rate = None
+        self._status = None
 
         # public members
         self.cls_dyn = ClusterDynamics()
@@ -293,6 +297,22 @@ class BaseSimulation(dict):
             ext.sample_rate(self.sample_rate)
         self.status()
 
+    @property
+    def status(self):
+        self._status = {
+            'frame_size'    : self.frame_size,
+            'sample_rate'   : self.sample_rate,
+            'neurons'       : [id(nrn) for nrn in filter(
+                               lambda x: isinstance(x, Neuron),
+                               self.values())],
+            'recorders'     : [id(rec) for rec in filter(
+                               lambda x: isinstance(x, Recorder),
+                               self.values())]
+        }
+        if self.io_man.status != self._status:
+            self.io_man.status = self._status
+        return self._status
+
     ## simulation controll methods
 
     def simulate(self):
@@ -307,7 +327,7 @@ class BaseSimulation(dict):
         # record for recorders
         self._simulate_recorders()
 
-        # inc counters
+        # inc frame counter
         self.frame += 1
 
     def _simulate_events(self):
@@ -393,7 +413,7 @@ class BaseSimulation(dict):
             self.io_man.send_wf_neuron(self.frame, id(rec), wf_neuron)
             self.io_man.send_wf_noise(self.frame, id(rec), wf_noise)
 
-    ## methods interface
+    ## methods logging
 
     def log(self, log_str):
         """log a string"""
@@ -408,30 +428,7 @@ class BaseSimulation(dict):
             for ext in self._externals:
                 ext.log('[DEBUG] %s' % log_str)
 
-    ## methods info
-
-    def status(self):
-        """convenience method for getting internal simulation paramters
-
-        :Returns:
-            dict : The current simulation paramters maped to member name.
-        """
-
-        status = {
-            'frame_size'    : self.frame_size,
-            'sample_rate'   : self.sample_rate,
-            'neurons'       : [id(nrn) for nrn in filter(
-                               lambda x: isinstance(x, Neuron),
-                               self.values())],
-            'recorders'     : [id(rec) for rec in filter(
-                               lambda x: isinstance(x, Recorder),
-                               self.values())]
-        }
-        self.io_man.status = status
-
-        return status
-
-    ## methods management
+    ## methods object management
 
     def register_neuron(self, **kwargs):
         """register a neuron to the simulation
@@ -676,6 +673,21 @@ class BaseSimulation(dict):
         # save
         with open(fname, 'w') as save_file:
             cfg.write(save_file)
+
+    ## methods config loading
+
+    def load_config(self, cfg_path=None):
+        """loads initialization values from file
+
+        :Parameters:
+            cfg_file : str
+                Path to the config file. shoul be readale by a ConfigParser
+                instance.
+        """
+
+        cfg = ConfigParser()
+
+
 
     ## special methods
 
