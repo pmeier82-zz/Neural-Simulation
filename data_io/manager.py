@@ -43,25 +43,6 @@ from data_thread import DataThread
 
 ##---CLASSES
 
-class SimClient(DataThread):
-    """client wrapper"""
-
-    def __init__(self, addr, ident):
-        """
-        :Parameters:
-            addr : tuple
-                Host address and port tuple
-            ident : long
-                ident of the recorder this client is attached to.
-        """
-
-        # super
-        super(SimClient, self).__init__(addr=addr)
-
-        # members
-        self.ident = ident
-        self.pkg_cfg = None
-
 class SimIOManager(object):
     """the singleton input/output manager
 
@@ -93,7 +74,8 @@ class SimIOManager(object):
         self.port = kwargs.get('port', 31337)
         self._q_recv = Queue()
         self._srv = None
-        self._clt = []
+        self._clt = {}
+        self._events = []
 
     def initialize(self):
 
@@ -115,10 +97,9 @@ class SimIOManager(object):
             self._srv.join(5.0)
         self._srv = None
         while len(self._clt) > 0:
-            clt = self._clt.pop()
+            clt = self._clt.popitem()
             clt.stop()
             clt.join
-            clt = None
 
     ## properties
 
@@ -132,6 +113,14 @@ class SimIOManager(object):
         if self._status != value:
             self._status = value
             self.send_status()
+
+    @property
+    def q_recv(self):
+        return self._q_recv
+
+    @property
+    def events(self):
+        return self._events
 
     ## methods utility
 
@@ -165,10 +154,26 @@ class SimIOManager(object):
         """querys the send-queue and handles incoming packages"""
 
         # input packages
-        incomming = []
         while not self._q_recv.empty():
-            incomming.append(self._q_recv.get_nowait())
-            # TODO: handle client request
+
+            pkg, addr = self._q_recv.get_nowait()
+            self._events.append(pkg)
+
+            # do we need to take actions ?
+            if pkg.tid == SimPkg.T_CON:
+                # new connection
+                clt = ClientThread(addr_peer=addr, q_recv=self._q_recv)
+                clt.start()
+                clt.q_send(self.get_status_pkg())
+                self._clt.append(clt)
+
+            elif pkg.tid == SimPkg.T_END:
+                # connection close
+                clt = self._clt.pop(addr, None)
+                if clt is not None:
+                    if clt.is_alive():
+                        clt.stop()
+                        clt.join()
 
     def send_package(self, ident, package):
         """send package to interested clients

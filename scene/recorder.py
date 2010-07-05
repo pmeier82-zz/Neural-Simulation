@@ -108,27 +108,29 @@ class Recorder(SimObject):
     ## methods public
 
     def simulate(self, nlist=[], frame_size=1):
-        """record a multichanneled frame from passed neurons
+        """record a multichanneled frame from neurons in range
 
         :Parameters:
             nlist : list
                 List of Neuron instances to record from.
             frame_size : int
                 Size of the frame in samples.
+        :Returns:
+            list : A list of items for this frame. The first item is the noise
+            for this frame. Subsequent items are tuples of waveform and interval
+            data for the neurons taht have significant (not all zero) waveforms
+            in this frame.
         """
 
-        # for each neuron rebuild superimposed frame per position
-        wf_neuron = N.zeros((frame_size, self.nchan))
-        for c in xrange(self.nchan):
-            pos = self.points[c]
-            for nrn in nlist:
-                try:
-                    wf_neuron[:,c] += nrn.query_for_position(pos)
-                except Exception, ex:
-                    continue
+        # init
+        rval = [self.noise_gen.query(size=frame_size) / self.snr]
 
-        # build noise strip as basis of the frame
-        wf_noise = self.noise_gen.query(size=frame_size) / self.snr
+        # for each neuron query waveform and firing data
+        for nrn in nlist:
+            try:
+                wf, times = nrn.query_for_recorder(self.points[:self.nchan])
+            except Exception, ex:
+                continue
 
         # return
         return wf_neuron, wf_noise

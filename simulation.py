@@ -333,57 +333,68 @@ class BaseSimulation(dict):
     def _simulate_events(self):
         """process events for the current frame"""
 
-        # aquire
-        events = self.io_man.query_input()
-
         # process
-        if len(events) > 0:
+        while len(self.io_man.events) > 0:
 
-            for pkg in events:
+            pkg = self.io_man.events.pop(0)
 
-                log_str = 'Event:'
+            log_str = 'Event:'
 
-                if pkg.ident in self:
+            if pkg.ident in self:
 
-                    # recorder event
-                    if isinstance(self[pkg.ident], Recorder):
-                        log_str +='R[%s]:' % pkg.ident
-                        if pkg.tid == SimPkg.T_POS:
-                            if pkg.cont.size == 1:
-                                log_str += 'MOVE[%s] - request' % (
-                                    self[pkg.ident].name
-                                )
-                            elif pkg.cont.size == 2:
-                                pos, vel = pkg.cont
-                                log_str += 'MOVE: %s, %s' % (pos, vel)
-                                self[pkg.ident].trajectory_pos = pos
-                            else:
-                                print 'weird event', pkg
-                                continue
-                            self.io_man.send_position(
-                                self._frame,
-                                pkg.ident,
-                                self[pkg.ident].trajectory_pos
+                # recorder event
+                if isinstance(self[pkg.ident], Recorder):
+
+                    log_str +='R[%s]:' % pkg.ident
+
+                    # position event
+                    if pkg.tid == SimPkg.T_POS:
+
+                        pos_data = pkg.cont[0]
+
+                        # position request
+                        if pos_data.size == 1:
+                            log_str += 'MOVE[%s] - request' % (
+                                self[pkg.ident].name
                             )
 
-                    # neuron event
-                    elif isinstance(sel):
-                        log_str += 'N:ANY\n%s' % pkg
+                        # reposition request
+                        elif pos_data.size == 2:
+                            pos, vel = pos_data
+                            log_str += 'MOVE: %s, %s' % (pos, vel)
+                            self[pkg.ident].trajectory_pos = pos
+                            # TODO: implemementation of the velocity component
 
-                    # log
-                    self.log(log_str)
+                        # weird position event
+                        else:
+                            print 'weird event, was T_POS with:', pos_data
+                            continue
 
-                # other event
+                        # send position aknowledgement
+                        self.io_man.send_position(
+                            self._frame,
+                            pkg.ident,
+                            self[pkg.ident].trajectory_pos
+                        )
+
+                # neuron event
+                elif isinstance(self[pkg.ident], Neuron):
+                    log_str += 'N:ANY\n%s' % pkg
+
+                # log
+                self.log(log_str)
+
+            # other event
+            else:
+
+                log_str += 'O[%s]:' % pkg.ident
+                if pkg.tid == SimPkg.T_CON:
+                    log_str += 'CONNECT from %s' % str(pkg.cont)
+                elif pkg.tid == SimPkg.T_END:
+                    log_str += 'DISCONNECT from %s' % str(pkg.cont)
                 else:
-
-                    log_str += 'O[%s]:' % pkg.ident
-                    if pkg.tid == SimPkg.T_CON:
-                        log_str += 'CONNECT from %s' % str(pkg.cont)
-                    elif pkg.tid == SimPkg.T_END:
-                        log_str += 'DISCONNECT from %s' % str(pkg.cont)
-                    else:
-                        log_str += 'unknown'
-                    self.log(log_str)
+                    log_str += 'unknown'
+                self.log(log_str)
 
     def _simulate_neurons(self):
         """neuron fireing dynamics for the current frame"""
@@ -410,6 +421,7 @@ class BaseSimulation(dict):
                 nlist=nlist,
                 frame_size=self.frame_size
             )
+
             self.io_man.send_wf_neuron(self.frame, id(rec), wf_neuron)
             self.io_man.send_wf_noise(self.frame, id(rec), wf_noise)
 

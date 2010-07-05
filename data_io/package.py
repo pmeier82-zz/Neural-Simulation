@@ -36,6 +36,11 @@ from struct import calcsize, pack, unpack
 import scipy as N
 
 
+##---PACKAGE DISTRO
+
+__all__ = ['SimPkg', 'SimPkgPing']
+
+
 ##---CLASSES
 
 class ContentItem(object):
@@ -49,7 +54,17 @@ class ContentItem(object):
 
     def __init__(self, cont):
 
-        self.cont = N.asarray(cont)
+        # check by type
+        if isinstance(cont, ContentItem):
+            self.cont = cont.cont
+        elif isinstance(cont, N.ndarray):
+            self.cont = cont
+        else:
+            self.cont = N.asarray(cont)
+
+        # check cont for shape
+        if len(self.cont.shape) > 2:
+            raise ValuleError('shape shoud be <= 2')
 
     ## properties
 
@@ -105,7 +120,13 @@ class SimPkg(object):
     T_POS = 8   # position
     T_REC = 16  # recorder
 
+    T_PING = 128    # ping
+    T_PONG = 256    # pong
+
     SEND_ALWAYS = [0, 1, 2, 4]
+
+    NOIDENT = 0L
+    NOFRAME = 0L
 
     ## constructor
 
@@ -126,14 +147,13 @@ class SimPkg(object):
 
         # members
         self.tid = tid or self.T_UKN
-        self.ident = ident or 0L
-        self.frame = frame or 0L
+        self.ident = ident or self.NOIDENT
+        self.frame = frame or self.NOFRAME
         self.cont = []
 
         # contents
         if not isinstance(cont, list):
-            if cont is not None:
-                cont = [cont]
+            cont = [cont]
         for item in cont:
             self.cont.append(ContentItem(item))
 
@@ -230,6 +250,15 @@ class SimPkg(object):
 
         # return
         return SimPkg(tid, ident, frame, cont)
+
+## special packages
+
+class SimPkgPing(SimPkg):
+    """ping package"""
+
+    def __init__(self):
+
+        super(SimPkgPing, self).__init__(tid=SimPkg.T_PING, cont=N.randn())
 
 
 ##---MAIN

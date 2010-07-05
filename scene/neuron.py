@@ -77,8 +77,8 @@ class Neuron(SimObject):
         self._frame_size = None
         self._neuron_data = ndata
 
-        self._interv_overshoot = []
-        self._interv_waveform = []
+        self._interval_overshoot = []
+        self._interval_waveform = []
         self._firing_times = []
 
         # set from kwargs
@@ -128,19 +128,19 @@ class Neuron(SimObject):
                 frame. obviously fireing_times[i] < frame_size!
         """
 
-        # get kwargs and init
+        # get kwargs and init/reset
         self._firing_times = kwargs.get('firing_times', [])
         self._frame_size = kwargs.get('frame_size', 1)
-        self._interv_waveform = []
+        self._interval_waveform = []
 
         # check if we are active
         if self.active is False:
             return
 
         # overshooting waveform intervals from last frame
-        if len(self._interv_overshoot) > 0:
-            self._interv_waveform = self._interv_overshoot
-            self._interv_overshoot = []
+        if len(self._interval_overshoot) > 0:
+            self._interval_waveform = self._interval_overshoot
+            self._interval_overshoot = []
 
         # waveform intervals for this frame
         for t in self._firing_times:
@@ -151,55 +151,60 @@ class Neuron(SimObject):
             if end[0] >= self._frame_size:
                 residual = end[0] - self._frame_size
                 end = [self._frame_size, self._neuron_data.phase_max - residual]
-                self._interv_overshoot.append([0, end[1]])
-                self._interv_overshoot.append([residual, self._neuron_data.phase_max])
+                self._interval_overshoot.append([0, end[1]])
+                self._interval_overshoot.append([residual, self._neuron_data.phase_max])
 
             # add interval
-            self._interv_waveform.append(start)
-            self._interv_waveform.append(end)
+            self._interval_waveform.append(start)
+            self._interval_waveform.append(end)
 
     ## methods public
 
-    def query_for_position(self, pos):
-        """return the voltage trace for this neuron for the current frame
+    def query_for_recorder(self, positions):
+        """return the multichanneled waveform and firing times for this neuron
+        for the current frame. The multichanneled waveform is build from the
+        positions passed, yielding a [npositions, frame_size] matrix with one
+        channel per column.
 
         :Keywords:
-            pos : arraylike
-                absolute 3d-position of the listener
+            rec : Recorder
+                Recorder instance to produce the waveform for
         :Returns:
-            The waveform of this neuron of length 'frame_size'.
+            tuple : (waveform, interval_waveforms)
         :Raises:
             ValueError : if self._frame_size is None or the position is outside
-            of the listening spehere of the neuron.
+            of the listening sphere of the neuron.
         """
 
-        # check for valid position
-        rel_pos = pos - self.position
-        if vector_norm(rel_pos) > self.sphere_radius:
-            raise ValueError('queried position outside of sphere_radius')
+        # check for any valid positions
+        rel_pos = positions - self.position
+        rel_pos_valid = [vector_norm(rel_pos[i]) > self.sphere_radius
+                         for  i in range(rel_pos.shape[0])]
+        if not N.any(rel_pos_valid):
+            raise ValueError('queried positions outside of sphere_radius')
 
         # inits
-        rval = N.zeros(self._frame_size)
+        wf = N.zeros((rel_pos.shape[0], self._frame_size))
 
         # if we have orientation, rotate rel_pos accoringly
         if self.orientation is not False:
             rel_pos = N.dot(
                 quaternion_matrix(self.orientation)[:3,:3],
-                rel_pos
-            )
+                rel_pos.T
+            ).T
 
-        # copy waveform stips
-        if len(self._interv_waveform) > 0:
-            temp = self._neuron_data.get_data(rel_pos)
-            for i in xrange(0, len(self._interv_waveform), 2):
-                start = self._interv_waveform[i]
-                end = self._interv_waveform[i+1]
-                rval[start[0]:end[0]] = temp[start[1]:end[1]]
-
-        # adjust for amplitude and return
+        # copy waveforms per position (resp. channel)
+        for i in xrange(rel_pos.shape[0]):
+            if rel_pos_valid[i] is False:
+                continue
+            else:
+                wf[i,:] = self._neuron_data.get_data(rel_pos[i])
+        # adjust for amplitude
         if self.amplitude != 1.0:
-            rval *= self.amplitude
-        return rval
+            wf *= self.amplitude
+
+        # return
+        return wf, self._interval_waveform
 
 
 ##---PACKAGE
