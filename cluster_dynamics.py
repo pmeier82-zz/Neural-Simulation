@@ -186,7 +186,7 @@ class ClusterDynamics(dict):
 
             # get rates:
             rates = N.asarray([
-                self[cls][nrn][0].fireing_rate for nrn in self[cls]
+                self[cls][nrn][0].rate_of_fire for nrn in self[cls]
             ])
 
             # generate spike trains
@@ -505,7 +505,7 @@ if __name__ == '__main__':
     print '## CLUSTER DYNAMICS ##'
     class mynrn(object):
         def __init__(self, frate, name):
-            self.fireing_rate = frate
+            self.rate_of_fire = frate
             self.name = name
         def __str__(self):
             return 'neuron%02d' % self.name

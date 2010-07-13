@@ -249,7 +249,7 @@ class BaseSimulation(dict):
         self.sample_rate = kwargs.get('sample_rate', 16000.0)
         self.frame = kwargs.get('frame', 0)
         self.frame_size = kwargs.get('frame_size', 1024)
-        self.status()
+        self.status
 
     def finalize(self):
         """finalize the simulation"""
@@ -280,7 +280,7 @@ class BaseSimulation(dict):
         self._frame_size = int(value)
         for ext in self._externals:
             ext.frame_size(self.frame_size)
-        self.status()
+        self.status
 
     @property
     def sample(self):
@@ -295,7 +295,7 @@ class BaseSimulation(dict):
         self.cls_dyn.sample_rate = self.sample_rate
         for ext in self._externals:
             ext.sample_rate(self.sample_rate)
-        self.status()
+        self.status
 
     @property
     def status(self):
@@ -397,17 +397,17 @@ class BaseSimulation(dict):
                 self.log(log_str)
 
     def _simulate_neurons(self):
-        """neuron fireing dynamics for the current frame"""
+        """neuron firing dynamics for the current frame"""
 
         # generate
         self.cls_dyn.generate(self.frame_size)
 
         # propagate
         for nrn in filter(lambda x: isinstance(x, Neuron), self.values()):
-            fireing_times = self.cls_dyn.get_spike_train(nrn)
-            nrn.simulate(frame_size=self.frame_size, fireing_times=fireing_times)
-            if len(fireing_times) > 0:
-                self.io_man.send_groundtruth(self.frame, id(nrn), fireing_times)
+            firing_times = self.cls_dyn.get_spike_train(nrn)
+            nrn.simulate(frame_size=self.frame_size, firing_times=firing_times)
+            if len(firing_times) > 0:
+                self.io_man.send_groundtruth(self.frame, id(nrn), firing_times)
 
     def _simulate_recorders(self):
         """recorder operation for the current frame"""
@@ -500,7 +500,7 @@ class BaseSimulation(dict):
 
         # log and return
         self.log('>> %s created!' % neuron)
-        self.status()
+        self.status
         return str(neuron)
 
     def register_recorder(self, **kwargs):
@@ -543,7 +543,7 @@ class BaseSimulation(dict):
 
         # connect and return
         self.log('>> %s created!' % tetrode)
-        self.status()
+        self.status
         return str(tetrode)
 
     def remove_object(self, key):
@@ -574,7 +574,7 @@ class BaseSimulation(dict):
         try:
             item = self.pop(lookup)
             self.log('>> %s destroyed!' % item)
-            self.status()
+            self.status
             return True
         except:
             return False

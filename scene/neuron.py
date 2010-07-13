@@ -125,7 +125,7 @@ class Neuron(SimObject):
                 Size of the frame to simulate
             firing_times : list
                 list of int representing sample where the neuron fires in the
-                frame. obviously fireing_times[i] < frame_size!
+                frame. obviously firing_times[i] < frame_size!
         """
 
         # get kwargs and init/reset

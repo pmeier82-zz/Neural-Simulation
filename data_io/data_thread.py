@@ -41,7 +41,7 @@ from package import SimPkg
 
 ##---CLASSES
 
-class ClientThread(Thread):
+class DataThread(Thread):
     """UDP socket thread, communicating via recv and send Queue using SimPkg"""
 
     ## constructor
@@ -87,7 +87,7 @@ class ClientThread(Thread):
             q_send = Queue()
 
         # thread init
-        super(ClientThread, self).__init__(name='NS_CLIENT_THREAD')
+        super(DataThread, self).__init__(name='NS_CLIENT_THREAD')
         self.daemon = True
 
         # members
@@ -224,7 +224,7 @@ if __name__ == '__main__':
     print
     print 'starting server..'
     q_recv = Queue()
-    dt = ClientThread(addr_peer=('127.0.0.1', 56415), q_recv=q_recv, addr_host=('', 31337))
+    dt = DataThread(addr_peer=('127.0.0.1', 56415), q_recv=q_recv, addr_host=('', 31337))
     dt.start()
     select([], [], [], .2)
     print dt

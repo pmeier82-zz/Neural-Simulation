@@ -35,6 +35,7 @@ import os
 from os import path as osp
 # packages
 import scipy as N
+from Queue import Queue
 import tables
 # own imports
 from package import SimPkg
@@ -70,8 +71,10 @@ class SimIOManager(object):
         self._status = None
 
         # io members
-        self.addr = kwargs.get('addr', '')
-        self.port = kwargs.get('port', 31337)
+        self.addr_ini = kwargs.get('addr', '')
+        self.addr = None
+        self.port_ini = kwargs.get('port', 31337)
+        self.port = None
         self._q_recv = Queue()
         self._srv = None
         self._clt = {}
@@ -85,16 +88,18 @@ class SimIOManager(object):
         self._srv = DataThread(
             addr_peer=(),
             q_recv=self._q_recv,
-            addr_host=(self.addr, self.port)
+            addr_host=(self.addr_ini, self.port_ini)
         )
         self._srv.start()
-        self.status = None
+        self.addr, self.port = self._srv.addr_host
+        self._status = None
 
     def finalize(self):
 
-        if not self._srv.is_shutdown:
-            self._srv.stop()
-            self._srv.join(5.0)
+        if self._srv is not None:
+           if not self._srv.is_shutdown:
+               self._srv.stop()
+               self._srv.join(5.0)
         self._srv = None
         while len(self._clt) > 0:
             clt = self._clt.popitem()
@@ -175,7 +180,7 @@ class SimIOManager(object):
                         clt.stop()
                         clt.join()
 
-    def send_package(self, ident, package):
+    def send_package(self, package, ident=None):
         """send package to interested clients
 
         :Parameters:

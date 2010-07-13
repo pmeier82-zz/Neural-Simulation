@@ -613,8 +613,8 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
                     QtGui.QStandardItem(str(n.orientation))
                 ])
                 nrn.appendRow([
-                    QtGui.QStandardItem('Fireing Rate'),
-                    QtGui.QStandardItem(str(n.fireing_rate))
+                    QtGui.QStandardItem('Rate of Fire'),
+                    QtGui.QStandardItem(str(n.rate_of_fire))
                 ])
                 nrn.appendRow([
                     QtGui.QStandardItem('Amplitude'),
