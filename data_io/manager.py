@@ -142,14 +142,15 @@ class SimIOManager(object):
         try:
             status = self.status
             cont = [
-                [status['sample_rate'], 0],
-                [status['frame_size'], 1]
+                [self.status['sample_rate'], 0],
+                [self.status['frame_size'], 1]
             ]
             if len(self.status['neurons']) > 0:
-                cont.extend([[item, 10] for item in status['neurons']])
+                cont.extend([[item, 10] for item in self.status['neurons']])
             if len(status['recorders']) > 0:
-                cont.extend([[item, 20] for item in status['recorders']])
+                cont.extend([[item, 20] for item in self.status['recorders']])
             return SimPkg(tid=SimPkg.T_STS, cont=cont.astype(long))
+            # TODO long type ok?
         except:
             return None
 
@@ -161,7 +162,9 @@ class SimIOManager(object):
         # input packages
         while not self._q_recv.empty():
 
+            # get package
             pkg, addr = self._q_recv.get_nowait()
+            # propagate package
             self._events.append(pkg)
 
             # do we need to take actions ?
@@ -187,15 +190,14 @@ class SimIOManager(object):
             pkg : SimPkg
                 the SimPkg to send
             ident : long
-                target ident or None of unrestricted
+                target ident or None if unrestricted
                 Default=None
         """
 
         for clt in self._clt:
 
             if pkg.ident is None or pkg.ident == clt.ident:
-                if pkg.tid in SimPkg.SEND_ALWAYS or pkg.tid in clt.pkg_cfg:
-                    clt.q_send.put_nowait(pkg)
+                clt.q_send.put_nowait(pkg)
 
     def send_status(self):
         """send the status package"""

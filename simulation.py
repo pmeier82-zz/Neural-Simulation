@@ -258,7 +258,7 @@ class BaseSimulation(dict):
 
         # reset pubic members
         self.cls_dyn.clear()
-        self.io_man.cleanup_svr()
+        self.io_man.finalize()
         self.neuron_data.clear()
 
     ## properties
@@ -283,10 +283,6 @@ class BaseSimulation(dict):
         self.status
 
     @property
-    def sample(self):
-        return self._frame * self._frame_size
-
-    @property
     def sample_rate(self):
         return self._sample_rate
     @sample_rate.setter
@@ -302,16 +298,28 @@ class BaseSimulation(dict):
         self._status = {
             'frame_size'    : self.frame_size,
             'sample_rate'   : self.sample_rate,
-            'neurons'       : [id(nrn) for nrn in filter(
-                               lambda x: isinstance(x, Neuron),
-                               self.values())],
-            'recorders'     : [id(rec) for rec in filter(
-                               lambda x: isinstance(x, Recorder),
-                               self.values())]
+            'neurons'       : self.neuron_keys,
+            'recorders'     : self.recorder_keys,
         }
         if self.io_man.status != self._status:
             self.io_man.status = self._status
         return self._status
+
+    @property
+    def neuron_keys(self):
+        return [
+            id(nrn) for nrn in filter(
+                lambda x: isinstance(x, Neuron),self.values()
+            )
+        ]
+
+    @property
+    def recorder_keys(self):
+        return [
+            id(rec) for rec in filter(
+                lambda x: isinstance(x, Recorder),self.values()
+            )
+        ]
 
     ## simulation controll methods
 
@@ -397,27 +405,27 @@ class BaseSimulation(dict):
                 self.log(log_str)
 
     def _simulate_neurons(self):
-        """neuron firing dynamics for the current frame"""
+        """generate spiketrains for the current frame"""
 
-        # generate
+        # generate spike trains fo the scene
         self.cls_dyn.generate(self.frame_size)
 
-        # propagate
-        for nrn in filter(lambda x: isinstance(x, Neuron), self.values()):
-            firing_times = self.cls_dyn.get_spike_train(nrn)
+        # propagate spike trains to neurons
+        for nrn_k in self.neuron_keys:
+            nrn = self[nrn_k]
+            firing_times = self.cls_dyn.get_spike_train(nrn_k)
             nrn.simulate(frame_size=self.frame_size, firing_times=firing_times)
-            if len(firing_times) > 0:
-                self.io_man.send_groundtruth(self.frame, id(nrn), firing_times)
 
     def _simulate_recorders(self):
         """recorder operation for the current frame"""
 
         # list of all neurons
-        nlist = filter(lambda x: isinstance(x, Neuron), self.values())
+        nlist = [self[nrn_k] for nrn_k in self.neuron_keys]
 
         # record per recorder
-        for rec in filter(lambda x: isinstance(x, Recorder), self.values()):
-            wf_neuron, wf_noise = rec.simulate(
+        for rec_k in self.recorder_keys:
+            rec = self[rec_k]
+            wf_neuron, wf_noise = self[rec_k].simulate(
                 nlist=nlist,
                 frame_size=self.frame_size
             )
@@ -532,7 +540,7 @@ class BaseSimulation(dict):
                 The noise generator parameters.
                 Default=None
         :Raises:
-            soem error ..mostly ValueError for invalid parameters.
+            some error ..mostly ValueError for invalid parameters.
         :Returns:
             The string representation of the registered Recorder.
         """

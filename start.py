@@ -556,10 +556,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
                 QtGui.QStandardItem(str(self._sim))
             ])
             self._trn_sim.appendRow([
-                QtGui.QStandardItem('Current Sample'),
-                QtGui.QStandardItem(str(self._sim.sample))
-            ])
-            self._trn_sim.appendRow([
                 QtGui.QStandardItem('Sample Rate'),
                 QtGui.QStandardItem(str(self._sim.sample_rate))
             ])

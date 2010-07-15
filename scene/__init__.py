@@ -31,14 +31,18 @@ This package contains objects that interact in the SCENE
 __docformat__ = 'restructuredtext'
 
 
-##---PACKAGE
+##---IMPORTS
 
 from data import NeuronData, NeuronDataContainer
 from sim_object import SimObject
 from neuron import Neuron
 from recorder import Recorder, Tetrode
 
+
+##---PACKAGE
+
 __all__ = [
+    'BadNeuronQuery',
     # from data
     'NeuronData',
     'NeuronDataContainer',

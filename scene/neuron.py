@@ -39,6 +39,12 @@ from math3d import quaternion_matrix, vector_norm
 from data import NeuronData
 
 
+##---EXCEPTIONS
+
+class BadNeuronQuery(Exception):
+    pass
+
+
 ##---CLASSES
 
 class Neuron(SimObject):
@@ -166,27 +172,27 @@ class Neuron(SimObject):
         positions passed, yielding a [npositions, frame_size] matrix with one
         channel per column.
 
-        :Keywords:
-            rec : Recorder
-                Recorder instance to produce the waveform for
+        :Parameters:
+            positions : ndarray
+                Points of the recorder
         :Returns:
             tuple : (waveform, interval_waveforms)
         :Raises:
-            ValueError : if self._frame_size is None or the position is outside
+            BadNeuronQuery : if self._frame_size is None or the position is outside
             of the listening sphere of the neuron.
         """
 
         # check for any valid positions
         rel_pos = positions - self.position
-        rel_pos_valid = [vector_norm(rel_pos[i]) > self.sphere_radius
-                         for  i in range(rel_pos.shape[0])]
+        rel_pos_valid = [vector_norm(rel_pos[i]) < self.sphere_radius
+                         for  i in xrange(rel_pos.shape[0])]
         if not N.any(rel_pos_valid):
-            raise ValueError('queried positions outside of sphere_radius')
+            raise BadNeuronQuery('queried positions outside of sphere_radius')
 
         # inits
-        wf = N.zeros((rel_pos.shape[0], self._frame_size))
+        wf = N.zeros((self._frame_size, rel_pos.shape[0]))
 
-        # if we have orientation, rotate rel_pos accoringly
+        # if we have orientation, rotate rel_pos accordingly
         if self.orientation is not False:
             rel_pos = N.dot(
                 quaternion_matrix(self.orientation)[:3,:3],
@@ -195,10 +201,8 @@ class Neuron(SimObject):
 
         # copy waveforms per position (resp. channel)
         for i in xrange(rel_pos.shape[0]):
-            if rel_pos_valid[i] is False:
-                continue
-            else:
-                wf[i,:] = self._neuron_data.get_data(rel_pos[i])
+            if rel_pos_valid[i] is True:
+                wf[:,i] = self._neuron_data.get_data(rel_pos[i])
         # adjust for amplitude
         if self.amplitude != 1.0:
             wf *= self.amplitude
@@ -209,7 +213,8 @@ class Neuron(SimObject):
 
 ##---PACKAGE
 
-__all__ = ['Neuron']
+__all__ = ['BadNeuronQuery', 'Neuron']
+
 
 ##---MAIN
 
