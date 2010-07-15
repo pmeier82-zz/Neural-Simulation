@@ -240,16 +240,16 @@ class BaseSimulation(dict):
 
         self.clear()
 
-        # reset pubic members
-        self.cls_dyn.clear()
-        self.io_man.initialize()
-        self.neuron_data.clear()
-
         # reset private members
         self.sample_rate = kwargs.get('sample_rate', 16000.0)
         self.frame = kwargs.get('frame', 0)
         self.frame_size = kwargs.get('frame_size', 1024)
         self.status
+
+        # reset pubic members
+        self.cls_dyn.clear()
+        self.io_man.initialize()
+        self.neuron_data.clear()
 
     def finalize(self):
         """finalize the simulation"""
@@ -301,8 +301,7 @@ class BaseSimulation(dict):
             'neurons'       : self.neuron_keys,
             'recorders'     : self.recorder_keys,
         }
-        if self.io_man.status != self._status:
-            self.io_man.status = self._status
+        self.io_man.status = self._status
         return self._status
 
     @property
@@ -327,21 +326,25 @@ class BaseSimulation(dict):
         """advance the simulation by one frame"""
 
         # process events
-        self._simulate_events()
+        self._simulate_io_tick()
 
         # process units
-        self._simulate_neurons()
+        self._simulate_neuron_tick()
 
         # record for recorders
-        self._simulate_recorders()
+        self._simulate_recorder_tick()
 
         # inc frame counter
         self.frame += 1
 
-    def _simulate_events(self):
-        """process events for the current frame"""
+    def _simulate_io_tick(self):
+        """process io loop for the current frame
+
+        This will tick the SimIOManager and process all queued events.
+        """
 
         # process
+        self.io_man.tick()
         while len(self.io_man.events) > 0:
 
             pkg = self.io_man.events.pop(0)
@@ -404,8 +407,12 @@ class BaseSimulation(dict):
                     log_str += 'unknown'
                 self.log(log_str)
 
-    def _simulate_neurons(self):
-        """generate spiketrains for the current frame"""
+    def _simulate_neuron_tick(self):
+        """process neurons for current frame
+
+        Thi will generate spike trains for the current frame and configure the
+        neuronal firing behavior.
+        """
 
         # generate spike trains fo the scene
         self.cls_dyn.generate(self.frame_size)
@@ -416,8 +423,11 @@ class BaseSimulation(dict):
             firing_times = self.cls_dyn.get_spike_train(nrn_k)
             nrn.simulate(frame_size=self.frame_size, firing_times=firing_times)
 
-    def _simulate_recorders(self):
-        """recorder operation for the current frame"""
+    def _simulate_recorder_tick(self):
+        """process recorders for the current frame
+
+        This will recorde waveforms and grountruth for the current frame.
+        """
 
         # list of all neurons
         nlist = [self[nrn_k] for nrn_k in self.neuron_keys]
@@ -425,13 +435,11 @@ class BaseSimulation(dict):
         # record per recorder
         for rec_k in self.recorder_keys:
             rec = self[rec_k]
-            wf_neuron, wf_noise = self[rec_k].simulate(
+            rec_data = self[rec_k].simulate(
                 nlist=nlist,
                 frame_size=self.frame_size
             )
-
-            self.io_man.send_wf_neuron(self.frame, id(rec), wf_neuron)
-            self.io_man.send_wf_noise(self.frame, id(rec), wf_noise)
+            self.io_man.send_package(SimPkg.T_REC, rec_k, self._frame, rec_data)
 
     ## methods logging
 

@@ -59,6 +59,8 @@ class ContentItem(object):
             self.cont = cont.cont
         elif isinstance(cont, N.ndarray):
             self.cont = cont
+        elif cont is None:
+            self.cont = N.array([])
         else:
             self.cont = N.asarray(cont)
 
@@ -94,9 +96,11 @@ class ContentItem(object):
     @property
     def payload(self):
         return ''.join([self.header, self.cont.tostring()])
-    __call__ = payload
 
     ## special methods
+
+    def __call__(self):
+       return self.payload
 
     def __len__(self):
         return self.HLEN + self.cont.nbytes
@@ -170,12 +174,13 @@ class SimPkg(object):
     @property
     def payload(self):
         return ''.join([self.header] + [item.payload for item in self.cont])
-    __call__ = payload
 
     ## special methods
 
-    def __eq__(self, other):
+    def __call__(self):
+       return self.payload
 
+    def __eq__(self, other):
         if not isinstance(other, SimPkg):
             return False
         if self.tid != other.tid:
@@ -275,5 +280,7 @@ if __name__ == '__main__':
     print newpkg
     print
     print 'mypkg == newpkg :', mypkg == newpkg
+    print
+    print '%s\n\nequals\n\n%s\n\n%s' % (mypkg(), newpkg(), mypkg() == newpkg())
     print
     print 'PACKAGE TEST DONE'

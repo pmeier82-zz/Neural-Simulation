@@ -671,7 +671,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
         try:
 
-            self._sim.io_man.setup_svr()
+            self._sim.io_man.initialize()
             self.io_build_model()
 
         except:

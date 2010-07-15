@@ -48,12 +48,12 @@ class DataThread(Thread):
 
     def __init__(
         self,
-        addr_peer,
-        q_recv,
+        addr_host=None,
+        addr_peer=None,
+        q_recv=None,
         q_send=None,
         poll=0.001,
         maxlen=32768,
-        addr_host=None
     ):
         """socket io thread for datagrams of the SimPkg type
 
@@ -61,12 +61,16 @@ class DataThread(Thread):
         location using SimPkg as the data format.
 
         :Parameters:
+            addr_host : addr
+                Host address and port tuple. If not supplied or None, will not
+                bind at all.
+                Default=None
             addr_peer: (host, port)
                 peer address and port tuple.
-                Required
+                Default=None
             q_recv: Queue
                 Queue for receiving packages.
-                Required
+                Default=None
             q_send : Queue
                 Queue for sending packages, if not supplied a new Queue will be
                 setup internally
@@ -76,18 +80,10 @@ class DataThread(Thread):
             maxlen : int
                 maxlength of package buffer for recvfrom calls
                 Default=32768
-            addr_host : addr
-                Host address and port tuple. If not supplied or None, will not
-                bind at all.
-                Default=None
         """
 
-        # default queue if not supplied
-        if q_send is None:
-            q_send = Queue()
-
         # thread init
-        super(DataThread, self).__init__(name='NS_CLIENT_THREAD')
+        super(DataThread, self).__init__(name='NS_DATA_THREAD')
         self.daemon = True
 
         # members
@@ -96,8 +92,8 @@ class DataThread(Thread):
         self.__is_shutdown.set()
         self.__sock = None
         self.__poll = float(poll)
-        self.__q_recv = q_recv
-        self.__q_send = q_send
+        self.__q_recv = q_recv or Queue()
+        self.__q_send = q_send or Queue()
         self.__addr_host = addr_host
         self.__addr_peer = addr_peer
         self.__maxlen = int(maxlen)
@@ -134,7 +130,7 @@ class DataThread(Thread):
         self.__sock = socket(AF_INET, SOCK_DGRAM)
         self.__sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         if self.__addr_host is None:
-            self.__sock.sendto(0, ('localhost', 80))
+            self.__sock.sendto('\x00', ('localhost', 80))
         else:
             self.__sock.bind(self.__addr_host)
         self.__addr_host = self.__sock.getsockname()
@@ -159,21 +155,19 @@ class DataThread(Thread):
         # doomsday loop
         try:
             while self.__online:
-
+                # select
                 read_rdy, _, _ = select([self.__sock], [], [], self.__poll)
-
+                # receive
                 if len(read_rdy) > 0:
                     data = self.__recv()
                     if data is not None:
                         self.__q_recv.put_nowait(data)
-
+                # send
                 while not self.__q_send.empty():
-                        self.__send(self.__q_send.get_nowait())
-
+                    self.__send(self.__q_send.get_nowait())
         except Exception, ex:
             print ex
             self.__q_recv.put_nowait((ex, None))
-
         finally:
             self.__sock_close()
             self.__is_shutdown.set()
@@ -197,10 +191,12 @@ class DataThread(Thread):
         try:
             data, addr = self.__sock.recvfrom(self.__maxlen)
             pkg = SimPkg.from_data(data)
-            assert addr == self.__addr_peer
+            if self.__addr_peer is not None:
+                assert addr == self.__addr_peer, \
+                    '%s == %s -> %s' % (addr, self.__addr_peer, addr == self.__addr_peer)
             return pkg, addr
-        except:
-            print '%s == %s -> %s' % (addr, self.__addr_peer, addr == self.__addr_peer)
+        except Exception, ex:
+            print ex
             rval = None
 
     def __send(self, pkg):
@@ -212,7 +208,8 @@ class DataThread(Thread):
         """
 
         try:
-            self.__sock.sendto(pkg(), self.__addr_peer)
+            if self.__addr_peer is not None:
+                self.__sock.sendto(pkg(), self.__addr_peer)
         except Exception, ex:
             print ex
 
@@ -223,23 +220,29 @@ if __name__ == '__main__':
 
     print
     print 'starting server..'
-    q_recv = Queue()
-    dt = DataThread(addr_peer=('127.0.0.1', 56415), q_recv=q_recv, addr_host=('', 31337))
+    dt = DataThread(addr_peer=('localhost', 31337))
     dt.start()
     select([], [], [], .2)
     print dt
     print 'serving at:', dt.addr_host
+    print 'sending to:', dt.addr_peer
+
+    con = False
 
     try:
         while True:
-            while not q_recv.empty():
-                pkg = q_recv.get_nowait()
+            if con is False:
+                dt.q_send.put(SimPkg(tid=SimPkg.T_CON))
+                con = True
+#            else:
+#                dt.q_send.put(SimPkg(tid=SimPkg.T_END))
+            while not dt.q_recv.empty():
+                pkg = dt.q_recv.get_nowait()
                 print
                 print 'received:'
                 print pkg[0]
                 print 'from', pkg[1]
-            else:
-                select([], [], [], .1)
+            select([], [], [], 1)
 
     except KeyboardInterrupt:
         print
