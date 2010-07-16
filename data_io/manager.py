@@ -36,7 +36,7 @@ from struct import unpack
 from threading import Event, Lock, Thread
 from time import sleep
 from Queue import Queue
-from SocketServer import BaseRequestHandler, TCPServer, ThreadingMixIn
+from SocketServer import BaseRequestHandler, BaseServer, TCPServer, ThreadingMixIn
 # packages
 import scipy as N
 # own imports
@@ -59,35 +59,46 @@ class SimIOProtocol(BaseRequestHandler):
     def setup(self):
         """setup the connection"""
 
+        self.sq_lock = self.server.send_queues_lock
         self.q_recv = self.server.q_recv
+        with self.sq_lock:
+            self.server.send_queues[self.client_address] = Queue()
         self.q_send = self.server.send_queues[self.client_address]
         self.poll = self.server.client_poll
-        self.buf = ''
+
+        print 'new connection from', self.client_address
 
     def handle(self):
         """the run method"""
 
         while True:
             # select
-            r, w, e = select([self.request], [self.request], [self.request], self.poll)
+            r, w, e = select([self.request], [], [self.request], self.poll)
             # receive
             if len(r) > 0:
                 pkg = self.recv_pkg()
                 if pkg is not None:
                     self.q_recv.put(pkg)
+                else:
+                    break
             # send
             if len(w) > 0:
-                while not self.q_send.empty():
-                    item = self.q_send.get()
-                    self.send_pkg(item)
-                    self.q_send.task_done()
+                with self.sq_lock:
+                    while not self.q_send.empty():
+                        item = self.q_send.get()
+                        self.send_pkg(item)
+                        self.q_send.task_done()
             # error
             if len(e) > 0:
                 break
 
     def finish(self):
         """finalize the connection"""
-        pass
+
+        print 'closing for', self.client_address
+        with self.server.send_queues_lock:
+            if self.client_address in self.server.send_queues:
+                self.server.send_queues.pop(self.client_address)
 
     ## interface
 
@@ -95,8 +106,10 @@ class SimIOProtocol(BaseRequestHandler):
         """receive one package"""
 
         try:
+            inp = self.request.recv(2)
+            assert inp
             # get length
-            pkg_data_len = SimPkg.len_from_bin(self.request.recv(2))
+            pkg_data_len = SimPkg.len_from_bin(inp)
             # get data
             data = self.request.recv(pkg_data_len)
             return SimPkg.from_data(data)
@@ -109,8 +122,13 @@ class SimIOProtocol(BaseRequestHandler):
         self.request.sendall(pkg.packed_size)
         self.request.sendall(pkg())
 
-class SimIOServer(TCPServer):
+class SimIOServer(ThreadingMixIn, TCPServer, Thread):
     """the server thread spawning one thread per connection"""
+
+    ## class memebers
+
+    allow_reuse_address = True
+    request_queue_size = 5
 
     ## constructor
 
@@ -123,7 +141,8 @@ class SimIOServer(TCPServer):
         client_poll=0.001
     ):
 
-        # super
+        # supers
+        Thread.__init__(self, name='SimIOServer')
         TCPServer.__init__(self, server_address, SimIOProtocol)
 
         # members
@@ -133,34 +152,23 @@ class SimIOServer(TCPServer):
         self.send_queues_lock = Lock()
         self.client_poll = client_poll
 
+        self._serving = False
+        self._is_shutdown = Event()
+        self._is_shutdown.set()
+
     ## threading handlers with queue propagation
-
-    def close_request(self, request):
-        """Called to clean up an individual request."""
-
-        client_address = request.getpeername()
-        with self.send_queues_lock:
-            if client_address in self.send_queues:
-                self.send_queues.pop(client_address)
 
     def verify_request(self, request, client_address):
         """Verify the request.
 
         Return True if client_address is not served yet.
+        [OVERWRITE]
         """
 
         if client_address in self.send_queues:
             return False
         else:
             return True
-
-    def process_request(self, request, client_address):
-        """implement queue handling"""
-
-        with self.send_queues_lock:
-            self.send_queues[client_address] = Queue()
-
-        TCPServer.process_request(self, request, client_address)
 
     def propagate_send_queue(self):
         """multiplex items in the send queue to the clients"""
@@ -171,8 +179,10 @@ class SimIOServer(TCPServer):
                 for q in self.send_queues.values():
                     q.put()
             self.q_send.task_done()
+            print '.',
+            sys.stdout.flush()
 
-    def serve_forever(self, poll_interval=0.5):
+    def run(self):
         """Handle one request at a time until shutdown.
 
         Polls for shutdown every poll_interval seconds. Ignores
@@ -180,14 +190,20 @@ class SimIOServer(TCPServer):
         another thread.
         """
 
-        self._BaseServer__serving = True
-        self._BaseServer__is_shut_down.clear()
-        while self._BaseServer__serving:
-            r, w, e = select([self], [], [], poll_interval)
+        self._serving = True
+        self._is_shutdown.clear()
+        while self._serving:
+            r, w, e = select([self], [], [], 0.5)
             if r:
                 self._handle_request_noblock()
             self.propagate_send_queue()
-        self._BaseServer__is_shut_down.set()
+        self._is_shutdown.set()
+
+    def stop(self):
+        """stop the thread"""
+
+        self._serving = False
+        self._is_shutdown.wait()
 
 
 class SimIOManager(object):
