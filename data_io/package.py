@@ -175,6 +175,10 @@ class SimPkg(object):
     def payload(self):
         return ''.join([self.header] + [item.payload for item in self.cont])
 
+    @property
+    def packed_size(self):
+        return pack('!H', len(self))
+
     ## special methods
 
     def __call__(self):
@@ -210,7 +214,11 @@ class SimPkg(object):
                 rval += '\n%s' % item
         return rval
 
-    ## from byte data factory
+    @staticmethod
+    def len_from_bin(data):
+        """decode package lenge from unsigned short in network-byteorder"""
+
+        return unpack('!H', data)[0]
 
     @staticmethod
     def from_data(data):
@@ -282,5 +290,7 @@ if __name__ == '__main__':
     print 'mypkg == newpkg :', mypkg == newpkg
     print
     print '%s\n\nequals\n\n%s\n\n%s' % (mypkg(), newpkg(), mypkg() == newpkg())
+    print
+    print 'unpack(\'!H\', newpkg.packed_size)[0] == len(newpkg) :', unpack('!H', newpkg.packed_size)[0] == len(newpkg)
     print
     print 'PACKAGE TEST DONE'

@@ -31,19 +31,158 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 # builtins
-import os
-from os import path as osp
+from select import select
+from struct import unpack
+from threading import Event, Lock, Thread
 from time import sleep
+from Queue import Queue
+from SocketServer import BaseRequestHandler, TCPServer, ThreadingMixIn
 # packages
 import scipy as N
-from Queue import Queue
-import tables
 # own imports
 from package import SimPkg
-from data_thread import DataThread
 
 
 ##---CLASSES
+
+class SimIOProtocol(BaseRequestHandler):
+    """the protocoll implementation
+
+    inherited member variables:
+    self.request : socket to work with
+    self.client_address : (addr,port) of the client
+    self.server : server reference
+    """
+
+    ## BaseRequestHandler interface
+
+    def setup(self):
+        """setup the connection"""
+
+        self.q_recv = self.server.q_recv
+        self.q_send = self.server.send_queues[self.client_address]
+        self.poll = self.server.client_poll
+        self.buf = ''
+
+    def handle(self):
+        """the run method"""
+
+        while True:
+            # select
+            r, w, e = select([self.request], [self.request], [self.request], self.poll)
+            # receive
+            if len(r) > 0:
+                pkg = self.recv_pkg()
+                if pgk is not None:
+                    self.q_recv.put(pkg)
+            # send
+            if len(w) > 0:
+                while not self.q_send.empty():
+                    item = self.q_send.get()
+                    self.request.sendall(item())
+                    self.q_send.task_done()
+            # error
+            if len(e) > 0:
+                break
+
+    def finish(self):
+        """finalize the connection"""
+        pass
+
+    ## interface
+
+    def recv_pkg(self):
+        """receive one package"""
+
+        try:
+            # get length
+            pkg_data_len = SimPkg.len_from_bin(self.request.recv(2))
+            # get data
+            data = self.request.recv(pkg_data_len)
+            return SimPkg.from_data(data)
+        except:
+            return None
+
+class SimIOServer(TCPServer):
+    """the server thread spawning one thread per connection"""
+
+    ## constructor
+
+    def __init__(
+        self,
+        server_address,
+        q_recv,
+        q_send,
+        daemon_threads=True,
+        client_poll=0.001
+    ):
+
+        # super
+        TCPServer.__init__(self, server_address, SimIOProtocol)
+
+        # members
+        self.q_recv = q_recv    # singleton receive queue
+        self.q_send = q_send    # incomming send queuq
+        self.send_queues = {}
+        self.send_queues_lock = Lock()
+        self.client_poll = client_poll
+
+    ## threading handlers with queue propagation
+
+    def close_request(self, request):
+        """Called to clean up an individual request."""
+
+        client_address = request.getpeername()
+        with self.send_queues_lock:
+            if client_address in self.send_queues:
+                self.send_queues.pop(client_address)
+
+    def verify_request(self, request, client_address):
+        """Verify the request.
+
+        Return True if client_address is not served yet.
+        """
+
+        if client_address in self.send_queues:
+            return False
+        else:
+            return True
+
+    def process_request(self, request, client_address):
+        """implement queue handling"""
+
+        with self.send_queues_lock:
+            self.send_queues[client_address] = Queue()
+
+        TCPServer.process_request(self, request, client_address)
+
+    def propagate_send_queue(self):
+        """multiplex items in the send queue to the clients"""
+
+        while not self.q_send.empty():
+            item = self.q_send.get()
+            with self.send_queues_lock:
+                for q in self.send_queues.values():
+                    q.put()
+            self.q_send.task_done()
+
+    def serve_forever(self, poll_interval=0.5):
+        """Handle one request at a time until shutdown.
+
+        Polls for shutdown every poll_interval seconds. Ignores
+        self.timeout. If you need to do periodic tasks, do them in
+        another thread.
+        """
+
+        self._BaseServer__serving = True
+        self._BaseServer__is_shut_down.clear()
+        while self._BaseServer__serving:
+            r, w, e = select([self], [], [], poll_interval)
+            if r:
+                self._handle_request_noblock()
+            self.propagate_send_queue()
+        self._BaseServer__is_shut_down.set()
+
 
 class SimIOManager(object):
     """the singleton input/output manager
@@ -73,40 +212,34 @@ class SimIOManager(object):
 
         # io members
         self.addr_ini = kwargs.get('addr', '')
-        self.addr = None
         self.port_ini = kwargs.get('port', 31337)
         self._q_recv = Queue()
+        self._q_send = Queue()
         self._srv = None
-        self._clients = {}
         self._events = []
 
     def initialize(self):
 
         self.finalize()
-        while not self._q_recv.empty():
-            self._q_recv.get_nowait()
-        self._srv = DataThread(
-            q_recv=self._q_recv,
-            addr_host=(self.addr_ini, self.port_ini)
+        self._srv = SimIOServer(
+            (self.addr_ini, self.port_ini),
+            self._q_recv,
+            self._q_send
         )
-        self._srv.start()
-        sleep(.1)
-        self.addr = self._srv.addr_host
+        t = Thread(target=self._srv.serve_forever, name='SimIOServer')
+        t.daemon = True
+        t.start()
         self._status = None
 
     def finalize(self):
 
         if self._srv is not None:
-           if not self._srv.is_shutdown:
-               self._srv.stop()
-               self._srv.join(5.0)
-               assert not self._srv.is_alive(), 'server thread still alive after stop!'
+            self._srv.shutdown()
         self._srv = None
-        while len(self._clients) > 0:
-            _, clt = self._clients.popitem()
-            clt.stop()
-            clt.join(5.0)
-            assert not clt.is_alive(), 'client thread still alive after stop!'
+        while not self._q_recv.empty():
+            self._q_recv.get_nowait()
+        while not self._q_send.empty():
+            self._q_send.get_nowait()
 
     ## properties
 
@@ -124,6 +257,10 @@ class SimIOManager(object):
     @property
     def q_recv(self):
         return self._q_recv
+
+    @property
+    def q_send(self):
+        return self._q_send
 
     @property
     def events(self):
@@ -162,32 +299,10 @@ class SimIOManager(object):
     def tick(self):
         """querys the send-queue and handles incoming packages"""
 
-        # input packages
         while not self._q_recv.empty():
-
-            # get package
-            pkg, addr = self._q_recv.get_nowait()
-            # propagate package
+            pkg = self._q_recv.get()
             self._events.append(pkg)
-
-            # do we need to take actions ?
-            if pkg.tid == SimPkg.T_CON:
-                assert addr not in self._clients, 'duplicate addr: %s' % addr
-                # new connection
-                clt = DataThread(addr_peer=addr, q_recv=self._q_recv)
-                clt.start()
-                if self._status is not None:
-                    clt.q_send.put(self.get_status_pkg())
-                self._clients[addr] = clt
-
-            elif pkg.tid == SimPkg.T_END:
-                # connection close
-                clt = self._clients.pop(addr, None)
-                if clt is not None:
-                    if clt.is_alive():
-                        clt.stop()
-                        clt.join(5.0)
-                        assert not clt.is_alive(), 'client thread still alive after stop!'
+            self._q_recv.task_done()
 
     def send_package(
         self,
@@ -216,8 +331,7 @@ class SimIOManager(object):
                 The SimPkg instance to send.
         """
 
-        for clt_k in self._clients:
-            self._clients[clt_k].q_send.put_nowait(pkg)
+        self.q_send.put(pkg)
 
     def send_status(self):
         """send the status package"""
