@@ -73,13 +73,13 @@ class SimIOProtocol(BaseRequestHandler):
             # receive
             if len(r) > 0:
                 pkg = self.recv_pkg()
-                if pgk is not None:
+                if pkg is not None:
                     self.q_recv.put(pkg)
             # send
             if len(w) > 0:
                 while not self.q_send.empty():
                     item = self.q_send.get()
-                    self.request.sendall(item())
+                    self.send_pkg(item)
                     self.q_send.task_done()
             # error
             if len(e) > 0:
@@ -102,6 +102,12 @@ class SimIOProtocol(BaseRequestHandler):
             return SimPkg.from_data(data)
         except:
             return None
+
+    def send_pkg(self, pkg):
+        """send one package"""
+
+        self.request.sendall(pkg.packed_size)
+        self.request.sendall(pkg())
 
 class SimIOServer(TCPServer):
     """the server thread spawning one thread per connection"""
