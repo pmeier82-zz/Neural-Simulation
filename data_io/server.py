@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - data_io/manager.py
+# sim - data_io/server.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-02-15
@@ -36,15 +36,21 @@ import sys
 from select import select
 from threading import Event, Lock, Thread
 from Queue import Queue
-from SocketServer import BaseRequestHandler, BaseServer, TCPServer, ThreadingMixIn
+from SocketServer import BaseRequestHandler, TCPServer, ThreadingMixIn
 # packages
 import scipy as N
 # own imports
 from package import SimPkg, recv_pkg, send_pkg
 
 
+##---MODULE_ADMIN
+
+__all__ = ['SimIOManager', 'SimIOProtocol', 'SimIOServer']
+
+
 ##---LOGGING
-logger = logging.getLogger('')
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 ##---CLASSES
@@ -70,7 +76,7 @@ class SimIOProtocol(BaseRequestHandler):
         self.q_send = self.server.send_queues[self.client_address]
         self.poll = self.server.client_poll
 
-        print 'new connection from', self.client_address
+        logging.info('new connection from %s', str(self.client_address))
 
     def handle(self):
         """the run method"""
@@ -97,11 +103,12 @@ class SimIOProtocol(BaseRequestHandler):
     def finish(self):
         """finalize the connection"""
 
-        print 'closing for', self.client_address
+        logging.debug('closing for %s' % self.client_address)
         with self.sq_lock:
             if self.client_address in self.server.send_queues:
                 q = self.server.send_queues.pop(self.client_address)
                 del q
+
 
 class SimIOServer(ThreadingMixIn, TCPServer, Thread):
     """the server thread spawning one thread per connection"""
@@ -192,11 +199,11 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
 
 
 class SimIOManager(object):
-    """the singleton input/output manager
+    """the singleton input/output manager thread
 
-    This class handles all data input and output for a SimBase object. Data is
-    received from and sent to instances of SimIOBase. The manager is a
-    dict of SimIOBase instances.
+    This class handles all data input and output for a BaseSimulation object.
+    Data is received from and sent to via Queue.Queue objects using the protocol
+    defined in package.py.
     """
 
     ## constructor
@@ -368,9 +375,12 @@ if __name__ == '__main__':
     try:
         while True:
             io_man.tick()
-            print io_man.events
+            while len(io_man.events) > 0:
+                print io_man.events.pop(0)
+            else:
+                print '.'
             sleep(.5)
-
+            io_man.send_package(cont=N.ones((4, 4)))
     except KeyboardInterrupt:
         print
         print 'stoping due to KeyboardInterrupt'

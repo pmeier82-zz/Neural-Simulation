@@ -36,9 +36,9 @@ from struct import calcsize, pack, unpack
 import scipy as N
 
 
-##---PACKAGE DISTRO
+##---MODULE_ADMIN
 
-__all__ = ['SimPkg', 'SimPkgPing']
+__all__ = ['SimPkg', 'recv_pkg', 'send_pkg']
 
 
 ##---CLASSES

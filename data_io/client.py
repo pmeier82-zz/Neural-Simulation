@@ -40,7 +40,7 @@ from Queue import Queue
 from package import SimPkg, recv_pkg, send_pkg
 
 
-##---PACKAGE DISTRO
+##---MODULE_ADMIN
 
 __all__ = ['SimIOClientNotifier', 'SimIOConnection']
 
@@ -127,11 +127,9 @@ class SimIOConnection(Thread):
     ## notification interface
 
     def register_interest(self, interest):
-        """register an object implementiong the SimClientNotifier interaface"""
+        """register an object implementiong the SimIOClientNotifier interaface"""
 
         assert isinstance(interest, SimClientNotifier)
-
-
 
 
 ##---MAIN
@@ -139,6 +137,7 @@ class SimIOConnection(Thread):
 if __name__ == '__main__':
 
     from Queue import Empty
+    from time import sleep
 
     print 'initialize'
     q_r, q_s = Queue(), Queue()
@@ -149,12 +148,11 @@ if __name__ == '__main__':
     again = True
     while again:
         try:
-            item = q_r.get(True, 1000)
-            if item is not None:
-                print item
-            print '.'
+            while not q_r.empty():
+                print q_r.get()
         except Empty:
             continue
         except:
             again = False
+        sleep(.5)
     print 'Done.'
