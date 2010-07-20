@@ -270,7 +270,7 @@ class BaseSimulation(dict):
     def frame(self, value):
         self._frame = long(value)
         for ext in self._externals:
-            ext.frame(self.frame)
+            ext.frame(self._frame)
 
     @property
     def frame_size(self):
@@ -279,7 +279,7 @@ class BaseSimulation(dict):
     def frame_size(self, value):
         self._frame_size = int(value)
         for ext in self._externals:
-            ext.frame_size(self.frame_size)
+            ext.frame_size(self._frame_size)
         self.status
 
     @property
@@ -288,9 +288,9 @@ class BaseSimulation(dict):
     @sample_rate.setter
     def sample_rate(self, value):
         self._sample_rate = float(value)
-        self.cls_dyn.sample_rate = self.sample_rate
+        self.cls_dyn.sample_rate = self._sample_rate
         for ext in self._externals:
-            ext.sample_rate(self.sample_rate)
+            ext.sample_rate(self._sample_rate)
         self.status
 
     @property
@@ -301,7 +301,8 @@ class BaseSimulation(dict):
             'neurons'       : self.neuron_keys,
             'recorders'     : self.recorder_keys,
         }
-        self.io_man.status = self._status
+        if self.io_man.is_initialized is True:
+            self.io_man.status = self._status
         return self._status
 
     @property

@@ -216,7 +216,7 @@ class SimPkg(object):
 
     @staticmethod
     def len_from_bin(data):
-        """decode package lenge from unsigned short in network-byteorder"""
+        """decode package length from unsigned short in network-byteorder"""
 
         return unpack('!H', data)[0]
 
@@ -264,14 +264,28 @@ class SimPkg(object):
         # return
         return SimPkg(tid, ident, frame, cont)
 
-## special packages
 
-class SimPkgPing(SimPkg):
-    """ping package"""
+##---FUNCTIONS
 
-    def __init__(self):
+def recv_pkg(sock):
+    """receive one SimPkg"""
 
-        super(SimPkgPing, self).__init__(tid=SimPkg.T_PING, cont=N.randn())
+    try:
+        inp = sock.recv(2)
+        assert inp
+        # get length
+        pkg_data_len = SimPkg.len_from_bin(inp)
+        # get data
+        data = sock.recv(pkg_data_len)
+        return SimPkg.from_data(data)
+    except:
+        return None
+
+def send_pkg(sock, pkg):
+    """send one SimPkg"""
+
+    sock.sendall(pkg.packed_size)
+    sock.sendall(pkg())
 
 
 ##---MAIN

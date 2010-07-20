@@ -201,7 +201,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         self.actionPreferences.triggered.connect(self.comming_soon)
 
         # init gui
-        self._sim.initialize()
         self.on_input_cmdpnl_reset()
 
     ## delegate event slots

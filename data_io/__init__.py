@@ -32,7 +32,7 @@ __docformat__ = 'restructuredtext'
 
 from data_thread import DataThread
 from manager import SimIOManager
-from package import SimPkg
+from package import SimPkg, recv_pkg, send_pkg
 
 
 ##---PACKAGE
@@ -43,7 +43,9 @@ __all__ = [
     # manager
     'SimIOManager',
     # package
-    'SimPkg'
+    'SimPkg',
+    'recv_pkg',
+    'send_pkg'
 ]
 
 

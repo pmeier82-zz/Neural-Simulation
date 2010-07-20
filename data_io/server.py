@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - data_io.py
+# sim - data_io/manager.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-02-15
@@ -31,16 +31,20 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 # builtins
+import logging
+import sys
 from select import select
-from struct import unpack
 from threading import Event, Lock, Thread
-from time import sleep
 from Queue import Queue
 from SocketServer import BaseRequestHandler, BaseServer, TCPServer, ThreadingMixIn
 # packages
 import scipy as N
 # own imports
-from package import SimPkg
+from package import SimPkg, recv_pkg, send_pkg
+
+
+##---LOGGING
+logger = logging.getLogger('')
 
 
 ##---CLASSES
@@ -74,53 +78,30 @@ class SimIOProtocol(BaseRequestHandler):
         while True:
             # select
             r, w, e = select([self.request], [], [self.request], self.poll)
-            # receive
-            if len(r) > 0:
-                pkg = self.recv_pkg()
-                if pkg is not None:
-                    self.q_recv.put(pkg)
-                else:
-                    break
-            # send
-            if len(w) > 0:
-                with self.sq_lock:
-                    while not self.q_send.empty():
-                        item = self.q_send.get()
-                        self.send_pkg(item)
-                        self.q_send.task_done()
             # error
             if len(e) > 0:
                 break
+            # receive
+            if len(r) > 0:
+                pkg = recv_pkg(self.request)
+                if pkg is None:
+                    break
+                self.q_recv.put(pkg)
+            # send
+            with self.sq_lock:
+                while not self.q_send.empty():
+                    item = self.q_send.get()
+                    send_pkg(self.request, item)
+                    self.q_send.task_done()
 
     def finish(self):
         """finalize the connection"""
 
         print 'closing for', self.client_address
-        with self.server.send_queues_lock:
+        with self.sq_lock:
             if self.client_address in self.server.send_queues:
-                self.server.send_queues.pop(self.client_address)
-
-    ## interface
-
-    def recv_pkg(self):
-        """receive one package"""
-
-        try:
-            inp = self.request.recv(2)
-            assert inp
-            # get length
-            pkg_data_len = SimPkg.len_from_bin(inp)
-            # get data
-            data = self.request.recv(pkg_data_len)
-            return SimPkg.from_data(data)
-        except:
-            return None
-
-    def send_pkg(self, pkg):
-        """send one package"""
-
-        self.request.sendall(pkg.packed_size)
-        self.request.sendall(pkg())
+                q = self.server.send_queues.pop(self.client_address)
+                del q
 
 class SimIOServer(ThreadingMixIn, TCPServer, Thread):
     """the server thread spawning one thread per connection"""
@@ -129,6 +110,7 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
 
     allow_reuse_address = True
     request_queue_size = 5
+    daemon_threads = True
 
     ## constructor
 
@@ -137,17 +119,16 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
         server_address,
         q_recv,
         q_send,
-        daemon_threads=True,
         client_poll=0.001
     ):
 
-        # supers
+        # thread super
         Thread.__init__(self, name='SimIOServer')
-        TCPServer.__init__(self, server_address, SimIOProtocol)
+        self.daemon = True
 
         # members
         self.q_recv = q_recv    # singleton receive queue
-        self.q_send = q_send    # incomming send queuq
+        self.q_send = q_send    # incomming send queue
         self.send_queues = {}
         self.send_queues_lock = Lock()
         self.client_poll = client_poll
@@ -155,6 +136,9 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
         self._serving = False
         self._is_shutdown = Event()
         self._is_shutdown.set()
+
+        # TCPerver super
+        TCPServer.__init__(self, server_address, SimIOProtocol, False)
 
     ## threading handlers with queue propagation
 
@@ -177,10 +161,8 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
             item = self.q_send.get()
             with self.send_queues_lock:
                 for q in self.send_queues.values():
-                    q.put()
+                    q.put(item)
             self.q_send.task_done()
-            print '.',
-            sys.stdout.flush()
 
     def run(self):
         """Handle one request at a time until shutdown.
@@ -190,6 +172,8 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
         another thread.
         """
 
+        self.server_bind()
+        self.server_activate()
         self._serving = True
         self._is_shutdown.clear()
         while self._serving:
@@ -197,6 +181,7 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
             if r:
                 self._handle_request_noblock()
             self.propagate_send_queue()
+        self.server_close()
         self._is_shutdown.set()
 
     def stop(self):
@@ -233,12 +218,14 @@ class SimIOManager(object):
         self._status = None
 
         # io members
-        self.addr_ini = kwargs.get('addr', '')
+        self.addr_ini = kwargs.get('addr', '0.0.0.0')
         self.port_ini = kwargs.get('port', 31337)
+        self.addr = 'not connected'
         self._q_recv = Queue()
         self._q_send = Queue()
         self._srv = None
         self._events = []
+        self._is_initialized = False
 
     def initialize(self):
 
@@ -248,20 +235,21 @@ class SimIOManager(object):
             self._q_recv,
             self._q_send
         )
-        t = Thread(target=self._srv.serve_forever, name='SimIOServer')
-        t.daemon = True
-        t.start()
+        self._srv.start()
+        self.addr = self._srv.server_address
         self._status = None
+        self._is_initialized = True
 
     def finalize(self):
 
         if self._srv is not None:
-            self._srv.shutdown()
-        self._srv = None
+            self._srv.stop()
+            self._srv = None
         while not self._q_recv.empty():
             self._q_recv.get_nowait()
         while not self._q_send.empty():
             self._q_send.get_nowait()
+        self._is_initialized = False
 
     ## properties
 
@@ -288,6 +276,10 @@ class SimIOManager(object):
     def events(self):
         return self._events
 
+    @property
+    def is_initialized(self):
+        return self._is_initialized
+
     ## methods utility
 
     def get_status_pkg(self):
@@ -301,16 +293,15 @@ class SimIOManager(object):
         """
 
         try:
-            status = self.status
             cont = [
                 [self.status['sample_rate'], 0],
                 [self.status['frame_size'], 1]
             ]
             if len(self.status['neurons']) > 0:
                 cont.extend([[item, 10] for item in self.status['neurons']])
-            if len(status['recorders']) > 0:
+            if len(self.status['recorders']) > 0:
                 cont.extend([[item, 20] for item in self.status['recorders']])
-            cont = N.asarray(cont, dtype=long)
+            cont = N.array(cont, dtype=long)
             return SimPkg(tid=SimPkg.T_STS, cont=cont)
             # TODO long type ok?
         except:
@@ -367,7 +358,7 @@ class SimIOManager(object):
 
 if __name__ == '__main__':
 
-    from select import select
+    from time import sleep
 
     print
     print 'setting up manager..'
