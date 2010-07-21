@@ -110,10 +110,7 @@ class SimServer(Thread):
             self.sock_close()
         self.sock = socket(AF_INET, SOCK_DGRAM)
         self.sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-<<<<<<< HEAD
-=======
         #self.sock.setblocking(0)
->>>>>>> be2ee4edac2ad297a87883944a15ad0575282cc3
         self.sock.bind(self.addr)
 
     def sock_close(self):
