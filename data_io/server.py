@@ -92,7 +92,11 @@ class SimIOProtocol(BaseRequestHandler):
                 pkg = recv_pkg(self.request)
                 if pkg is None:
                     break
+                if pkg.tid in [SimPkg.T_CON, SimPkg.T_END]:
+                    pkg.cont = self.client_address
                 self.q_recv.put(pkg)
+                if pkg.tid == SimPkg.T_END:
+                    break
             # send
             with self.sq_lock:
                 while not self.q_send.empty():
@@ -225,8 +229,7 @@ class SimIOManager(object):
         self._status = None
 
         # io members
-        self.addr_ini = kwargs.get('addr', '0.0.0.0')
-        self.port_ini = kwargs.get('port', 31337)
+        self.addr_ini = (kwargs.get('addr', '0.0.0.0'), kwargs.get('port', 31337))
         self.addr = 'not connected'
         self._q_recv = Queue()
         self._q_send = Queue()
@@ -238,7 +241,7 @@ class SimIOManager(object):
 
         self.finalize()
         self._srv = SimIOServer(
-            (self.addr_ini, self.port_ini),
+            self.addr_ini,
             self._q_recv,
             self._q_send
         )
@@ -303,28 +306,29 @@ class SimIOManager(object):
 
         try:
             cont = [
-                [self.status['sample_rate'], 0],
-                [self.status['frame_size'], 1]
+                [self._status['sample_rate'], 0],
+                [self._status['frame_size'], 1]
             ]
-            if len(self.status['neurons']) > 0:
-                cont.extend([[item, 10] for item in self.status['neurons']])
-            if len(self.status['recorders']) > 0:
-                cont.extend([[item, 20] for item in self.status['recorders']])
-            cont = N.array(cont, dtype=long)
+            if len(self._status['neurons']) > 0:
+                cont.extend([[item, 10] for item in self._status['neurons']])
+            if len(self._status['recorders']) > 0:
+                cont.extend([[item, 20] for item in self._status['recorders']])
+            cont = N.asarray(cont, dtype=N.float32)
             return SimPkg(tid=SimPkg.T_STS, cont=cont)
-            # TODO long type ok?
         except:
             return None
 
     ## io methods
 
     def tick(self):
-        """querys the send-queue and handles incoming packages"""
+        """querys the receive-queue returns all queued items"""
 
+        rval = []
         while not self._q_recv.empty():
-            pkg = self._q_recv.get()
-            self._events.append(pkg)
+            item = self._q_recv.get()
+            rval.append(item)
             self._q_recv.task_done()
+        return rval
 
     def send_package(
         self,
@@ -335,11 +339,20 @@ class SimIOManager(object):
     ):
         """build a package fromdata and send to clients
 
+        SimPkg constructor wrapper
+
         :Parameters:
             pkg : SimPkg
-                the SimPkg to send
+                the SimPkg type id
+                Default=T_UKN
             ident : long
                 target ident or None if unrestricted
+                Default=NOIDENT
+            frame : long
+                target frame
+                Default=NOFRAME
+            cont : list
+                the conetnt of the package (ndarrays)
                 Default=None
         """
 

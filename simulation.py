@@ -301,7 +301,7 @@ class BaseSimulation(dict):
             'neurons'       : self.neuron_keys,
             'recorders'     : self.recorder_keys,
         }
-        if self.io_man.is_initialized is True:
+        if self.io_man.is_initialized:
             self.io_man.status = self._status
         return self._status
 
@@ -309,7 +309,7 @@ class BaseSimulation(dict):
     def neuron_keys(self):
         return [
             id(nrn) for nrn in filter(
-                lambda x: isinstance(x, Neuron),self.values()
+                lambda idx: isinstance(self[idx], Neuron), self
             )
         ]
 
@@ -317,7 +317,7 @@ class BaseSimulation(dict):
     def recorder_keys(self):
         return [
             id(rec) for rec in filter(
-                lambda x: isinstance(x, Recorder),self.values()
+                lambda idx: isinstance(self[idx], Recorder), self
             )
         ]
 
@@ -344,13 +344,14 @@ class BaseSimulation(dict):
         This will tick the SimIOManager and process all queued events.
         """
 
-        # process
-        self.io_man.tick()
-        while len(self.io_man.events) > 0:
+        # get events
+        events = self.io_man.tick()
 
-            pkg = self.io_man.events.pop(0)
+        while len(events) > 0:
 
-            log_str = 'Event:'
+            pkg = events.pop(0)
+
+            log_str = '>>> '
 
             if pkg.ident in self:
 
@@ -362,7 +363,7 @@ class BaseSimulation(dict):
                     # position event
                     if pkg.tid == SimPkg.T_POS:
 
-                        pos_data = pkg.cont[0]
+                        pos_data = pkg.cont[0].cont
 
                         # position request
                         if pos_data.size == 1:
@@ -391,10 +392,9 @@ class BaseSimulation(dict):
 
                 # neuron event
                 elif isinstance(self[pkg.ident], Neuron):
-                    log_str += 'N:ANY\n%s' % pkg
-
-                # log
-                self.log(log_str)
+                    log_str += 'N:[%s] neuron event' % pkg.ident
+                else:
+                    log_str += 'ANY:[%s] unknown' % pkg.ident
 
             # other event
             else:
@@ -406,7 +406,8 @@ class BaseSimulation(dict):
                     log_str += 'DISCONNECT from %s' % str(pkg.cont)
                 else:
                     log_str += 'unknown'
-                self.log(log_str)
+            # log
+            self.log(log_str)
 
     def _simulate_neuron_tick(self):
         """process neurons for current frame
