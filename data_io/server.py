@@ -92,7 +92,7 @@ class SimServer(Thread):
         self.poll = poll or POLL
         self.q_read = q_read
         self.q_writ = q_writ
-        self.addr = (host or '', port or PORT)
+        self.addr = (host or '0.0.0.0', port or 31337)
         self.handshake = None
 
     ## properties
