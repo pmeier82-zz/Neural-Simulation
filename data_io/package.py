@@ -38,7 +38,7 @@ import scipy as N
 
 ##---MODULE_ADMIN
 
-__all__ = ['SimPkg', 'recv_pkg', 'send_pkg']
+__all__ = ['SimPkg', 'recv_pkg', 'send_pkg', 'receive_n_bytes']
 
 
 ##---CLASSES
@@ -48,7 +48,8 @@ class ContentItem(object):
 
     ## class members
 
-    HLEN = calcsize('!hhH4s') # dim[0], dim[1], nbytes, dtype
+    HDEF = '!hhI4s' # dim[0], dim[1], nbytes, dtype
+    HLEN = calcsize(HDEF)
 
     ## constructor
 
@@ -86,7 +87,7 @@ class ContentItem(object):
     @property
     def header(self):
         return pack(
-            '!hhH4s',
+            self.HDEF,
             self.dim[0],
             self.dim[1],
             self.cont.nbytes,
@@ -114,7 +115,8 @@ class SimPkg(object):
 
     ## class members
 
-    HLEN = calcsize('!BQQB') # tid, ident, frame, nitems
+    HDEF = '!BQQB' # tid, ident, frame, nitems
+    HLEN = calcsize(HDEF)
 
     T_UKN = 0   # unknown
     T_CON = 1   # connection new
@@ -123,11 +125,6 @@ class SimPkg(object):
 
     T_POS = 8   # position
     T_REC = 16  # recorder
-
-    T_PING = 128    # ping
-    T_PONG = 256    # pong
-
-    SEND_ALWAYS = [0, 1, 2, 4]
 
     NOIDENT = 0L
     NOFRAME = 0L
@@ -165,7 +162,7 @@ class SimPkg(object):
 
     @property
     def header(self):
-        return pack('!BQQB', self.tid, self.ident, self.frame, self.nitems)
+        return pack(self.HDEF, self.tid, self.ident, self.frame, self.nitems)
 
     @property
     def nitems(self):
@@ -177,7 +174,7 @@ class SimPkg(object):
 
     @property
     def packed_size(self):
-        return pack('!H', len(self))
+        return pack('!I', len(self))
 
     ## special methods
 
@@ -218,7 +215,7 @@ class SimPkg(object):
     def len_from_bin(data):
         """decode package length from unsigned short in network-byteorder"""
 
-        return unpack('!H', data)[0]
+        return unpack('!I', data)[0]
 
     @staticmethod
     def from_data(data):
@@ -235,14 +232,14 @@ class SimPkg(object):
 
         # read header
         idx = SimPkg.HLEN
-        tid, ident, frame, nitems= unpack('!BQQB', data[:idx])
+        tid, ident, frame, nitems= unpack(SimPkg.HDEF, data[:idx])
         cont = []
 
         # content loop
         while idx < len(data):
 
             # read contents header
-            dim0, dim1, nbytes, dtype_str = unpack('!hhH4s', data[idx:idx+ContentItem.HLEN])
+            dim0, dim1, nbytes, dtype_str = unpack(ContentItem.HDEF, data[idx:idx+ContentItem.HLEN])
 
             idx += ContentItem.HLEN
 
@@ -267,18 +264,39 @@ class SimPkg(object):
 
 ##---FUNCTIONS
 
-def recv_pkg(sock):
+def receive_n_bytes(sock, nbytes):
+    """receive until nbytes have been received"""
+
+    received = 0
+    buf = ''
+    while received != n:
+        temp = sock.recv(nbytes - received)
+        if not temp:
+            raise IOError('remote connection closed')
+        buf += temp
+        received = len(buf)
+    return buf
+
+def recv_pkg(sock, recv_chunk_size=4096):
     """receive one SimPkg"""
 
     try:
-        inp = sock.recv(2)
-        assert inp
-        # get length
-        pkg_data_len = SimPkg.len_from_bin(inp)
+        # get size
+        len_recv, data = 0, []
+        data_size = sock.recv(4)
+        len_data = SimPkg.len_from_bin(data_size)
         # get data
-        data = sock.recv(pkg_data_len)
-        return SimPkg.from_data(data)
-    except:
+        while len_recv < len_data:
+            cnk_len = recv_chunk_size
+            if len_data - len_recv < cnk_len:
+                cnk_len = len_data - len_recv
+            temp = sock.recv(cnk_len)
+            data.append(temp)
+            len_recv += len(temp)
+        return SimPkg.from_data(''.join(data))
+    except Exception, ex:
+        print ex
+        print len(data_size), data_size
         return None
 
 def send_pkg(sock, pkg):
@@ -305,6 +323,6 @@ if __name__ == '__main__':
     print
     print '%s\n\nequals\n\n%s\n\n%s' % (mypkg(), newpkg(), mypkg() == newpkg())
     print
-    print 'unpack(\'!H\', newpkg.packed_size)[0] == len(newpkg) :', unpack('!H', newpkg.packed_size)[0] == len(newpkg)
+    print 'unpack(\'!I\', newpkg.packed_size)[0] == len(newpkg) :', unpack('!I', newpkg.packed_size)[0] == len(newpkg)
     print
     print 'PACKAGE TEST DONE'

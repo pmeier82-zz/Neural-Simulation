@@ -145,14 +145,17 @@ if __name__ == '__main__':
     client.start()
 
     print 'started client, going to listen:'
-    again = True
-    while again:
-        try:
-            while not q_r.empty():
-                print q_r.get()
-        except Empty:
-            continue
-        except:
-            again = False
-        sleep(.5)
+    try:
+        while True:
+            try:
+                while not q_r.empty():
+                    print q_r.get()
+            except Empty:
+                continue
+            sleep(.5)
+            if not client.is_alive():
+                print 'client not alive :('
+                break
+    except KeyboardInterrupt:
+        client.stop()
     print 'Done.'

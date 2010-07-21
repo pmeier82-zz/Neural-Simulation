@@ -103,7 +103,7 @@ class SimIOProtocol(BaseRequestHandler):
     def finish(self):
         """finalize the connection"""
 
-        logging.debug('closing for %s' % self.client_address)
+        logging.debug('closing for %s', str(self.client_address))
         with self.sq_lock:
             if self.client_address in self.server.send_queues:
                 q = self.server.send_queues.pop(self.client_address)
@@ -269,7 +269,9 @@ class SimIOManager(object):
             return
         if self._status != value:
             self._status = value
-            self.send_status()
+            status_pkg = self.get_status_pkg()
+            if status_pkg is not None:
+                self.send_pkg(status_pkg)
 
     @property
     def q_recv(self):
@@ -352,13 +354,6 @@ class SimIOManager(object):
         """
 
         self.q_send.put(pkg)
-
-    def send_status(self):
-        """send the status package"""
-
-        pkg = self.get_status_pkg()
-        if pkg is not None:
-            self.send_pkg(pkg)
 
 
 ##---MAIN

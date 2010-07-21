@@ -326,6 +326,9 @@ class BaseSimulation(dict):
     def simulate(self):
         """advance the simulation by one frame"""
 
+        # inc frame counter
+        self.frame += 1
+
         # process events
         self._simulate_io_tick()
 
@@ -334,9 +337,6 @@ class BaseSimulation(dict):
 
         # record for recorders
         self._simulate_recorder_tick()
-
-        # inc frame counter
-        self.frame += 1
 
     def _simulate_io_tick(self):
         """process io loop for the current frame
@@ -411,23 +411,24 @@ class BaseSimulation(dict):
     def _simulate_neuron_tick(self):
         """process neurons for current frame
 
-        Thi will generate spike trains for the current frame and configure the
-        neuronal firing behavior.
+        This will generate spike trains and configure the neuronal firing
+        behavior for the current frame.
         """
 
-        # generate spike trains fo the scene
+        # generate spike trains for the scene
         self.cls_dyn.generate(self.frame_size)
 
         # propagate spike trains to neurons
         for nrn_k in self.neuron_keys:
-            nrn = self[nrn_k]
-            firing_times = self.cls_dyn.get_spike_train(nrn_k)
-            nrn.simulate(frame_size=self.frame_size, firing_times=firing_times)
+            self[nrn_k].simulate(
+                frame_size=self.frame_size,
+                firing_times=self.cls_dyn.get_spike_train(nrn_k)
+            )
 
     def _simulate_recorder_tick(self):
         """process recorders for the current frame
 
-        This will recorde waveforms and grountruth for the current frame.
+        This will record waveforms and grountruth for the current frame.
         """
 
         # list of all neurons
@@ -435,12 +436,15 @@ class BaseSimulation(dict):
 
         # record per recorder
         for rec_k in self.recorder_keys:
-            rec = self[rec_k]
-            rec_data = self[rec_k].simulate(
-                nlist=nlist,
-                frame_size=self.frame_size
+            self.io_man.send_package(
+                SimPkg.T_REC,
+                rec_k,
+                self._frame,
+                self[rec_k].simulate(
+                    nlist=nlist,
+                    frame_size=self.frame_size
+                )
             )
-            self.io_man.send_package(SimPkg.T_REC, rec_k, self._frame, rec_data)
 
     ## methods logging
 

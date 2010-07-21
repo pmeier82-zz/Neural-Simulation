@@ -140,7 +140,7 @@ class Neuron(SimObject):
         self._interval_waveform = []
 
         # check if we are active
-        if self.active is False:
+        if not self.active:
             return
 
         # overshooting waveform intervals from last frame
@@ -183,29 +183,31 @@ class Neuron(SimObject):
         """
 
         # check for any valid positions
-        rel_pos = positions - self.position
-        rel_pos_valid = [vector_norm(rel_pos[i]) < self.sphere_radius
-                         for  i in xrange(rel_pos.shape[0])]
+        rel_pos = positions - self._position
+        rel_pos_valid = [
+            vector_norm(rel_pos[i]) < self._neuron_data.sphere_radius
+            for  i in xrange(rel_pos.shape[0])
+        ]
         if not N.any(rel_pos_valid):
-            raise BadNeuronQuery('queried positions outside of sphere_radius')
+            raise BadNeuronQuery('queried position(s) outside of sphere_radius')
 
         # inits
-        wf = N.zeros((self._frame_size, rel_pos.shape[0]))
+        wf = N.zeros((self._neuron_data.time_vec.size, rel_pos.shape[0]))
 
         # if we have orientation, rotate rel_pos accordingly
-        if self.orientation is not False:
+        if self._orientation:
             rel_pos = N.dot(
-                quaternion_matrix(self.orientation)[:3,:3],
+                quaternion_matrix(self._orientation)[:3,:3],
                 rel_pos.T
             ).T
 
         # copy waveforms per position (resp. channel)
         for i in xrange(rel_pos.shape[0]):
-            if rel_pos_valid[i] is True:
+            if rel_pos_valid[i]:
                 wf[:,i] = self._neuron_data.get_data(rel_pos[i])
         # adjust for amplitude
-        if self.amplitude != 1.0:
-            wf *= self.amplitude
+        if self._amplitude != 1.0:
+            wf *= self._amplitude
 
         # return
         return wf, self._interval_waveform
