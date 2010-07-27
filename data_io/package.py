@@ -126,12 +126,21 @@ class SimPkg(object):
     T_POS = 8   # position
     T_REC = 16  # recorder
 
+    T_MAP = {
+        0   : 'T_UKN',
+        1   : 'T_CON',
+        2   : 'T_END',
+        4   : 'T_STS',
+        8   : 'T_POS',
+        16  : 'T_REC',
+    }
+
     NOIDENT = 0L
     NOFRAME = 0L
 
     ## constructor
 
-    def __init__(self, tid=None, ident=None, frame=None, cont=None):
+    def __init__(self, tid=None, ident=None, frame=None, cont=[]):
         """
         :Parameters:
             tid : byte >= 0
@@ -201,8 +210,8 @@ class SimPkg(object):
         return self.HLEN + sum([len(self.cont[i]) for i in xrange(self.nitems)])
 
     def __str__(self):
-        rval = 'SimIOPackage (%d) - frame %d - from %d' % (
-            self.tid, self.frame, self.ident
+        rval = 'SimIOPackage(%s) #[%d] - frame %d - from %d' % (
+            self.T_MAP[self.tid], self.nitems, self.frame, self.ident
         )
         if self.nitems == 0:
             rval += '\nempty'
@@ -311,7 +320,7 @@ def send_pkg(sock, pkg):
 if __name__ == '__main__':
 
     print
-    print 'PACKAGE TEST - constructor'
+    print 'PACKAGE TEST - constructor with randn(4,4) amd arange(10)'
     mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, [N.randn(4,4), N.arange(10)])
     print mypkg
     print
@@ -321,7 +330,7 @@ if __name__ == '__main__':
     print
     print 'mypkg == newpkg :', mypkg == newpkg
     print
-    print '%s\n\nequals\n\n%s\n\n%s' % (mypkg(), newpkg(), mypkg() == newpkg())
+    print ' --- %s \n --- \n equals \n --- %s \n --- \n %s' % (mypkg(), newpkg(), mypkg() == newpkg())
     print
     print 'unpack(\'!I\', newpkg.packed_size)[0] == len(newpkg) :', unpack('!I', newpkg.packed_size)[0] == len(newpkg)
     print

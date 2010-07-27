@@ -48,9 +48,26 @@ __all__ = ['SimIOClientNotifier', 'SimIOConnection']
 ##---CLASSES
 
 class SimIOClientNotifier(object):
+    """delegate class, subclass for specific GUI kit or other interface
+
+    An instance of SimExternalDelegate should pass messages/events on to a
+    suitable external interface, like a GUI kit (frex QT or GTK). As we must not
+    make assumptions about the frontend, we provide this delegate class for the
+    frontend to receive events.
+    """
+
+    def __init__(self, **kwargs):
+        """
+        :Parameters:
+            kwargs : dict
+                Keywords for subclasses
+        """
+
+        pass
 
     def notify(self):
         """to be implemented in a subclass"""
+
         pass
 
 
@@ -84,6 +101,7 @@ class SimIOConnection(Thread):
         self.q_recv = q_recv or Queue()
         self.q_send = q_send or Queue()
         self._interest = list(interest)
+        self.status = None
         self._online = False
         self._is_shutdown = Event()
         self._is_shutdown.set()
@@ -108,28 +126,45 @@ class SimIOConnection(Thread):
             # receive
             if len(r) > 0:
                 pkg = recv_pkg(sock)
+                print pkg
                 if pkg is None:
                     break
+                if pkg.tid == SimPkg.T_STS:
+                    self.status = pkg.cont[0].cont.copy()
                 self.q_recv.put(pkg)
+                self.notify()
             # send
             while not self.q_send.empty():
                 item = self.q_send.get()
                 send_pkg(sock, item)
                 self.q_send.task_done()
+
         self._is_shutdown.set()
 
     def stop(self):
         """stop the thread"""
 
+        self.q_send.put(SimPkg(tid=SimPkg.T_END))
         self._online = False
         self._is_shutdown.wait()
 
     ## notification interface
 
+    def notify(self):
+        """notify all interests about pkg"""
+
+        for interest in self._interest:
+            interest.notify()
+
     def register_interest(self, interest):
         """register an object implementiong the SimIOClientNotifier interaface"""
 
-        assert isinstance(interest, SimClientNotifier)
+        # check
+        assert issubclass(interest.__class__, SimIOClientNotifier), \
+            'interest must be of type SimIOClientNotifier (or a subclasss thereof)!'
+
+        # add interest
+        self._interest.append(interest)
 
 
 ##---MAIN
@@ -144,18 +179,26 @@ if __name__ == '__main__':
     client = SimIOConnection(('localhost', 31337), q_r, q_s)
     client.start()
 
+    moved = False
+
     print 'started client, going to listen:'
     try:
         while True:
             try:
                 while not q_r.empty():
-                    print q_r.get()
+                    pkg = q_r.get()
+#                    print pkg
             except Empty:
                 continue
             sleep(.5)
             if not client.is_alive():
                 print 'client not alive :('
                 break
+            if client.status is not None and not moved:
+                ident = client.status[client.status[:,1]==20,0]
+                pos_pkg = SimPkg(tid=SimPkg.T_STS, ident=ident, cont=N.asarray([150, 9999]))
+                q_s.put(pos_pkg)
+                moved = True
     except KeyboardInterrupt:
         client.stop()
     print 'Done.'

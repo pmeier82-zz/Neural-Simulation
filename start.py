@@ -816,13 +816,19 @@ class RecorderNode(QtGui.QStandardItem):
 
 def main(args):
 
+    QtGui.qApp = None
     app = QtGui.QApplication(args)
     app.lastWindowClosed.connect(app.quit)
+    QtGui.qApp = app
 
     win = SimulationGui()
     win.show()
 
-    sys.exit(app.exec_())
+    rval = app.exec_()
+    print rval
+    QtGui.qApp = None
+
+    sys.exit(0)
 
 if __name__ == '__main__':
 

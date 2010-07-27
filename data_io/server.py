@@ -74,6 +74,8 @@ class SimIOProtocol(BaseRequestHandler):
         with self.sq_lock:
             self.server.send_queues[self.client_address] = Queue()
         self.q_send = self.server.send_queues[self.client_address]
+        if self.server.status is not None:
+            self.q_send.put(self.server.status)
         self.poll = self.server.client_poll
 
         logging.info('new connection from %s', str(self.client_address))
@@ -143,7 +145,7 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
         self.send_queues = {}
         self.send_queues_lock = Lock()
         self.client_poll = client_poll
-
+        self.status = None
         self._serving = False
         self._is_shutdown = Event()
         self._is_shutdown.set()
@@ -234,7 +236,6 @@ class SimIOManager(object):
         self._q_recv = Queue()
         self._q_send = Queue()
         self._srv = None
-        self._events = []
         self._is_initialized = False
 
     def initialize(self):
@@ -283,10 +284,6 @@ class SimIOManager(object):
     @property
     def q_send(self):
         return self._q_send
-
-    @property
-    def events(self):
-        return self._events
 
     @property
     def is_initialized(self):

@@ -114,8 +114,8 @@ class SimExternalDelegate(object):
 
     An instance of SimExternalDelegate should pass messages/events on to a
     suitable external interface, like a GUI kit (frex QT or GTK). As we must not
-    make assumptions about the frontend, we have the frontend operate on a
-    suitably customized subclass of his delegate.
+    make assumptions about the frontend, we provide this delegate class for the
+    frontend to receive events.
     """
 
     ## constructor
@@ -307,19 +307,11 @@ class BaseSimulation(dict):
 
     @property
     def neuron_keys(self):
-        return [
-            id(nrn) for nrn in filter(
-                lambda idx: isinstance(self[idx], Neuron), self
-            )
-        ]
+        return [idx for idx in self if isinstance(self[idx], Neuron)]
 
     @property
     def recorder_keys(self):
-        return [
-            id(rec) for rec in filter(
-                lambda idx: isinstance(self[idx], Recorder), self
-            )
-        ]
+        return [idx for idx in self if isinstance(self[idx], Recorder)]
 
     ## simulation controll methods
 
