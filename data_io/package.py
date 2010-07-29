@@ -140,7 +140,7 @@ class SimPkg(object):
 
     ## constructor
 
-    def __init__(self, tid=None, ident=None, frame=None, cont=[]):
+    def __init__(self, tid=None, ident=None, frame=None, cont=()):
         """
         :Parameters:
             tid : byte >= 0
@@ -149,8 +149,8 @@ class SimPkg(object):
                 The object this package refers to (id of SimObject).
             frame : long >= 0 or None
                 The frame this package refers to.
-            cont : ndarray
-                The content of the package as numpy compatible object.
+            args : tuple
+                The content of the package as numpy compatible objects.
         """
 
 
@@ -162,8 +162,6 @@ class SimPkg(object):
         self.cont = []
 
         # contents
-        if not isinstance(cont, list):
-            cont = [cont]
         for item in cont:
             self.cont.append(ContentItem(item))
 
@@ -268,7 +266,7 @@ class SimPkg(object):
             idx += nbytes
 
         # return
-        return SimPkg(tid, ident, frame, cont)
+        return SimPkg(tid, ident, frame, tuple(cont))
 
 
 ##---FUNCTIONS
@@ -320,8 +318,8 @@ def send_pkg(sock, pkg):
 if __name__ == '__main__':
 
     print
-    print 'PACKAGE TEST - constructor with randn(4,4) amd arange(10)'
-    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, [N.randn(4,4), N.arange(10)])
+    print 'PACKAGE TEST - constructor with randn(4,4) and arange(10)'
+    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (N.randn(4,4), N.arange(10)))
     print mypkg
     print
     print 'PACKAGE TEST - from package'

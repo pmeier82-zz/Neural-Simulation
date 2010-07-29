@@ -74,18 +74,20 @@ class SimIOClientNotifier(object):
 class SimIOConnection(Thread):
     """connection thread for the sim client stub"""
 
-    def __init__(self, addr, q_recv, q_send, interest=[], poll=0.001):
+    def __init__(self, addr, q_recv=None, q_send=None, delegate=None, poll=0.001):
         """
         :Parameters:
             addr : tuple
                 Socket connection address and port tuple.
             q_recv : Queue
                 The queue for received items.
+                Default=None
             q_send : Queue
                 The queue for items to send.
-            interest : list
-                list of objects implementing the SimNotifier interface
-                Default=[]
+                Defualt=None
+            delegate : SimIOClientNotifier
+                Object implementing the self.notify(SimPkg) method.
+                Default=None
             poll : float
                 select intervall
                 Default=0.001
@@ -100,7 +102,7 @@ class SimIOConnection(Thread):
         self.poll = float(poll)
         self.q_recv = q_recv or Queue()
         self.q_send = q_send or Queue()
-        self._interest = list(interest)
+        self.delegate = delegate
         self.status = None
         self._online = False
         self._is_shutdown = Event()
@@ -132,7 +134,8 @@ class SimIOConnection(Thread):
                 if pkg.tid == SimPkg.T_STS:
                     self.status = pkg.cont[0].cont.copy()
                 self.q_recv.put(pkg)
-                self.notify()
+                if self.delegate is not None:
+                    self.delegate.notify()
             # send
             while not self.q_send.empty():
                 item = self.q_send.get()
@@ -147,24 +150,6 @@ class SimIOConnection(Thread):
         self.q_send.put(SimPkg(tid=SimPkg.T_END))
         self._online = False
         self._is_shutdown.wait()
-
-    ## notification interface
-
-    def notify(self):
-        """notify all interests about pkg"""
-
-        for interest in self._interest:
-            interest.notify()
-
-    def register_interest(self, interest):
-        """register an object implementiong the SimIOClientNotifier interaface"""
-
-        # check
-        assert issubclass(interest.__class__, SimIOClientNotifier), \
-            'interest must be of type SimIOClientNotifier (or a subclasss thereof)!'
-
-        # add interest
-        self._interest.append(interest)
 
 
 ##---MAIN
