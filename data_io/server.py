@@ -145,13 +145,26 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
         self.send_queues = {}
         self.send_queues_lock = Lock()
         self.client_poll = client_poll
-        self.status = None
+        self._status = None
         self._serving = False
         self._is_shutdown = Event()
         self._is_shutdown.set()
 
         # TCPerver super
         TCPServer.__init__(self, server_address, SimIOProtocol, False)
+
+    ## properties
+
+    @property
+    def status(self):
+        return self._status
+    @status.setter
+    def status(self, value):
+        if not isinstance(value, SimPkg):
+            return
+        if value != self._status:
+            self._status = value
+            self.q_send.put(self._status)
 
     ## threading handlers with queue propagation
 
@@ -272,10 +285,12 @@ class SimIOManager(object):
         if not isinstance(value, dict):
             return
         if self._status != value:
-            self._status = value
-            status_pkg = self.get_status_pkg()
+            status_pkg = SimIOManager.build_status_pkg(value)
             if status_pkg is not None:
-                self.send_pkg(status_pkg)
+                self._status = status_pkg
+                self._srv.status = status_pkg
+            else:
+                print 'problem with status value'
 
     @property
     def q_recv(self):
@@ -288,32 +303,6 @@ class SimIOManager(object):
     @property
     def is_initialized(self):
         return self._is_initialized
-
-    ## methods utility
-
-    def get_status_pkg(self):
-        """build a package from self.status
-
-        items are mapped by id:
-            0   : sample_rate
-            1   : frame_size
-            10  : neurons
-            20  : recorders
-        """
-
-        try:
-            cont = [
-                [self._status['sample_rate'], 0],
-                [self._status['frame_size'], 1]
-            ]
-            if len(self._status['neurons']) > 0:
-                cont.extend([[item, 10] for item in self._status['neurons']])
-            if len(self._status['recorders']) > 0:
-                cont.extend([[item, 20] for item in self._status['recorders']])
-            cont = N.asarray(cont, dtype=N.float32)
-            return SimPkg(tid=SimPkg.T_STS, cont=cont)
-        except:
-            return None
 
     ## io methods
 
@@ -365,6 +354,33 @@ class SimIOManager(object):
 
         self.q_send.put(pkg)
 
+    ## static utility
+
+    @staticmethod
+    def build_status_pkg(status):
+        """build a package from status
+
+        items are mapped by id:
+            0   : sample_rate
+            1   : frame_size
+            10  : neurons
+            20  : recorders
+        """
+
+        try:
+            cont = [
+                [status['sample_rate'], 0],
+                [status['frame_size'], 1]
+            ]
+            if len(status['neurons']) > 0:
+                cont.extend([[item, 10] for item in status['neurons']])
+            if len(status['recorders']) > 0:
+                cont.extend([[item, 20] for item in status['recorders']])
+            cont = N.asarray(cont, dtype=N.float32)
+            return SimPkg(tid=SimPkg.T_STS, cont=cont)
+        except:
+            return None
+
 
 ##---MAIN
 
@@ -379,12 +395,12 @@ if __name__ == '__main__':
 
     try:
         while True:
-            io_man.tick()
-            while len(io_man.events) > 0:
-                print io_man.events.pop(0)
+            events = io_man.tick()
+            while len(events) > 0:
+                print events.pop(0)
             else:
                 print '.'
-            sleep(.5)
+            sleep(5)
             io_man.send_package(cont=N.ones((4, 4)))
     except KeyboardInterrupt:
         print

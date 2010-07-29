@@ -157,12 +157,17 @@ class Neuron(SimObject):
             if end[0] >= self._frame_size:
                 residual = end[0] - self._frame_size
                 end = [self._frame_size, self._neuron_data.phase_max - residual]
-                self._interval_overshoot.append([0, end[1]])
-                self._interval_overshoot.append([residual, self._neuron_data.phase_max])
+                self._interval_overshoot.append([0, end[1], residual, self._neuron_data.phase_max])
 
             # add interval
-            self._interval_waveform.append(start)
-            self._interval_waveform.append(end)
+            self._interval_waveform.append([start[0], end[0], start[1], end[1]])
+
+            # DEBUG: start
+            for interv in self._interval_waveform:
+                print interv[1] - interv[0] == interv[3] - interv[2]
+            for interv in self._interval_overshoot:
+                print interv[1] - interv[0] == interv[3] - interv[2]
+            # DEBUG: end
 
     ## methods public
 

@@ -128,7 +128,6 @@ class SimIOConnection(Thread):
             # receive
             if len(r) > 0:
                 pkg = recv_pkg(sock)
-                print pkg
                 if pkg is None:
                     break
                 if pkg.tid == SimPkg.T_STS:

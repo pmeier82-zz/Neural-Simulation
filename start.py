@@ -591,13 +591,18 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
             # neurons
             self._trn_nrn.removeRows(0, self._trn_nrn.rowCount())
-            for n in filter(lambda x: isinstance(x, Neuron), self._sim.values()):
+            for nrn_key in self._sim.neuron_keys:
 
+                n = self._sim[nrn_key]
                 nrn = NeuronNode(str(n))
                 self._trn_nrn.appendRow(nrn)
                 nrn.appendRow([
                     QtGui.QStandardItem('Name'),
                     QtGui.QStandardItem(str(n.name))
+                ])
+                nrn.appendRow([
+                    QtGui.QStandardItem('Ident'),
+                    QtGui.QStandardItem(str(nrn_key))
                 ])
                 nrn.appendRow([
                     QtGui.QStandardItem('Position'),
@@ -629,12 +634,18 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
             # recorders
             self._trn_rec.removeRows(0, self._trn_rec.rowCount())
-            for r in filter(lambda x: isinstance(x, Recorder), self._sim.values()):
+            for rec_key in self._sim.recorder_keys:
+
+                r = self._sim[rec_key]
                 rec = RecorderNode(str(r))
                 self._trn_rec.appendRow(rec)
                 rec.appendRow([
                     QtGui.QStandardItem('Name'),
                     QtGui.QStandardItem(str(r.name))
+                ])
+                rec.appendRow([
+                    QtGui.QStandardItem('Ident'),
+                    QtGui.QStandardItem(str(rec_key))
                 ])
                 rec.appendRow([
                     QtGui.QStandardItem('Position'),

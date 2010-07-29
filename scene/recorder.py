@@ -141,7 +141,7 @@ class Recorder(SimObject):
                 continue
 
         # return
-        return rval
+        return tuple(rval)
 
 
 class Tetrode(Recorder):

@@ -162,6 +162,8 @@ class SimPkg(object):
         self.cont = []
 
         # contents
+        if not isinstance(cont, tuple):
+            cont = (cont, )
         for item in cont:
             self.cont.append(ContentItem(item))
 
