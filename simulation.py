@@ -114,8 +114,8 @@ class SimExternalDelegate(object):
 
     An instance of SimExternalDelegate should pass messages/events on to a
     suitable external interface, like a GUI kit (frex QT or GTK). As we must not
-    make assumptions about the frontend, we have the frontend operate on a
-    suitably customized subclass of his delegate.
+    make assumptions about the frontend, we provide this delegate class for the
+    frontend to receive events.
     """
 
     ## constructor
@@ -196,13 +196,17 @@ class BaseSimulation(dict):
                 Frame to start at.
             frame_size : int
                 Frame size.
+            cfg : str
+                Path to a config file, readable by a ConfigParser instance.
         """
 
         # private property members
-        self._sample_rate = None
+        self._cfg = None
+        self._externals = []
         self._frame = None
         self._frame_size = None
-        self._externals = []
+        self._sample_rate = None
+        self._status = None
 
         # public members
         self.cls_dyn = ClusterDynamics()
@@ -236,16 +240,16 @@ class BaseSimulation(dict):
 
         self.clear()
 
-        # reset pubic members
-        self.cls_dyn.clear()
-        self.io_man.initialize()
-        self.neuron_data.clear()
-
         # reset private members
         self.sample_rate = kwargs.get('sample_rate', 16000.0)
         self.frame = kwargs.get('frame', 0)
         self.frame_size = kwargs.get('frame_size', 1024)
-        self.status()
+        self.status
+
+        # reset pubic members
+        self.cls_dyn.clear()
+        self.io_man.initialize()
+        self.neuron_data.clear()
 
     def finalize(self):
         """finalize the simulation"""
@@ -254,7 +258,7 @@ class BaseSimulation(dict):
 
         # reset pubic members
         self.cls_dyn.clear()
-        self.io_man.cleanup_svr()
+        self.io_man.finalize()
         self.neuron_data.clear()
 
     ## properties
@@ -266,7 +270,7 @@ class BaseSimulation(dict):
     def frame(self, value):
         self._frame = long(value)
         for ext in self._externals:
-            ext.frame(self.frame)
+            ext.frame(self._frame)
 
     @property
     def frame_size(self):
@@ -275,12 +279,8 @@ class BaseSimulation(dict):
     def frame_size(self, value):
         self._frame_size = int(value)
         for ext in self._externals:
-            ext.frame_size(self.frame_size)
-        self.status()
-
-    @property
-    def sample(self):
-        return self._frame * self._frame_size
+            ext.frame_size(self._frame_size)
+        self.status
 
     @property
     def sample_rate(self):
@@ -288,112 +288,158 @@ class BaseSimulation(dict):
     @sample_rate.setter
     def sample_rate(self, value):
         self._sample_rate = float(value)
-        self.cls_dyn.sample_rate = self.sample_rate
+        self.cls_dyn.sample_rate = self._sample_rate
         for ext in self._externals:
-            ext.sample_rate(self.sample_rate)
-        self.status()
+            ext.sample_rate(self._sample_rate)
+        self.status
+
+    @property
+    def status(self):
+        self._status = {
+            'frame_size'    : self.frame_size,
+            'sample_rate'   : self.sample_rate,
+            'neurons'       : self.neuron_keys,
+            'recorders'     : self.recorder_keys,
+        }
+        if self.io_man.is_initialized:
+            self.io_man.status = self._status
+        return self._status
+
+    @property
+    def neuron_keys(self):
+        return [idx for idx in self if isinstance(self[idx], Neuron)]
+
+    @property
+    def recorder_keys(self):
+        return [idx for idx in self if isinstance(self[idx], Recorder)]
 
     ## simulation controll methods
 
     def simulate(self):
         """advance the simulation by one frame"""
 
-        # process events
-        self._simulate_events()
-
-        # process units
-        self._simulate_neurons()
-
-        # record for recorders
-        self._simulate_recorders()
-
-        # inc counters
+        # inc frame counter
         self.frame += 1
 
-    def _simulate_events(self):
-        """process events for the current frame"""
+        # process events
+        self._simulate_io_tick()
 
-        # aquire
-        events = self.io_man.query_input()
+        # process units
+        self._simulate_neuron_tick()
 
-        # process
-        if len(events) > 0:
+        # record for recorders
+        self._simulate_recorder_tick()
 
-            for pkg in events:
+    def _simulate_io_tick(self):
+        """process io loop for the current frame
 
-                log_str = 'Event:'
+        This will tick the SimIOManager and process all queued events.
+        """
 
-                if pkg.ident in self:
+        # get events
+        events = self.io_man.tick()
 
-                    # recorder event
-                    if isinstance(self[pkg.ident], Recorder):
-                        log_str +='R[%s]:' % pkg.ident
-                        if pkg.tid == SimPkg.T_POS:
-                            if pkg.cont.size == 1:
-                                log_str += 'MOVE[%s] - request' % (
-                                    self[pkg.ident].name
-                                )
-                            elif pkg.cont.size == 2:
-                                pos, vel = pkg.cont
-                                log_str += 'MOVE: %s, %s' % (pos, vel)
-                                self[pkg.ident].trajectory_pos = pos
-                            else:
-                                print 'weird event', pkg
-                                continue
-                            self.io_man.send_position(
-                                self._frame,
-                                pkg.ident,
-                                self[pkg.ident].trajectory_pos
+        while len(events) > 0:
+
+            pkg = events.pop(0)
+
+            log_str = '>>> '
+
+            if pkg.ident in self:
+
+                # recorder event
+                if isinstance(self[pkg.ident], Recorder):
+
+                    log_str +='R[%s]:' % pkg.ident
+
+                    # position event
+                    if pkg.tid == SimPkg.T_POS:
+
+                        pos_data = pkg.cont[0].cont
+
+                        # position request
+                        if pos_data.size == 1:
+                            log_str += 'MOVE[%s] - request' % (
+                                self[pkg.ident].name
                             )
 
-                    # neuron event
-                    elif isinstance(sel):
-                        log_str += 'N:ANY\n%s' % pkg
+                        # reposition request
+                        elif pos_data.size == 2:
+                            pos, vel = pos_data
+                            log_str += 'MOVE: %s, %s' % (pos, vel)
+                            self[pkg.ident].trajectory_pos = pos
+                            # TODO: implemementation of the velocity component
 
-                    # log
-                    self.log(log_str)
+                        # weird position event
+                        else:
+                            print 'weird event, was T_POS with:', pos_data
+                            continue
 
-                # other event
+                        # send position aknowledgement
+                        self.io_man.send_position(
+                            self._frame,
+                            pkg.ident,
+                            self[pkg.ident].trajectory_pos
+                        )
+
+                # neuron event
+                elif isinstance(self[pkg.ident], Neuron):
+                    log_str += 'N:[%s] neuron event' % pkg.ident
                 else:
+                    log_str += 'ANY:[%s] unknown' % pkg.ident
 
-                    log_str += 'O[%s]:' % pkg.ident
-                    if pkg.tid == SimPkg.T_CON:
-                        log_str += 'CONNECT from %s' % str(pkg.cont)
-                    elif pkg.tid == SimPkg.T_END:
-                        log_str += 'DISCONNECT from %s' % str(pkg.cont)
-                    else:
-                        log_str += 'unknown'
-                    self.log(log_str)
+            # other event
+            else:
 
-    def _simulate_neurons(self):
-        """neuron fireing dynamics for the current frame"""
+                log_str += 'O[%s]:' % pkg.ident
+                if pkg.tid == SimPkg.T_CON:
+                    log_str += 'CONNECT from %s' % str(pkg.cont)
+                elif pkg.tid == SimPkg.T_END:
+                    log_str += 'DISCONNECT from %s' % str(pkg.cont)
+                else:
+                    log_str += 'unknown'
+            # log
+            self.log(log_str)
 
-        # generate
+    def _simulate_neuron_tick(self):
+        """process neurons for current frame
+
+        This will generate spike trains and configure the neuronal firing
+        behavior for the current frame.
+        """
+
+        # generate spike trains for the scene
         self.cls_dyn.generate(self.frame_size)
 
-        # propagate
-        for nrn in filter(lambda x: isinstance(x, Neuron), self.values()):
-            fireing_times = self.cls_dyn.get_spike_train(nrn)
-            nrn.simulate(frame_size=self.frame_size, fireing_times=fireing_times)
-            if len(fireing_times) > 0:
-                self.io_man.send_groundtruth(self.frame, id(nrn), fireing_times)
+        # propagate spike trains to neurons
+        for nrn_k in self.neuron_keys:
+            self[nrn_k].simulate(
+                frame_size=self.frame_size,
+                firing_times=self.cls_dyn.get_spike_train(nrn_k)
+            )
 
-    def _simulate_recorders(self):
-        """recorder operation for the current frame"""
+    def _simulate_recorder_tick(self):
+        """process recorders for the current frame
+
+        This will record waveforms and grountruth for the current frame.
+        """
 
         # list of all neurons
-        nlist = filter(lambda x: isinstance(x, Neuron), self.values())
+        nlist = [self[nrn_k] for nrn_k in self.neuron_keys]
 
         # record per recorder
-        for rec in filter(lambda x: isinstance(x, Recorder), self.values()):
-            wf_neuron, wf_noise = rec.simulate(
-                nlist=nlist,
-                frame_size=self.frame_size
+        for rec_k in self.recorder_keys:
+            self.io_man.send_package(
+                SimPkg.T_REC,
+                rec_k,
+                self._frame,
+                self[rec_k].simulate(
+                    nlist=nlist,
+                    frame_size=self.frame_size
+                )
             )
-            self.io_man.send_wf_neuron(self.frame, id(rec), wf_neuron)
-            self.io_man.send_wf_noise(self.frame, id(rec), wf_noise)
 
-    ## methods interface
+    ## methods logging
 
     def log(self, log_str):
         """log a string"""
@@ -408,30 +454,7 @@ class BaseSimulation(dict):
             for ext in self._externals:
                 ext.log('[DEBUG] %s' % log_str)
 
-    ## methods info
-
-    def status(self):
-        """convenience method for getting internal simulation paramters
-
-        :Returns:
-            dict : The current simulation paramters maped to member name.
-        """
-
-        status = {
-            'frame_size'    : self.frame_size,
-            'sample_rate'   : self.sample_rate,
-            'neurons'       : [id(nrn) for nrn in filter(
-                               lambda x: isinstance(x, Neuron),
-                               self.values())],
-            'recorders'     : [id(rec) for rec in filter(
-                               lambda x: isinstance(x, Recorder),
-                               self.values())]
-        }
-        self.io_man.status = status
-
-        return status
-
-    ## methods management
+    ## methods object management
 
     def register_neuron(self, **kwargs):
         """register a neuron to the simulation
@@ -451,8 +474,8 @@ class BaseSimulation(dict):
                 euler angles relative to the scene's positive z-axis. If it is
                 True a random rotation is created.
                 Default=False
-            firing_rate : float
-                Firing rate in Hz.
+            rate_of_fire : float
+                Rate of fire in Hz.
                 Default=50.0
             amplitude : float
                 Amplitude of the waveform.
@@ -491,7 +514,7 @@ class BaseSimulation(dict):
 
         # log and return
         self.log('>> %s created!' % neuron)
-        self.status()
+        self.status
         return str(neuron)
 
     def register_recorder(self, **kwargs):
@@ -523,7 +546,7 @@ class BaseSimulation(dict):
                 The noise generator parameters.
                 Default=None
         :Raises:
-            soem error ..mostly ValueError for invalid parameters.
+            some error ..mostly ValueError for invalid parameters.
         :Returns:
             The string representation of the registered Recorder.
         """
@@ -534,7 +557,7 @@ class BaseSimulation(dict):
 
         # connect and return
         self.log('>> %s created!' % tetrode)
-        self.status()
+        self.status
         return str(tetrode)
 
     def remove_object(self, key):
@@ -565,7 +588,7 @@ class BaseSimulation(dict):
         try:
             item = self.pop(lookup)
             self.log('>> %s destroyed!' % item)
-            self.status()
+            self.status
             return True
         except:
             return False
@@ -661,7 +684,7 @@ class BaseSimulation(dict):
                     cfg.set(name, 'orientation', obj.orientation)
                 else:
                     cfg.set(name, 'orientation', npy2cfg(obj.orientation))
-                cfg.set(name, 'firing_rate', str(obj.firing_rate))
+                cfg.set(name, 'rate_of_fire', str(obj.rate_of_fire))
                 cfg.set(name, 'amplitude', str(obj.amplitude))
                 cfg.set(name, 'neuron_data', str(obj._neuron_data.filename))
 
@@ -676,6 +699,21 @@ class BaseSimulation(dict):
         # save
         with open(fname, 'w') as save_file:
             cfg.write(save_file)
+
+    ## methods config loading
+
+    def load_config(self, cfg_path=None):
+        """loads initialization values from file
+
+        :Parameters:
+            cfg_file : str
+                Path to the config file. shoul be readale by a ConfigParser
+                instance.
+        """
+
+        cfg = ConfigParser()
+
+
 
     ## special methods
 

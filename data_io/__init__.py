@@ -28,19 +28,27 @@
 __docformat__ = 'restructuredtext'
 
 
-##---DIST
+##---IMPORTS
 
-from manager import SimIOManager
-from package import SimPkg
-from server import SimServer
+from client import SimIOClientNotifier, SimIOConnection
+from package import SimPkg, recv_pkg, send_pkg
+from server import SimIOManager, SimIOProtocol, SimIOServer
+
+
+##---PACKAGE_ADMIN
 
 __all__ = [
-    # manager
+    # client
+    'SimIOClientNotifier',
+    'SimIOConnection',
+    # server
     'SimIOManager',
+    'SimIOProtocol',
+    'SimIOServer',
     # package
     'SimPkg',
-    # server
-    'SimServer',
+    'recv_pkg',
+    'send_pkg',
 ]
 
 

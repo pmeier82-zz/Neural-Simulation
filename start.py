@@ -201,7 +201,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         self.actionPreferences.triggered.connect(self.comming_soon)
 
         # init gui
-        self._sim.initialize()
         self.on_input_cmdpnl_reset()
 
     ## delegate event slots
@@ -421,7 +420,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             kwargs.update(neuron_data=str(dialog.cb_data.currentText()))
             if str(dialog.edt_frate.text()) != '':
                 val = float(dialog.edt_frate.text())
-                kwargs.update(fireing_rate=val)
+                kwargs.update(rate_of_fire=val)
             if str(dialog.edt_ampl.text()) != '':
                 val = float(dialog.edt_ampl.text())
                 kwargs.update(amplitude=val)
@@ -556,10 +555,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
                 QtGui.QStandardItem(str(self._sim))
             ])
             self._trn_sim.appendRow([
-                QtGui.QStandardItem('Current Sample'),
-                QtGui.QStandardItem(str(self._sim.sample))
-            ])
-            self._trn_sim.appendRow([
                 QtGui.QStandardItem('Sample Rate'),
                 QtGui.QStandardItem(str(self._sim.sample_rate))
             ])
@@ -596,13 +591,18 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
             # neurons
             self._trn_nrn.removeRows(0, self._trn_nrn.rowCount())
-            for n in filter(lambda x: isinstance(x, Neuron), self._sim.values()):
+            for nrn_key in self._sim.neuron_keys:
 
+                n = self._sim[nrn_key]
                 nrn = NeuronNode(str(n))
                 self._trn_nrn.appendRow(nrn)
                 nrn.appendRow([
                     QtGui.QStandardItem('Name'),
                     QtGui.QStandardItem(str(n.name))
+                ])
+                nrn.appendRow([
+                    QtGui.QStandardItem('Ident'),
+                    QtGui.QStandardItem(str(nrn_key))
                 ])
                 nrn.appendRow([
                     QtGui.QStandardItem('Position'),
@@ -613,8 +613,8 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
                     QtGui.QStandardItem(str(n.orientation))
                 ])
                 nrn.appendRow([
-                    QtGui.QStandardItem('Fireing Rate'),
-                    QtGui.QStandardItem(str(n.fireing_rate))
+                    QtGui.QStandardItem('Rate of Fire'),
+                    QtGui.QStandardItem(str(n.rate_of_fire))
                 ])
                 nrn.appendRow([
                     QtGui.QStandardItem('Amplitude'),
@@ -634,12 +634,18 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
             # recorders
             self._trn_rec.removeRows(0, self._trn_rec.rowCount())
-            for r in filter(lambda x: isinstance(x, Recorder), self._sim.values()):
+            for rec_key in self._sim.recorder_keys:
+
+                r = self._sim[rec_key]
                 rec = RecorderNode(str(r))
                 self._trn_rec.appendRow(rec)
                 rec.appendRow([
                     QtGui.QStandardItem('Name'),
                     QtGui.QStandardItem(str(r.name))
+                ])
+                rec.appendRow([
+                    QtGui.QStandardItem('Ident'),
+                    QtGui.QStandardItem(str(rec_key))
                 ])
                 rec.appendRow([
                     QtGui.QStandardItem('Position'),
@@ -675,7 +681,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
         try:
 
-            self._sim.io_man.setup_svr()
+            self._sim.io_man.initialize()
             self.io_build_model()
 
         except:
@@ -821,13 +827,19 @@ class RecorderNode(QtGui.QStandardItem):
 
 def main(args):
 
+    QtGui.qApp = None
     app = QtGui.QApplication(args)
     app.lastWindowClosed.connect(app.quit)
+    QtGui.qApp = app
 
     win = SimulationGui()
     win.show()
 
-    sys.exit(app.exec_())
+    rval = app.exec_()
+    print rval
+    QtGui.qApp = None
+
+    sys.exit(0)
 
 if __name__ == '__main__':
 

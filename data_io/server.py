@@ -21,279 +21,388 @@
 # sim - data_io/server.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
-# 2010-04-21
+# 2010-02-15
 #
 
-"""socket select server for continuous connection"""
+"""data io classes for the simulation"""
 __docformat__ = 'restructuredtext'
 
 
 ##---IMPORTS
 
 # builtins
-from Queue import Queue
+import logging
+import sys
 from select import select
-from socket import (
-    socket, gethostname, gethostbyname, AF_INET, SOCK_STREAM, SOCK_DGRAM,
-    SOL_SOCKET, SO_REUSEADDR
-)
-from struct import calcsize, pack, unpack
-from threading import Event, Thread
+from threading import Event, Lock, Thread
+from Queue import Queue
+from SocketServer import BaseRequestHandler, TCPServer, ThreadingMixIn
 # packages
 import scipy as N
-# own packages
-from package import SimPkg
+# own imports
+from package import SimPkg, recv_pkg, send_pkg
+
+
+##---MODULE_ADMIN
+
+__all__ = ['SimIOManager', 'SimIOProtocol', 'SimIOServer']
+
+
+##---LOGGING
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 ##---CLASSES
 
-class SimServer(Thread):
-    """UDP server socket managing clients"""
+class SimIOProtocol(BaseRequestHandler):
+    """the protocoll implementation
+
+    inherited member variables:
+    self.request : socket to work with
+    self.client_address : (addr,port) of the client
+    self.server : server reference
+    """
+
+    ## BaseRequestHandler interface
+
+    def setup(self):
+        """setup the connection"""
+
+        self.sq_lock = self.server.send_queues_lock
+        self.q_recv = self.server.q_recv
+        with self.sq_lock:
+            self.server.send_queues[self.client_address] = Queue()
+        self.q_send = self.server.send_queues[self.client_address]
+        if self.server.status is not None:
+            self.q_send.put(self.server.status)
+        self.poll = self.server.client_poll
+
+        logging.info('new connection from %s', str(self.client_address))
+
+    def handle(self):
+        """the run method"""
+
+        while True:
+            # select
+            r, w, e = select([self.request], [], [self.request], self.poll)
+            # error
+            if len(e) > 0:
+                break
+            # receive
+            if len(r) > 0:
+                pkg = recv_pkg(self.request)
+                if pkg is None:
+                    break
+                if pkg.tid in [SimPkg.T_CON, SimPkg.T_END]:
+                    pkg.cont = self.client_address
+                self.q_recv.put(pkg)
+                if pkg.tid == SimPkg.T_END:
+                    break
+            # send
+            with self.sq_lock:
+                while not self.q_send.empty():
+                    item = self.q_send.get()
+                    send_pkg(self.request, item)
+                    self.q_send.task_done()
+
+    def finish(self):
+        """finalize the connection"""
+
+        logging.debug('closing for %s', str(self.client_address))
+        with self.sq_lock:
+            if self.client_address in self.server.send_queues:
+                q = self.server.send_queues.pop(self.client_address)
+                del q
+
+
+class SimIOServer(ThreadingMixIn, TCPServer, Thread):
+    """the server thread spawning one thread per connection"""
+
+    ## class memebers
+
+    allow_reuse_address = True
+    request_queue_size = 5
+    daemon_threads = True
 
     ## constructor
 
-    def __init__(self, q_read, q_writ, host='', port=31337, poll=0.001, maxlen=32768):
-        """
-        :Parameters:
-            q_read : Queue
-                Threadsave Queue for reading (world->sim)
-            q_writ : Queue
-                Threadsave Queue for writing (sim->world)
-            host : str
-                host address the server binds to
-                Default=''
-            port : int
-                host port the server binds to.
-                Default=31337
-            poll : float
-                Polling timeout in seconds.
-                Default=0.01
-            malen : int
-                maxlength of package buffer for recvfrom calls
-                Default=
-        """
+    def __init__(
+        self,
+        server_address,
+        q_recv,
+        q_send,
+        client_poll=0.001
+    ):
 
-        # checks
-        if not isinstance(q_read, Queue):
-            raise ValueError('q_read is not of type(%s)!' % Queue.__class__.__name__)
-        if not isinstance(q_writ, Queue):
-            raise ValueError('q_writ is not of type(%s)!' % Queue.__class__.__name__)
-
-        # super
-        super(SimServer, self).__init__(name='NS_IOMANAGER')
+        # thread super
+        Thread.__init__(self, name='SimIOServer')
         self.daemon = True
 
         # members
-        self.__serving = False
-        self.__is_shutdown = Event()
-        self.__is_shutdown.set()
-        self.sock = None
-        self.clients = []
-        self.poll = poll or POLL
-        self.q_read = q_read
-        self.q_writ = q_writ
-        self.addr = (host or '0.0.0.0', port or 31337)
-        self.handshake = None
+        self.q_recv = q_recv    # singleton receive queue
+        self.q_send = q_send    # incomming send queue
+        self.send_queues = {}
+        self.send_queues_lock = Lock()
+        self.client_poll = client_poll
+        self._status = None
+        self._serving = False
+        self._is_shutdown = Event()
+        self._is_shutdown.set()
+
+        # TCPerver super
+        TCPServer.__init__(self, server_address, SimIOProtocol, False)
 
     ## properties
 
     @property
-    def is_shutdown(self):
-        return self.__is_shutdown.is_set()
+    def status(self):
+        return self._status
+    @status.setter
+    def status(self, value):
+        if not isinstance(value, SimPkg):
+            return
+        if value != self._status:
+            self._status = value
+            self.q_send.put(self._status)
 
-    ## socket interface
+    ## threading handlers with queue propagation
 
-    def sock_build(self):
-        """builds the server socket"""
+    def verify_request(self, request, client_address):
+        """Verify the request.
 
-        if self.sock is not None:
-            self.sock_close()
-        self.sock = socket(AF_INET, SOCK_DGRAM)
-        self.sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        #self.sock.setblocking(0)
-        self.sock.bind(self.addr)
+        Return True if client_address is not served yet.
+        [OVERWRITE]
+        """
 
-    def sock_close(self):
-        """clean-up the server socket"""
+        if client_address in self.send_queues:
+            return False
+        else:
+            return True
 
-        while len(self.clients) > 0:
-            try:
-                self.writ_pkg(self.clients.pop(), SimPkg(tid=SimPkg.T_END))
-            except:
-                continue
-        self.sock.close()
-        self.sock = None
+    def propagate_send_queue(self):
+        """multiplex items in the send queue to the clients"""
 
-    def fileno(self):
-        """return socket file number for select"""
-
-        return self.sock.fileno()
-
-    ## server interface
+        while not self.q_send.empty():
+            item = self.q_send.get()
+            with self.send_queues_lock:
+                for q in self.send_queues.values():
+                    q.put(item)
+            self.q_send.task_done()
 
     def run(self):
-        """start the server thread"""
+        """Handle one request at a time until shutdown.
 
-        self.__is_shutdown.clear()
-        self.__serving = True
-        self.sock_build()
+        Polls for shutdown every poll_interval seconds. Ignores
+        self.timeout. If you need to do periodic tasks, do them in
+        another thread.
+        """
 
-        # doomsday loop
-        while self.__serving:
-
-            # fd sets
-            read_rdy, writ_rdy, erro_rdy = select([self], [], [self], self.poll)
-
-            # handle outgoing packages
-            while not self.q_writ.empty():
-                try:
-                    pkg = self.q_writ.get()
-                    for addr in self.clients:
-                        self.writ_pkg(addr, pkg)
-                except Exception, ex:
-                    print ex, addr
-                    continue
-
-            # handle incomming packages
-            if len(read_rdy) > 0:
-                pkg = self.read_pkg()
-                if pkg is not None:
-                    self.q_read.put_nowait(pkg)
-
-            # handle error sockets
-            if len(erro_rdy) > 0:
-                print '*' * 40
-                print 'socket error! TERMINATION'
-                print '*' * 40
-                self.__serving = False
-
-        # clean up
-        self.sock_close()
-        self.__is_shutdown.set()
+        self.server_bind()
+        self.server_activate()
+        self._serving = True
+        self._is_shutdown.clear()
+        while self._serving:
+            r, w, e = select([self], [], [], 0.5)
+            if r:
+                self._handle_request_noblock()
+            self.propagate_send_queue()
+        self.server_close()
+        self._is_shutdown.set()
 
     def stop(self):
-        """stop the server thread"""
+        """stop the thread"""
 
-        self.__serving = False
-        self.__is_shutdown.wait()
+        self._serving = False
+        self._is_shutdown.wait()
 
-    ## utility interface
 
-    def read_pkg(self):
-        """read a pkg from a socket
+class SimIOManager(object):
+    """the singleton input/output manager thread
 
+    This class handles all data input and output for a BaseSimulation object.
+    Data is received from and sent to via Queue.Queue objects using the protocol
+    defined in package.py.
+    """
+
+    ## constructor
+
+    def __init__(self, **kwargs):
+        """
         :Parameters:
-            sock : socket
-                The socket to read from.
-            maxloops : int
-                Maximum loop count to try the reading.
-                Default=16
-        :Returns:
-            SimPkg : if received a valid SimPkg
-            None : if no data available
+            kwargs : keywords
+        :Keywords:
+            addr : str
+                Host address the server binds to.
+                Default=all
+            port : int
+                Host port the server binds to.
+                Default=31337
         """
 
-        try:
+        # members
+        self._status = None
 
-            data, addr = self.sock.recvfrom(MAX_LEN)
-            pkg = SimPkg.from_data(data)
+        # io members
+        self.addr_ini = (kwargs.get('addr', '0.0.0.0'), kwargs.get('port', 31337))
+        self.addr = 'not connected'
+        self._q_recv = Queue()
+        self._q_send = Queue()
+        self._srv = None
+        self._is_initialized = False
 
-            # switch for package type
-            if pkg.tid == SimPkg.T_CON:
-                self.accept_client(addr)
-                pkg.cont = addr
-            elif pkg.tid == SimPkg.T_END:
-                self.drop_client(addr)
-                pkg.cont = addr
-            rval = pkg
+    def initialize(self):
 
-        except Exception, ex:
+        self.finalize()
+        self._srv = SimIOServer(
+            self.addr_ini,
+            self._q_recv,
+            self._q_send
+        )
+        self._srv.start()
+        self.addr = self._srv.server_address
+        self._status = None
+        self._is_initialized = True
 
-            print ex
-            try:
-                print data
-                self.drop_client(addr)
-            except:
-                pass
-            rval = None
+    def finalize(self):
 
+        if self._srv is not None:
+            self._srv.stop()
+            self._srv = None
+        while not self._q_recv.empty():
+            self._q_recv.get_nowait()
+        while not self._q_send.empty():
+            self._q_send.get_nowait()
+        self._is_initialized = False
+
+    ## properties
+
+    @property
+    def status(self):
+        return self._status
+    @status.setter
+    def status(self, value):
+        if not isinstance(value, dict):
+            return
+        if self._status != value:
+            status_pkg = SimIOManager.build_status_pkg(value)
+            if status_pkg is not None:
+                self._status = status_pkg
+                self._srv.status = status_pkg
+            else:
+                print 'problem with status value'
+
+    @property
+    def q_recv(self):
+        return self._q_recv
+
+    @property
+    def q_send(self):
+        return self._q_send
+
+    @property
+    def is_initialized(self):
+        return self._is_initialized
+
+    ## io methods
+
+    def tick(self):
+        """querys the receive-queue returns all queued items"""
+
+        rval = []
+        while not self._q_recv.empty():
+            item = self._q_recv.get()
+            rval.append(item)
+            self._q_recv.task_done()
         return rval
 
-    def writ_pkg(self, addr, pkg):
-        """write package to socket
+    def send_package(
+        self,
+        tid=SimPkg.T_UKN,
+        ident=SimPkg.NOIDENT,
+        frame=SimPkg.NOFRAME,
+        cont=None
+    ):
+        """build a package fromdata and send to clients
+
+        SimPkg constructor wrapper
 
         :Parameters:
-            addr : tuple
-                The socket addr to write to.
             pkg : SimPkg
-                The package to write.
+                the SimPkg type id
+                Default=T_UKN
+            ident : long
+                target ident or None if unrestricted
+                Default=NOIDENT
+            frame : long
+                target frame
+                Default=NOFRAME
+            cont : list
+                the conetnt of the package (ndarrays)
+                Default=None
+        """
+
+        self.send_pkg(SimPkg(tid=tid, ident=ident, frame=frame, cont=cont))
+
+    def send_pkg(self, pkg):
+        """senda SimPkg to clients
+
+        :Parameters:
+            pkg : SimPkg
+                The SimPkg instance to send.
+        """
+
+        self.q_send.put(pkg)
+
+    ## static utility
+
+    @staticmethod
+    def build_status_pkg(status):
+        """build a package from status
+
+        items are mapped by id:
+            0   : sample_rate
+            1   : frame_size
+            10  : neurons
+            20  : recorders
         """
 
         try:
-
-            self.sock.sendto(pkg(), addr)
-            print 'sent', pkg.tid, 'to', addr
-
-        except Exception, ex:
-
-            print ex
-            self.drop_client(addr)
-
-    def accept_client(self, addr):
-        """accept a new client"""
-
-        print 'con from', addr
-        self.clients.append(addr)
-
-        # handshaking
-        if self.handshake is not None:
-            self.writ_pkg(addr, self.handshake)
-
-    def drop_client(self, addr):
-
-        if addr in self.clients:
-            print 'closing con', addr
-            self.clients.remove(addr)
-
-    ## special methods
-
-    def __len__(self):
-        return len(self.clients)
+            cont = [
+                [status['sample_rate'], 0],
+                [status['frame_size'], 1]
+            ]
+            if len(status['neurons']) > 0:
+                cont.extend([[item, 10] for item in status['neurons']])
+            if len(status['recorders']) > 0:
+                cont.extend([[item, 20] for item in status['recorders']])
+            cont = N.asarray(cont, dtype=N.float32)
+            return SimPkg(tid=SimPkg.T_STS, cont=cont)
+        except:
+            return None
 
 
-## main
+##---MAIN
 
 if __name__ == '__main__':
 
-    q_read = Queue()
-    q_write = Queue()
+    from time import sleep
 
     print
-    print 'starting server..'
-    s = SimServer(q_read, q_write)
-    s.start()
-    s.handshake = SimPkg(cont=N.ones(5))
-    print s
-    print 'serving at:', s.addr
+    print 'setting up manager..'
+    io_man = SimIOManager()
+    io_man.initialize()
 
     try:
-
         while True:
-
-            while not s.q_read.empty():
-                pkg = s.q_read.get(False)
-                print
-                print 'received:'
-                print pkg
+            events = io_man.tick()
+            while len(events) > 0:
+                print events.pop(0)
             else:
-                select([], [], [], .01)
-
+                print '.'
+            sleep(5)
+            io_man.send_package(cont=N.ones((4, 4)))
     except KeyboardInterrupt:
-
-        print 'stoping due to KeyboardInterrupt'
-
-    finally:
-
-        s.stop()
-        print s
         print
+        print 'stoping due to KeyboardInterrupt'
+        io_man.finalize()

@@ -35,11 +35,12 @@ import os
 import os.path as osp
 # packages
 from tables import openFile, NoSuchNodeError
+import scipy as N
 from scipy.special import cbrt
-
-#for interpolation
+# own packages
 from lerp import LERP3
-import numpy as N
+
+
 ##---CLASSES
 
 class NeuronData(object):
@@ -63,7 +64,7 @@ class NeuronData(object):
 
     ## constructor
 
-    def __init__(self, filepath, time_frame=None):
+    def __init__(self, filepath):
         """
         :Parameters:
             filepath : path
@@ -90,9 +91,8 @@ class NeuronData(object):
         self.data = arc.getNode('/LFP').read().T
 
         # time frame
-        if time_frame is None:
-            time_frame = xrange(self.data.shape[1])
-        self.time_frame = time_frame
+        soma_v = arc.getNode('/soma_v').read()
+        self.time_frame = xrange(*get_eap_range(soma_v))
         self.data = self.data[..., self.time_frame]
 
         # voltage traces
@@ -297,9 +297,25 @@ class NeuronDataContainer(dict):
             return False
 
     ## dict interface
+
     def clear(self):
         super(NeuronDataContainer, self).clear()
         self.paths = set([])
+
+
+##---FUNCTIONS
+
+def get_eap_range(soma_v):
+    """return the indices where the eap has a significant waveform"""
+
+    my_soma = N.concatenate((soma_v[3:].copy(), N.ones(5) * soma_v[-1]))
+    soma_func = lambda x: my_soma[x]
+    der1 = [N.derivative(soma_func, i) for i in xrange(soma_v.size)]
+    der1 = N.absolute(N.asarray(der1[1:]))
+    start = stop = (der1 > 1e-1).argmax()
+    stop += (der1[stop:] > 1e-2).argmin()
+    return start, stop
+
 
 ##---PACKAGE
 
@@ -314,7 +330,7 @@ if __name__ == '__main__':
     from mpl_toolkits.mplot3d import Axes3D
     from datetime import datetime, timedelta
 
-    neuron = NeuronData('/home/phil/SVN/Data/Einevoll/LFP-20100516_225124.h5')
+    neuron = NeuronData('/home/phil/SVN/Data/Einevoll/LFP-20100517_235609.h5')
 
     fig_phil = figure()
     ax_phil = Axes3D(fig_phil)

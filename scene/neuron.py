@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # sim - sim_objects/neuron.py
 #
@@ -40,6 +39,12 @@ from math3d import quaternion_matrix, vector_norm
 from data import NeuronData
 
 
+##---EXCEPTIONS
+
+class BadNeuronQuery(Exception):
+    pass
+
+
 ##---CLASSES
 
 class Neuron(SimObject):
@@ -53,8 +58,8 @@ class Neuron(SimObject):
                 Reference to a NeuronData object. This is required, not setting
                 the neuron_data will result in an exception.
                 Default=None
-            firing_rate : float
-                Firing rate in Hz.
+            rate_of_fire : float
+                Rate of fire in Hz.
                 Default=10.0
             amplitude : float
                 Amplitude of the waveform
@@ -74,18 +79,18 @@ class Neuron(SimObject):
         # members
         self._active = None
         self._amplitude = None
-        self._fireing_rate = None
+        self._rate_of_fire = None
         self._frame_size = None
         self._neuron_data = ndata
 
-        self._interv_overshoot = []
-        self._interv_waveform = []
+        self._interval_overshoot = []
+        self._interval_waveform = []
         self._firing_times = []
 
         # set from kwargs
         self.active = True
         self.amplitude = kwargs.get('amplitude', 1.0)
-        self.fireing_rate = kwargs.get('firing_rate', 10.0)
+        self.rate_of_fire = kwargs.get('rate_of_fire', 10.0)
 
     ## properties
 
@@ -104,13 +109,13 @@ class Neuron(SimObject):
         self._amplitude = float(value)
 
     @property
-    def fireing_rate(self):
-        return self._fireing_rate
-    @fireing_rate.setter
-    def fireing_rate(self, value):
-        self._fireing_rate = float(value)
-        if self._fireing_rate <= 0.0:
-            self._fireing_rate = 1.0
+    def rate_of_fire(self):
+        return self._rate_of_fire
+    @rate_of_fire.setter
+    def rate_of_fire(self, value):
+        self._rate_of_fire = float(value)
+        if self._rate_of_fire <= 0.0:
+            self._rate_of_fire = 1.0
 
     @property
     def sphere_radius(self):
@@ -119,116 +124,104 @@ class Neuron(SimObject):
     ## event slots
 
     def simulate(self, **kwargs):
-        """this method performs a tick on the Neuron
+        """this method simulates the neurons firing behavior
 
         :Keywords:
             frame_size : int
                 Size of the frame to simulate
-            fireing_times : list
+            firing_times : list
                 list of int representing sample where the neuron fires in the
-                frame. obviously fireing_times[i] < frame_size!
+                frame. obviously firing_times[i] < frame_size!
         """
 
-        # get kwargs and init
-        self._fireing_times = kwargs.get('fireing_times', [])
+        # get kwargs and init/reset
+        self._firing_times = kwargs.get('firing_times', [])
         self._frame_size = kwargs.get('frame_size', 1)
-        self._interv_waveform = []
+        self._interval_waveform = []
 
         # check if we are active
-        if self.active is False:
+        if not self.active:
             return
 
         # overshooting waveform intervals from last frame
-        if len(self._interv_overshoot) > 0:
-            self._interv_waveform = self._interv_overshoot
-            self._interv_overshoot = []
+        if len(self._interval_overshoot) > 0:
+            self._interval_waveform = self._interval_overshoot
+            self._interval_overshoot = []
 
-        # new frame waveform intervals
-        for t in self._fireing_times:
+        # waveform intervals for this frame
+        for t in self._firing_times:
             start = [t, 0]
-            end = [
-                t + self._neuron_data.phase_max,
-                self._neuron_data.phase_max
-            ]
+            end = [t + self._neuron_data.phase_max, self._neuron_data.phase_max]
 
-            # check wether waveform overshoots
+            # check if waveform overshoots
             if end[0] >= self._frame_size:
                 residual = end[0] - self._frame_size
                 end = [self._frame_size, self._neuron_data.phase_max - residual]
-                self._interv_overshoot.append([0, end[1]])
-                self._interv_overshoot.append([residual, self._neuron_data.phase_max])
+                self._interval_overshoot.append([0, end[1], residual, self._neuron_data.phase_max])
 
             # add interval
-            self._interv_waveform.append(start)
-            self._interv_waveform.append(end)
+            self._interval_waveform.append([start[0], end[0], start[1], end[1]])
+
+            # DEBUG: start
+            for interv in self._interval_waveform:
+                print interv[1] - interv[0] == interv[3] - interv[2]
+            for interv in self._interval_overshoot:
+                print interv[1] - interv[0] == interv[3] - interv[2]
+            # DEBUG: end
 
     ## methods public
 
-    def query_for_position(self, pos):
-        """return the voltage trace for this neuron for the current frame
+    def query_for_recorder(self, positions):
+        """return the multichanneled waveform and firing times for this neuron
+        for the current frame. The multichanneled waveform is build from the
+        positions passed, yielding a [npositions, frame_size] matrix with one
+        channel per column.
 
-        :Keywords:
-            pos : arraylike
-                absolute 3d-position of the listener
+        :Parameters:
+            positions : ndarray
+                Points of the recorder
         :Returns:
-            The waveform of this neuron of length 'frame_size'.
+            tuple : (waveform, interval_waveforms)
         :Raises:
-            ValueError : if self._frame_size is None or the position is outside
-            of the listening spehere of the neuron.
+            BadNeuronQuery : if self._frame_size is None or the position is outside
+            of the listening sphere of the neuron.
         """
 
-        # check for valid position
-        rel_pos = pos - self.position
-        if vector_norm(rel_pos) > self.sphere_radius:
-            raise ValueError('queried position outside of sphere_radius')
+        # check for any valid positions
+        rel_pos = positions - self._position
+        rel_pos_valid = [
+            vector_norm(rel_pos[i]) < self._neuron_data.sphere_radius
+            for  i in xrange(rel_pos.shape[0])
+        ]
+        if not N.any(rel_pos_valid):
+            raise BadNeuronQuery('queried position(s) outside of sphere_radius')
 
         # inits
-        rval = N.zeros(self._frame_size)
+        wf = N.zeros((self._neuron_data.time_vec.size, rel_pos.shape[0]))
 
-        # if we have orientation, rotate rel_pos accoringly
-        if self.orientation is not False:
+        # if we have orientation, rotate rel_pos accordingly
+        if self._orientation:
             rel_pos = N.dot(
-                quaternion_matrix(self.orientation)[:3,:3],
-                rel_pos
-            )
+                quaternion_matrix(self._orientation)[:3,:3],
+                rel_pos.T
+            ).T
 
-        # copy waveform stips
-        for i in xrange(0, len(self._interv_waveform), 2):
-            start = self._interv_waveform[i]
-            end = self._interv_waveform[i+1]
-            temp = self._neuron_data.get_data(
-                rel_pos,
-                xrange(start[1], end[1])
-            )
-            rval[start[0]:end[0]] = temp
+        # copy waveforms per position (resp. channel)
+        for i in xrange(rel_pos.shape[0]):
+            if rel_pos_valid[i]:
+                wf[:,i] = self._neuron_data.get_data(rel_pos[i])
+        # adjust for amplitude
+        if self._amplitude != 1.0:
+            wf *= self._amplitude
 
-        # adjust for amplitude and return
-        if self.amplitude != 1.0:
-            rval *= self.amplitude
-        return rval
-
-    ## methods private
-
-    def _adjust_internals(self):
-        """build firing statistics generator"""
-
-        try:
-            if self.sample_rate is None:
-                return
-            if self.fireing_rate is None:
-                return
-        except:
-            return
-
-        self._rand_gen = poisson(
-            self.fireing_rate /
-            (self.sample_rate - self.fireing_rate * self._neuron_data.phase_max )
-        )
+        # return
+        return wf, self._interval_waveform
 
 
 ##---PACKAGE
 
-__all__ = ['Neuron']
+__all__ = ['BadNeuronQuery', 'Neuron']
+
 
 ##---MAIN
 
