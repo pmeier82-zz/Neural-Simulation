@@ -22,7 +22,7 @@ __docformat__ = 'restructuredtext'
 
 from PyQt4 import QtCore, QtGui
 import scipy as N
-from gui import Ui_InitDialog
+from nsim.gui import Ui_InitDialog
 from package import SimPkg
 from client import SimIOClientNotifier, SimIOConnection
 
