@@ -16,7 +16,7 @@ __docformat__ = 'restructuredtext'
 
 from PyQt4 import QtCore, QtGui
 from client_interface import DataContainer, NTrodeDataInterface, DEFAULT_VELOCITY
-from gui import NTrodePlot, Ui_RecorderControll
+from nsim.gui import NTrodePlot, Ui_RecorderControll
 
 
 ##---CLASSES

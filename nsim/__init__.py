@@ -42,7 +42,7 @@ __docformat__ = 'restructuredtext'
 
 ##---OTHER STUFF
 
-__version__ = '0.1'
+__version__ = '0.1.53'
 __revision__ = 'beta'
 
 __copyright__ = '(c) 2010 Philipp Meier'
