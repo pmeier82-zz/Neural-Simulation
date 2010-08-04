@@ -33,8 +33,11 @@ __docformat__ = 'restructuredtext'
 from Ui_add_neuron import Ui_AddNeuronDialog
 from Ui_add_recorder import Ui_AddRecorderDialog
 from Ui_gui_main import Ui_SimGui
+from Ui_init_dialog import Ui_InitDialog
+from Ui_recorder_controll import Ui_RecorderControll
+from ploting import NTrodePlot
 
-__all__ = ['Ui_AddNeuronDialog', 'Ui_AddRecorderDialog', 'Ui_SimGui']
+__all__ = ['NTrodePlot', 'Ui_AddNeuronDialog', 'Ui_AddRecorderDialog', 'Ui_InitDialog', 'Ui_RecorderControll', 'Ui_SimGui']
 
 
 ##---MAIN

@@ -71,21 +71,20 @@ class ContentItem(object):
 
     ## properties
 
-    @property
-    def dim(self):
+    def get_dim(self):
         rval = [-1, -1]
         for i in xrange(len(self.cont.shape)):
             if i > 1:
                 break
             rval[i] = self.cont.shape[i]
         return rval
+    dim = property(get_dim)
 
-    @property
-    def dtype(self):
+    def get_dtype(self):
         return self.cont.dtype
+    dtype = property(get_dtype)
 
-    @property
-    def header(self):
+    def get_header(self):
         return pack(
             self.HDEF,
             self.dim[0],
@@ -93,10 +92,11 @@ class ContentItem(object):
             self.cont.nbytes,
             self.cont.dtype.str
         )
+    header = property(get_header)
 
-    @property
-    def payload(self):
+    def get_payload(self):
         return ''.join([self.header, self.cont.tostring()])
+    payload = property(get_payload)
 
     ## special methods
 

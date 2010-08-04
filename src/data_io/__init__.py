@@ -31,6 +31,8 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from client import SimIOClientNotifier, SimIOConnection
+from client_interface import DataContainer, NTrodeDataInterface
+from minimal_client import MinimalClient
 from package import SimPkg, recv_pkg, send_pkg
 from server import SimIOManager, SimIOProtocol, SimIOServer
 
@@ -41,6 +43,11 @@ __all__ = [
     # client
     'SimIOClientNotifier',
     'SimIOConnection',
+    # client_interface
+    'DataContainer',
+    'NTrodeDataInterface',
+    # minimal_client
+    'MinimalClient',
     # server
     'SimIOManager',
     'SimIOProtocol',
