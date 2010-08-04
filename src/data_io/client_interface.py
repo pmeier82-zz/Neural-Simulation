@@ -23,8 +23,12 @@ __docformat__ = 'restructuredtext'
 from PyQt4 import QtCore, QtGui
 import scipy as N
 from gui import Ui_InitDialog
+<<<<<<< HEAD
 from package import SimPkg
 from client import SimIOClientNotifier, SimIOConnection
+=======
+from data_io import SimPkg, SimIOClientNotifier, SimIOConnection
+>>>>>>> cc1a5d6ab9d768e84ab612d760d3f7bb2c538671
 
 
 ##---CONSTANTS

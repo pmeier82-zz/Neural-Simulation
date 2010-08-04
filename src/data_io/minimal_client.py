@@ -33,7 +33,11 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         cnk_len=0.25,
         addr=('localhost', 31337),
         # gui parameters
+<<<<<<< HEAD
         axis_range=1.0,
+=======
+        range=1.0,
+>>>>>>> cc1a5d6ab9d768e84ab612d760d3f7bb2c538671
         # keyword arguments
         ** kwargs
     ):
@@ -48,8 +52,13 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             addr : tuple
                 A tuple of (host,port) defining where to reach the server.
                 Default=('localhost',31337)
+<<<<<<< HEAD
             axis_range : float
                 Amplitude axis_range of the displayed data plot[-axis_range,+axis_range].
+=======
+            range : float
+                Amplitude range of the displayed data plot[-range,+range].
+>>>>>>> cc1a5d6ab9d768e84ab612d760d3f7bb2c538671
                 Default=1.0
             kwargs : dict
                 Additional keywords.
@@ -62,7 +71,11 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         self.dataplot = NTrodePlot(
             parent=self.content,
             nchan=4,
+<<<<<<< HEAD
             axis_range=axis_range,
+=======
+            range=range,
+>>>>>>> cc1a5d6ab9d768e84ab612d760d3f7bb2c538671
             replot=True
         )
         #self.lo_content.addWidget(self.dataplot)
