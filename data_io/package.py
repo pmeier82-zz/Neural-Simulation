@@ -67,7 +67,7 @@ class ContentItem(object):
 
         # check cont for shape
         if len(self.cont.shape) > 2:
-            raise ValuleError('shape shoud be <= 2')
+            raise ValueError('shape shoud be <= 2')
 
     ## properties
 
@@ -78,7 +78,7 @@ class ContentItem(object):
             if i > 1:
                 break
             rval[i] = self.cont.shape[i]
-        return  rval
+        return rval
 
     @property
     def dtype(self):

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -78,13 +78,11 @@ __docformat__ = 'restructuredtext'
 from ConfigParser import ConfigParser
 import os.path as osp
 # packages
-import scipy as N
 # own packages
 from cluster_dynamics import ClusterDynamics
 from data_io import SimIOManager, SimPkg
 from scene import (
     NeuronDataContainer,
-    NeuronData,
     Neuron,
     Recorder,
     SimObject,
@@ -237,7 +235,7 @@ class BaseSimulation(dict):
                 Sample rate to operate.
                 Default=16000.0
         """
-
+        
         self.clear()
 
         # reset private members

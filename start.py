@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -24,35 +24,15 @@
 # 2010-01-21
 #
 
-"""simulation framework for extracellular recordings
+"""gui module for the neural simulation
 
-This module provides a discrete event simulation framework. The framework uses
-(Py)Qt4 functionality to implement message passing (signals/slots) and timing.
+This module provides gui frontend to the neural simulation. Simulation scenes
+can be edited and the simulation can be controlled. The gui logs all relevant
+events a log box and provides a frointend to create scenes or load canned scene
+files.
 
-The package is somewhat optimized to produce timeseries data of some (~4)
-recording agents in a scene with about 1 to 10 sources. Also included is a
-package to simulate correlated noise samples for multichanneld data using VAR
-models.
-
-A simulation is taking care of all the updates in state space on a discrete time
-scale. Time is advancing on a sample by sample basis and the simuation will
-be agnostic towards real time progression.
-
-[The application background of this framework is simulation of extracellular
-recordings in the cortex.]
-
-Definition of terms:
-:SCENE:
-    The SCENE is the spatial context of the simulation (usually a 3D space with
-    euclidean coordinates) that is continuously updated. Objects have a distinct
-    position and state within the SCENE for every point in time.
-:OBJECT:
-    An OBJECT is a subclass of SimObject. Objects model all actors and agents in
-    the scene, they are administrated as the child objects of the simulation.
-:TICK:
-    A tick is a (QT contextual) signal, emited from the simulation object that
-    will advance the simulation for one sample and notify all objects in the
-    scene about that fact. External objects may declare interest in this signal.
+This module is only the gui frontend, for details on the simulation see
+simulation.py.
 """
 __doctype__ = 'restructuredtext'
 
@@ -60,7 +40,6 @@ __doctype__ = 'restructuredtext'
 ##---IMPORTS
 
 # builtins
-import sys
 import traceback
 # packages
 from PyQt4 import QtCore, QtGui
@@ -70,7 +49,6 @@ from gui import (
     Ui_AddRecorderDialog,
     Ui_SimGui
 )
-from scene import Neuron, Recorder
 from simulation import BaseSimulation, SimExternalDelegate
 
 
@@ -82,7 +60,7 @@ LOG_BUF_LEN = 512
 ##---CLASSES
 
 class SimQt4Delegate(QtCore.QObject, SimExternalDelegate):
-    """QObject to connect signals to for the gui"""
+    """QObject to provide qt-signal from the simulation for the gui"""
 
     ## signals
 
@@ -93,11 +71,21 @@ class SimQt4Delegate(QtCore.QObject, SimExternalDelegate):
 
     ## constructor
 
-    def __init__(self, **kwargs):
+    def __init__(self, parent):
+        """
+        :Parameters:
+            parent : SimulationGui
+                The qt parent object. This is strictly required, as the
+                delegate poses as a glue/relay class between the python
+                simulation and the qt gui component.
+        """
+
+        # check for parent
+#        if not issublass(parent, QtCore.QObject)
 
         # super
-        QtCore.QObject.__init__(self, kwargs.get('parent', None))
-        SimExternalDelegate.__init__(self, **kwargs)
+        QtCore.QObject.__init__(self, parent)
+        SimExternalDelegate.__init__(self)
 
         # connections
         self.sig_frame.connect(self.parent().on_update_frame)
@@ -585,7 +573,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
                     dbg.appendRow([
                         QtGui.QStandardItem(str(key)),
                         QtGui.QStandardItem(str(value))
-                ])
+                    ])
                 ndata_node.appendRow(dbg)
                 self._trn_ndata.appendRow(ndata_node)
 
@@ -827,20 +815,15 @@ class RecorderNode(QtGui.QStandardItem):
 
 def main(args):
 
-    QtGui.qApp = None
     app = QtGui.QApplication(args)
-    app.lastWindowClosed.connect(app.quit)
-    QtGui.qApp = app
+#    app.lastWindowClosed.connect(app.quit)
 
     win = SimulationGui()
     win.show()
 
-    rval = app.exec_()
-    print rval
-    QtGui.qApp = None
-
-    sys.exit(0)
+    return app.exec_()
 
 if __name__ == '__main__':
 
-    main(sys.argv)
+    import sys 
+    sys.exit(main(sys.argv))
