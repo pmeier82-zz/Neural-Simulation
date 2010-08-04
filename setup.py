@@ -27,30 +27,22 @@
 
 ##---IMPORTS
 
-from setuptools import setup, find_packages
-
-# patch distutils if it can't cope with the "classifiers" or
-# "download_url" keywords
-from sys import version
-if version < '2.2.3':
-    from distutils.dist import DistributionMetadata
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
+from distutils.core import setup
 
 
 ##---STINGS
 
-##required
-NAME = 'Neural Simulation'
-VERSION = '0.3.a12'
-URL = 'http://ni.cs.tu-berlin.de'
+CLASSIFIERS = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: European Union Public Licence 1.1 (EUPL 1.1)',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 2.6',
+    'Topic :: Scientific/Engineering :: Bio-Informatics'
+]
 DESCRIPTION = 'A simulation framework for extracellular recordings'
-## mandatory
-AUTHOR = 'Neural Simulation Team'
-AUTHOR_EMAIL = 'ff@ni.cs.tu-berlin.de'
-MAINTAINER = 'Philipp Meier'
-MAINTAINER_EMAIL = 'pmeier82@googlemail.com'
-## long strings
 LONG_DESCRIPTION = """%s
 
 Extracellular recordings are a key tool to study the activity of
@@ -78,35 +70,21 @@ spike sorter is possible.
 ##---SETUP BLOCK
 
 setup(
-    # package identification
-    name=NAME,
-    version=VERSION,
-    # contact information
-    author=AUTHOR,
-    author_email=AUTHOR_EMAIL,
-    maintainer=MAINTAINER,
-    maintainer_email=MAINTAINER_EMAIL,
-    url=URL,
-    # description strings
+    name='Neural Simulation',
+    version='0.0.54',
+    author='Philipp Meier',
+    author_email='pmeier82@googlemail.com',
+    maintainer='Philipp Meier',
+    maintainer_email='pmeier82@googlemail.com',
+    url='http://ni.cs.tu-berlin.de',
+    download_url='http://github.com/pmeier82/Neural-Simulation/zipball/master',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    # package paths
-    packages=['nrl_sim'],
-    package_dir={
-        '':'src'
-    },
-    # package option
+    packages=['nsim', 'nsim.data_io', 'nsim.gui', 'nsim.scene'],
+    package_data={'res':['*.*'],
+                  'nsim.gui':['*.ui', '*.qrc', '*.png']},
     zip_safe=False,
     include_package_data=True,
-    # licens information
     license='EUPL v1.1',
-    # trove classifiers
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'License :: OSI Approved :: European Union Public Licence 1.1 (EUPL 1.1)',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.6',
-        'Environment :: X11 Applications :: Qt',
-        'Topic :: Scientific/Engineering :: Bio-Informatics'
-    ]
+    classifiers=CLASSIFIERS
 )
