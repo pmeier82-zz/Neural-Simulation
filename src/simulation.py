@@ -334,6 +334,7 @@ class BaseSimulation(dict):
         while len(events) > 0:
 
             pkg = events.pop(0)
+            print pkg
 
             log_str = '>>> '
 
@@ -347,27 +348,23 @@ class BaseSimulation(dict):
                     # position event
                     if pkg.tid == SimPkg.T_POS:
 
-                        pos_data = pkg.cont[0].cont
-
                         # position request
-                        if pos_data.size == 1:
-                            log_str += 'MOVE[%s] - request' % (
-                                self[pkg.ident].name
-                            )
+                        if pkg.nitems == 0:
+                            log_str += 'MOVE[%s] - request' % (self[pkg.ident].name)
 
                         # reposition request
-                        elif pos_data.size == 2:
-                            pos, vel = pos_data
+                        elif pkg.nitems == 1:
+                            pos, vel = pkg.cont[0].cont[:2]
                             log_str += 'MOVE: %s, %s' % (pos, vel)
                             self[pkg.ident].trajectory_pos = pos
                             # TODO: implementation of the velocity component
 
                         # weird position event
                         else:
-                            print 'weird event, was T_POS with:', pos_data
+                            print 'weird event, was T_POS with:', pkg.cont
                             continue
 
-                        # send position aknowledgement
+                        # send position acknowledgement
                         self.io_man.send_position(
                             self._frame,
                             pkg.ident,

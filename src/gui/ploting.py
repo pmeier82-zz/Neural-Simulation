@@ -46,7 +46,7 @@ class MatrixData(Qwt5.QwtRasterData):
     def copy(self):
         return self
 
-    def range(self):
+    def axis_range(self):
         try:
             return Qwt5.QwtDoubleInterval(self.data.min(), self.data.max())
         except:
@@ -115,7 +115,7 @@ class MatShow(Qwt5.QwtPlot):
         # axis and scales
         self.axisWidget(Qwt5.QwtPlot.yRight).setColorBarEnabled(True)
         self.axisWidget(Qwt5.QwtPlot.yRight).setColorMap(
-            self._data.range(),
+            self._data.axis_range(),
             self._mat.colorMap()
         )
         self.enableAxis(Qwt5.QwtPlot.yRight, True)
@@ -139,7 +139,7 @@ class MatShow(Qwt5.QwtPlot):
 
         # recalculate colorbar axis
         self.axisWidget(Qwt5.QwtPlot.yRight).setColorMap(
-            self._data.range(),
+            self._data.axis_range(),
             self._mat.colorMap()
         )
         self.setAxisScale(
@@ -154,14 +154,14 @@ class TimeSeriesPlot(Qwt5.QwtPlot):
 
     ## constructor
 
-    def __init__(self, parent=None, range=2.0, replot=False):
+    def __init__(self, parent=None, axis_range=2.0, replot=False):
         """
         :Parameters:
             parent : QObject
                 Qt parent.
                 Default=None
-            range : float
-                Axis range. Axis will have range [-range,range].
+            axis_range : float
+                Axis axis_range. Axis will have axis_range [-axis_range,axis_range].
             replot : bool
                 If True, replot after set_data() was called, else do not replot.
         """
@@ -170,14 +170,14 @@ class TimeSeriesPlot(Qwt5.QwtPlot):
         super(TimeSeriesPlot, self).__init__(parent)
 
         # members
-        self.range = range
+        self.axis_range = axis_range
         self.replot_on_update = replot
 
         # layout
         self.plotLayout().setMargin(0)
         self.plotLayout().setCanvasMargin(0)
         self.plotLayout().setAlignCanvasToScales(True)
-        self.setAxisScale(Qwt5.QwtPlot.yLeft, -float(self.range), float(self.range))
+        self.setAxisScale(Qwt5.QwtPlot.yLeft, -float(self.axis_range), float(self.axis_range))
         self.setFrameStyle(QtGui.QFrame.NoFrame)
         self.setCanvasBackground(BACKGROUND)
 
@@ -238,14 +238,14 @@ class TimeSeriesPlot(Qwt5.QwtPlot):
             ev = N.zeros(0)
         else:
             ev = N.asarray(events)
-        self._events.setData(ev, N.ones(ev.size) * self.range)
+        self._events.setData(ev, N.ones(ev.size) * self.axis_range)
 
         # gtruth
         if gtruth is None:
             gt = N.zeros(0)
         else:
             gt = N.asarray(list(gtruth))
-        self._gtruth.setData(gt, N.ones(gt.size) * -self.range)
+        self._gtruth.setData(gt, N.ones(gt.size) * -self.axis_range)
 
         # replot
         if self.replot_on_update is True:
@@ -256,7 +256,7 @@ class NTrodePlot(QtGui.QWidget):
     """a plot for (multichanneled) timeseries data"""
 
     ## constructor
-    def __init__(self, parent=None, nchan=4, range=2.0, replot=False):
+    def __init__(self, parent=None, nchan=4, axis_range=2.0, replot=False):
         """
         :Parameters:
             parent : QObject
@@ -272,7 +272,7 @@ class NTrodePlot(QtGui.QWidget):
 
         # internal members
         self.nchan = nchan
-        self.range = range
+        self.axis_range = axis_range
         self._err = QtGui.QErrorMessage.qtHandler()
 
         # gui members
@@ -289,7 +289,7 @@ class NTrodePlot(QtGui.QWidget):
         # add plots
         self.plt = []
         for i in xrange(self.nchan):
-            self.plt.append(TimeSeriesPlot(parent=self.area_plt, range=self.range))
+            self.plt.append(TimeSeriesPlot(parent=self.area_plt, axis_range=self.axis_range))
             self.lo_plt.addWidget(self.plt[i])
 
         # size policy
@@ -333,14 +333,14 @@ class QualityPlot(Qwt5.QwtPlot):
     """a plot for a single channel time series data with event markers"""
 
     ## constructor
-    def __init__(self, parent=None, range=2.0):
+    def __init__(self, parent=None, axis_range=2.0):
         """
         :Parameters:
             parent : QObject
                 Qt parent.
                 Default=None
-            range : float
-                Axis range. Axis will have range [-range,range].
+            axis_range : float
+                Axis axis_range. Axis will have axis_range [-axis_range,axis_range].
         """
 
         # super
@@ -349,7 +349,7 @@ class QualityPlot(Qwt5.QwtPlot):
 
         # internal members
         self._err = QtGui.QErrorMessage.qtHandler()
-        self.range = range
+        self.axis_range = axis_range
 
         # size policy
 #        self.setSizePolicy(SIZE_POL)
@@ -358,7 +358,7 @@ class QualityPlot(Qwt5.QwtPlot):
         self.plotLayout().setMargin(0)
         self.plotLayout().setCanvasMargin(0)
         self.plotLayout().setAlignCanvasToScales(True)
-        self.setAxisScale(Qwt5.QwtPlot.yLeft, -float(self.range), float(self.range))
+        self.setAxisScale(Qwt5.QwtPlot.yLeft, -float(self.axis_range), float(self.axis_range))
         self.setFrameStyle(QtGui.QFrame.NoFrame)
         self.setAutoReplot(True)
         self.setCanvasBackground(QtCore.Qt.white)
@@ -445,9 +445,9 @@ class QualityPlot(Qwt5.QwtPlot):
         self._data.setData(xticks, data)
 
         # events
-        self._events.setData(events, N.ones(events.size) * self.range)
+        self._events.setData(events, N.ones(events.size) * self.axis_range)
 
-        # range
+        # axis_range
         if data is not None and data.size > 0:
             self.setAxisScale(Qwt5.QwtPlot.yLeft, data.min() - 1, data.max() + 1)
 

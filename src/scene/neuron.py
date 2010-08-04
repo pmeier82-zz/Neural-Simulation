@@ -160,9 +160,11 @@ class Neuron(SimObject):
 
             # DEBUG: start
             for interv in self._interval_waveform:
-                print interv[1] - interv[0] == interv[3] - interv[2]
+                if interv[1] - interv[0] != interv[3] - interv[2]:
+                    raise ValueError('intervals do not match: %s' % interv)
             for interv in self._interval_overshoot:
-                print interv[1] - interv[0] == interv[3] - interv[2]
+                if interv[1] - interv[0] != interv[3] - interv[2]:
+                    raise ValueError('intervals do not match: %s' % interv)
             # DEBUG: end
 
     ## methods public
@@ -170,7 +172,7 @@ class Neuron(SimObject):
     def query_for_recorder(self, positions):
         """return the multichanneled waveform and firing times for this neuron
         for the current frame. The multichanneled waveform is build from the
-        positions passed, yielding a [npositions, frame_size] matrix with one
+        positions passed, yielding a [positions, frame_size] matrix with one
         channel per column.
 
         :Parameters:
