@@ -19,10 +19,10 @@ import scipy as N
 ##---CONSTANTS
 
 # TimeSeriesPlot constants
-BACKGROUND  = QtCore.Qt.black
-CURVECOLOR  = QtCore.Qt.green
+BACKGROUND = QtCore.Qt.black
+CURVECOLOR = QtCore.Qt.green
 ORIGINCOLOR = QtCore.Qt.darkYellow
-EVENTCOLOR  = QtCore.Qt.red
+EVENTCOLOR = QtCore.Qt.red
 GTRUTHCOLOR = QtCore.Qt.blue
 
 
@@ -194,7 +194,7 @@ class TimeSeriesPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.DTriangle,
                 QtGui.QBrush(EVENTCOLOR),
                 EVENTCOLOR,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         e.attach(self)
@@ -207,7 +207,7 @@ class TimeSeriesPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.UTriangle,
                 QtGui.QBrush(GTRUTHCOLOR),
                 GTRUTHCOLOR,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         g.attach(self)
@@ -317,7 +317,7 @@ class NTrodePlot(QtGui.QWidget):
                 )
             for i, plt in enumerate(self.plt):
                 try:
-                    plt.set_data(data[:,i], events, gtruth)
+                    plt.set_data(data[:, i], events, gtruth)
                 except Exception, ex:
                     self._err.showMessage(str(ex))
 
@@ -373,7 +373,7 @@ class QualityPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.Star1,
                 QtGui.QBrush(CURVECOLOR),
                 CURVECOLOR,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         d.attach(self)
@@ -387,7 +387,7 @@ class QualityPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.Star1,
                 QtGui.QBrush(QtCore.Qt.red),
                 QtCore.Qt.red,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         d.attach(self)
@@ -401,7 +401,7 @@ class QualityPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.Star1,
                 QtGui.QBrush(QtCore.Qt.blue),
                 QtCore.Qt.blue,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         d.attach(self)
@@ -414,7 +414,7 @@ class QualityPlot(Qwt5.QwtPlot):
                 Qwt5.QwtSymbol.DTriangle,
                 QtGui.QBrush(EVENTCOLOR),
                 EVENTCOLOR,
-                QtCore.QSize(15,15)
+                QtCore.QSize(15, 15)
             )
         )
         e.attach(self)
@@ -448,8 +448,8 @@ class QualityPlot(Qwt5.QwtPlot):
         self._events.setData(events, N.ones(events.size) * self.range)
 
         # range
-        if data is not None and data.size>0:
-            self.setAxisScale(Qwt5.QwtPlot.yLeft, data.min()-1, data.max()+1)
+        if data is not None and data.size > 0:
+            self.setAxisScale(Qwt5.QwtPlot.yLeft, data.min() - 1, data.max() + 1)
 
 #        # replot
 #        self.replot()

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -32,7 +32,6 @@ __docformat__ = 'restructuredtext'
 
 # builtins
 import logging
-import sys
 from select import select
 from threading import Event, Lock, Thread
 from Queue import Queue
@@ -155,16 +154,15 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
 
     ## properties
 
-    @property
-    def status(self):
+    def get_status(self):
         return self._status
-    @status.setter
-    def status(self, value):
+    def set_status(self, value):
         if not isinstance(value, SimPkg):
             return
         if value != self._status:
             self._status = value
             self.q_send.put(self._status)
+    status = property(get_status, set_status)
 
     ## threading handlers with queue propagation
 
@@ -277,11 +275,9 @@ class SimIOManager(object):
 
     ## properties
 
-    @property
-    def status(self):
+    def get_status(self):
         return self._status
-    @status.setter
-    def status(self, value):
+    def set_status(self, value):
         if not isinstance(value, dict):
             return
         if self._status != value:
@@ -291,18 +287,19 @@ class SimIOManager(object):
                 self._srv.status = status_pkg
             else:
                 print 'problem with status value'
+    status = property(get_status, set_status)
 
-    @property
-    def q_recv(self):
+    def get_q_recv(self):
         return self._q_recv
+    q_recv = property(get_q_recv)
 
-    @property
-    def q_send(self):
+    def get_q_send(self):
         return self._q_send
+    q_send = property(get_q_send)
 
-    @property
-    def is_initialized(self):
+    def get_is_initialized(self):
         return self._is_initialized
+    is_initialized = property(get_is_initialized)
 
     ## io methods
 

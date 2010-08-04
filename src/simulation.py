@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -74,11 +74,8 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-# builtins
 from ConfigParser import ConfigParser
 import os.path as osp
-# packages
-# own packages
 from cluster_dynamics import ClusterDynamics
 from data_io import SimIOManager, SimPkg
 from scene import (
@@ -235,7 +232,7 @@ class BaseSimulation(dict):
                 Sample rate to operate.
                 Default=16000.0
         """
-        
+
         self.clear()
 
         # reset private members
@@ -261,38 +258,34 @@ class BaseSimulation(dict):
 
     ## properties
 
-    @property
-    def frame(self):
+    def get_frame(self):
         return self._frame
-    @frame.setter
-    def frame(self, value):
+    def set_frame(self, value):
         self._frame = long(value)
         for ext in self._externals:
             ext.frame(self._frame)
+    frame = property(get_frame, set_frame)
 
-    @property
-    def frame_size(self):
+    def get_frame_size(self):
         return self._frame_size
-    @frame_size.setter
-    def frame_size(self, value):
+    def set_frame_size(self, value):
         self._frame_size = int(value)
         for ext in self._externals:
             ext.frame_size(self._frame_size)
         self.status
+    frame_size = property(get_frame_size, set_frame_size)
 
-    @property
-    def sample_rate(self):
+    def get_sample_rate(self):
         return self._sample_rate
-    @sample_rate.setter
-    def sample_rate(self, value):
+    def set_sample_rate(self, value):
         self._sample_rate = float(value)
         self.cls_dyn.sample_rate = self._sample_rate
         for ext in self._externals:
             ext.sample_rate(self._sample_rate)
         self.status
+    sample_rate = property(get_sample_rate, set_sample_rate)
 
-    @property
-    def status(self):
+    def get_status(self):
         self._status = {
             'frame_size'    : self.frame_size,
             'sample_rate'   : self.sample_rate,
@@ -302,14 +295,15 @@ class BaseSimulation(dict):
         if self.io_man.is_initialized:
             self.io_man.status = self._status
         return self._status
+    status = property(get_status)
 
-    @property
-    def neuron_keys(self):
+    def get_neuron_keys(self):
         return [idx for idx in self if isinstance(self[idx], Neuron)]
+    neuron_keys = property(get_neuron_keys)
 
-    @property
-    def recorder_keys(self):
+    def get_recorder_keys(self):
         return [idx for idx in self if isinstance(self[idx], Recorder)]
+    recorder_keys = property(get_recorder_keys)
 
     ## simulation controll methods
 
@@ -348,7 +342,7 @@ class BaseSimulation(dict):
                 # recorder event
                 if isinstance(self[pkg.ident], Recorder):
 
-                    log_str +='R[%s]:' % pkg.ident
+                    log_str += 'R[%s]:' % pkg.ident
 
                     # position event
                     if pkg.tid == SimPkg.T_POS:
@@ -366,7 +360,7 @@ class BaseSimulation(dict):
                             pos, vel = pos_data
                             log_str += 'MOVE: %s, %s' % (pos, vel)
                             self[pkg.ident].trajectory_pos = pos
-                            # TODO: implemementation of the velocity component
+                            # TODO: implementation of the velocity component
 
                         # weird position event
                         else:
@@ -695,8 +689,9 @@ class BaseSimulation(dict):
                 cfg.set(name, 'snr', str(obj.snr))
 
         # save
-        with open(fname, 'w') as save_file:
-            cfg.write(save_file)
+        save_file = open(fname, 'w')
+        cfg.write(save_file)
+        save_file.close()
 
     ## methods config loading
 
@@ -709,9 +704,7 @@ class BaseSimulation(dict):
                 instance.
         """
 
-        cfg = ConfigParser()
-
-
+        # TODO: implement config file handling
 
     ## special methods
 

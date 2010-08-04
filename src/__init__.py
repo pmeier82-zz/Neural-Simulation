@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82 at googlemail dot com>

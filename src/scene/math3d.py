@@ -311,14 +311,14 @@ def rotation_matrix(angle, direction, point=None):
     cosa = math.cos(angle)
     direction = unit_vector(direction[:3])
     # rotation matrix around unit vector
-    R = numpy.array(((cosa, 0.0,  0.0),
-                     (0.0,  cosa, 0.0),
-                     (0.0,  0.0,  cosa)), dtype=numpy.float64)
+    R = numpy.array(((cosa, 0.0, 0.0),
+                     (0.0, cosa, 0.0),
+                     (0.0, 0.0, cosa)), dtype=numpy.float64)
     R += numpy.outer(direction, direction) * (1.0 - cosa)
     direction *= sina
-    R += numpy.array((( 0.0,         -direction[2],  direction[1]),
-                      ( direction[2], 0.0,          -direction[0]),
-                      (-direction[1], direction[0],  0.0)),
+    R += numpy.array(((0.0, -direction[2], direction[1]),
+                      (direction[2], 0.0, -direction[0]),
+                      (-direction[1], direction[0], 0.0)),
                      dtype=numpy.float64)
     M = numpy.identity(4)
     M[:3, :3] = R
@@ -360,11 +360,11 @@ def rotation_from_matrix(matrix):
     # rotation angle depending on direction
     cosa = (numpy.trace(R33) - 1.0) / 2.0
     if abs(direction[2]) > 1e-8:
-        sina = (R[1, 0] + (cosa-1.0)*direction[0]*direction[1]) / direction[2]
+        sina = (R[1, 0] + (cosa - 1.0) * direction[0] * direction[1]) / direction[2]
     elif abs(direction[1]) > 1e-8:
-        sina = (R[0, 2] + (cosa-1.0)*direction[0]*direction[2]) / direction[1]
+        sina = (R[0, 2] + (cosa - 1.0) * direction[0] * direction[2]) / direction[1]
     else:
-        sina = (R[2, 1] + (cosa-1.0)*direction[1]*direction[2]) / direction[0]
+        sina = (R[2, 1] + (cosa - 1.0) * direction[1] * direction[2]) / direction[0]
     angle = math.atan2(sina, cosa)
     return angle, direction, point
 
@@ -388,10 +388,10 @@ def scale_matrix(factor, origin=None, direction=None):
     """
     if direction is None:
         # uniform scaling
-        M = numpy.array(((factor, 0.0,    0.0,    0.0),
-                         (0.0,    factor, 0.0,    0.0),
-                         (0.0,    0.0,    factor, 0.0),
-                         (0.0,    0.0,    0.0,    1.0)), dtype=numpy.float64)
+        M = numpy.array(((factor, 0.0, 0.0, 0.0),
+                         (0.0, factor, 0.0, 0.0),
+                         (0.0, 0.0, factor, 0.0),
+                         (0.0, 0.0, 0.0, 1.0)), dtype=numpy.float64)
         if origin is not None:
             M[:3, 3] = origin[:3]
             M[:3, 3] *= 1.0 - factor
@@ -486,12 +486,12 @@ def projection_matrix(point, normal, direction=None,
         # perspective projection
         perspective = numpy.array(perspective[:3], dtype=numpy.float64,
                                   copy=False)
-        M[0, 0] = M[1, 1] = M[2, 2] = numpy.dot(perspective-point, normal)
+        M[0, 0] = M[1, 1] = M[2, 2] = numpy.dot(perspective - point, normal)
         M[:3, :3] -= numpy.outer(perspective, normal)
         if pseudo:
             # preserve relative depth
             M[:3, :3] -= numpy.outer(normal, normal)
-            M[:3, 3] = numpy.dot(point, normal) * (perspective+normal)
+            M[:3, 3] = numpy.dot(point, normal) * (perspective + normal)
         else:
             M[:3, 3] = numpy.dot(point, normal) * perspective
         M[3, :3] = -normal
@@ -575,7 +575,7 @@ def projection_from_matrix(matrix, pseudo=False):
                 "no eigenvector not corresponding to eigenvalue 0")
         point = numpy.real(V[:, i[-1]]).squeeze()
         point /= point[3]
-        normal = - M[3, :3]
+        normal = -M[3, :3]
         perspective = M[:3, 3] / numpy.dot(point[:3], normal)
         if pseudo:
             perspective -= normal
@@ -622,14 +622,14 @@ def clip_matrix(left, right, bottom, top, near, far, perspective=False):
         if near <= _EPS:
             raise ValueError("invalid frustrum: near <= 0")
         t = 2.0 * near
-        M = ((-t/(right-left), 0.0, (right+left)/(right-left), 0.0),
-             (0.0, -t/(top-bottom), (top+bottom)/(top-bottom), 0.0),
-             (0.0, 0.0, -(far+near)/(far-near), t*far/(far-near)),
+        M = ((-t / (right - left), 0.0, (right + left) / (right - left), 0.0),
+             (0.0, -t / (top - bottom), (top + bottom) / (top - bottom), 0.0),
+             (0.0, 0.0, -(far + near) / (far - near), t * far / (far - near)),
              (0.0, 0.0, -1.0, 0.0))
     else:
-        M = ((2.0/(right-left), 0.0, 0.0, (right+left)/(left-right)),
-             (0.0, 2.0/(top-bottom), 0.0, (top+bottom)/(bottom-top)),
-             (0.0, 0.0, 2.0/(far-near), (far+near)/(near-far)),
+        M = ((2.0 / (right - left), 0.0, 0.0, (right + left) / (left - right)),
+             (0.0, 2.0 / (top - bottom), 0.0, (top + bottom) / (bottom - top)),
+             (0.0, 0.0, 2.0 / (far - near), (far + near) / (near - far)),
              (0.0, 0.0, 0.0, 1.0))
     return numpy.array(M, dtype=numpy.float64)
 
@@ -750,7 +750,7 @@ def decompose_matrix(matrix):
     if not numpy.linalg.det(P):
         raise ValueError("matrix is singular")
 
-    scale = numpy.zeros((3, ), dtype=numpy.float64)
+    scale = numpy.zeros((3,), dtype=numpy.float64)
     shear = [0, 0, 0]
     angles = [0, 0, 0]
 
@@ -869,10 +869,10 @@ def orthogonalization_matrix(lengths, angles):
     cosa, cosb, cosg = numpy.cos(angles)
     co = (cosa * cosb - cosg) / (sina * sinb)
     return numpy.array((
-        ( a*sinb*math.sqrt(1.0-co*co),  0.0,    0.0, 0.0),
-        (-a*sinb*co,                    b*sina, 0.0, 0.0),
-        ( a*cosb,                       b*cosa, c,   0.0),
-        ( 0.0,                          0.0,    0.0, 1.0)),
+        (a * sinb * math.sqrt(1.0 - co * co), 0.0, 0.0, 0.0),
+        (-a * sinb * co, b * sina, 0.0, 0.0),
+        (a * cosb, b * cosa, c, 0.0),
+        (0.0, 0.0, 0.0, 1.0)),
         dtype=numpy.float64)
 
 
@@ -952,10 +952,10 @@ def superimposition_matrix(v0, v1, scaling=False, usesvd=True):
         xx, yy, zz = numpy.sum(v0 * v1, axis=1)
         xy, yz, zx = numpy.sum(v0 * numpy.roll(v1, -1, axis=0), axis=1)
         xz, yx, zy = numpy.sum(v0 * numpy.roll(v1, -2, axis=0), axis=1)
-        N = ((xx+yy+zz, 0.0, 0.0, 0.0),
-             (yz-zy, xx-yy-zz, 0.0, 0.0),
-             (zx-xz, xy+yx, -xx+yy-zz, 0.0),
-             (xy-yx, zx+xz, yz+zy, -xx-yy+zz))
+        N = ((xx + yy + zz, 0.0, 0.0, 0.0),
+             (yz - zy, xx - yy - zz, 0.0, 0.0),
+             (zx - xz, xy + yx, -xx + yy - zz, 0.0),
+             (xy - yx, zx + xz, yz + zy, -xx - yy + zz))
         # quaternion: eigenvector corresponding to most positive eigenvalue
         l, V = numpy.linalg.eigh(N)
         q = V[:, numpy.argmax(l)]
@@ -1003,8 +1003,8 @@ def euler_matrix(ai, aj, ak, axes='sxyz'):
         firstaxis, parity, repetition, frame = axes
 
     i = firstaxis
-    j = _NEXT_AXIS[i+parity]
-    k = _NEXT_AXIS[i-parity+1]
+    j = _NEXT_AXIS[i + parity]
+    k = _NEXT_AXIS[i - parity + 1]
 
     if frame:
         ai, ak = ak, ai
@@ -1013,30 +1013,30 @@ def euler_matrix(ai, aj, ak, axes='sxyz'):
 
     si, sj, sk = math.sin(ai), math.sin(aj), math.sin(ak)
     ci, cj, ck = math.cos(ai), math.cos(aj), math.cos(ak)
-    cc, cs = ci*ck, ci*sk
-    sc, ss = si*ck, si*sk
+    cc, cs = ci * ck, ci * sk
+    sc, ss = si * ck, si * sk
 
     M = numpy.identity(4)
     if repetition:
         M[i, i] = cj
-        M[i, j] = sj*si
-        M[i, k] = sj*ci
-        M[j, i] = sj*sk
-        M[j, j] = -cj*ss+cc
-        M[j, k] = -cj*cs-sc
-        M[k, i] = -sj*ck
-        M[k, j] = cj*sc+cs
-        M[k, k] = cj*cc-ss
+        M[i, j] = sj * si
+        M[i, k] = sj * ci
+        M[j, i] = sj * sk
+        M[j, j] = -cj * ss + cc
+        M[j, k] = -cj * cs - sc
+        M[k, i] = -sj * ck
+        M[k, j] = cj * sc + cs
+        M[k, k] = cj * cc - ss
     else:
-        M[i, i] = cj*ck
-        M[i, j] = sj*sc-cs
-        M[i, k] = sj*cc+ss
-        M[j, i] = cj*sk
-        M[j, j] = sj*ss+cc
-        M[j, k] = sj*cs-sc
+        M[i, i] = cj * ck
+        M[i, j] = sj * sc - cs
+        M[i, k] = sj * cc + ss
+        M[j, i] = cj * sk
+        M[j, j] = sj * ss + cc
+        M[j, k] = sj * cs - sc
         M[k, i] = -sj
-        M[k, j] = cj*si
-        M[k, k] = cj*ci
+        M[k, j] = cj * si
+        M[k, k] = cj * ci
     return M
 
 
@@ -1066,29 +1066,29 @@ def euler_from_matrix(matrix, axes='sxyz'):
         firstaxis, parity, repetition, frame = axes
 
     i = firstaxis
-    j = _NEXT_AXIS[i+parity]
-    k = _NEXT_AXIS[i-parity+1]
+    j = _NEXT_AXIS[i + parity]
+    k = _NEXT_AXIS[i - parity + 1]
 
     M = numpy.array(matrix, dtype=numpy.float64, copy=False)[:3, :3]
     if repetition:
-        sy = math.sqrt(M[i, j]*M[i, j] + M[i, k]*M[i, k])
+        sy = math.sqrt(M[i, j] * M[i, j] + M[i, k] * M[i, k])
         if sy > _EPS:
-            ax = math.atan2( M[i, j],  M[i, k])
-            ay = math.atan2( sy,       M[i, i])
-            az = math.atan2( M[j, i], -M[k, i])
+            ax = math.atan2(M[i, j], M[i, k])
+            ay = math.atan2(sy, M[i, i])
+            az = math.atan2(M[j, i], -M[k, i])
         else:
-            ax = math.atan2(-M[j, k],  M[j, j])
-            ay = math.atan2( sy,       M[i, i])
+            ax = math.atan2(-M[j, k], M[j, j])
+            ay = math.atan2(sy, M[i, i])
             az = 0.0
     else:
-        cy = math.sqrt(M[i, i]*M[i, i] + M[j, i]*M[j, i])
+        cy = math.sqrt(M[i, i] * M[i, i] + M[j, i] * M[j, i])
         if cy > _EPS:
-            ax = math.atan2( M[k, j],  M[k, k])
-            ay = math.atan2(-M[k, i],  cy)
-            az = math.atan2( M[j, i],  M[i, i])
+            ax = math.atan2(M[k, j], M[k, k])
+            ay = math.atan2(-M[k, i], cy)
+            az = math.atan2(M[j, i], M[i, i])
         else:
-            ax = math.atan2(-M[j, k],  M[j, j])
-            ay = math.atan2(-M[k, i],  cy)
+            ax = math.atan2(-M[j, k], M[j, j])
+            ay = math.atan2(-M[k, i], cy)
             az = 0.0
 
     if parity:
@@ -1127,8 +1127,8 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
         firstaxis, parity, repetition, frame = axes
 
     i = firstaxis + 1
-    j = _NEXT_AXIS[i+parity-1] + 1
-    k = _NEXT_AXIS[i-parity] + 1
+    j = _NEXT_AXIS[i + parity - 1] + 1
+    k = _NEXT_AXIS[i - parity] + 1
 
     if frame:
         ai, ak = ak, ai
@@ -1144,22 +1144,22 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
     sj = math.sin(aj)
     ck = math.cos(ak)
     sk = math.sin(ak)
-    cc = ci*ck
-    cs = ci*sk
-    sc = si*ck
-    ss = si*sk
+    cc = ci * ck
+    cs = ci * sk
+    sc = si * ck
+    ss = si * sk
 
-    quaternion = numpy.empty((4, ), dtype=numpy.float64)
+    quaternion = numpy.empty((4,), dtype=numpy.float64)
     if repetition:
-        quaternion[0] = cj*(cc - ss)
-        quaternion[i] = cj*(cs + sc)
-        quaternion[j] = sj*(cc + ss)
-        quaternion[k] = sj*(cs - sc)
+        quaternion[0] = cj * (cc - ss)
+        quaternion[i] = cj * (cs + sc)
+        quaternion[j] = sj * (cc + ss)
+        quaternion[k] = sj * (cs - sc)
     else:
-        quaternion[0] = cj*cc + sj*ss
-        quaternion[i] = cj*sc - sj*cs
-        quaternion[j] = cj*ss + sj*cc
-        quaternion[k] = cj*cs - sj*sc
+        quaternion[0] = cj * cc + sj * ss
+        quaternion[i] = cj * sc - sj * cs
+        quaternion[j] = cj * ss + sj * cc
+        quaternion[k] = cj * cs - sj * sc
     if parity:
         quaternion[j] *= -1
 
@@ -1174,14 +1174,14 @@ def quaternion_about_axis(angle, axis):
     True
 
     """
-    quaternion = numpy.zeros((4, ), dtype=numpy.float64)
+    quaternion = numpy.zeros((4,), dtype=numpy.float64)
     quaternion[1] = axis[0]
     quaternion[2] = axis[1]
     quaternion[3] = axis[2]
     qlen = vector_norm(quaternion)
     if qlen > _EPS:
-        quaternion *= math.sin(angle/2.0) / qlen
-    quaternion[0] = math.cos(angle/2.0)
+        quaternion *= math.sin(angle / 2.0) / qlen
+    quaternion[0] = math.cos(angle / 2.0)
     return quaternion
 
 
@@ -1206,10 +1206,10 @@ def quaternion_matrix(quaternion):
     q *= math.sqrt(2.0 / nq)
     q = numpy.outer(q, q)
     return numpy.array((
-        (1.0-q[2, 2]-q[3, 3],     q[1, 2]-q[3, 0],     q[1, 3]+q[2, 0], 0.0),
-        (    q[1, 2]+q[3, 0], 1.0-q[1, 1]-q[3, 3],     q[2, 3]-q[1, 0], 0.0),
-        (    q[1, 3]-q[2, 0],     q[2, 3]+q[1, 0], 1.0-q[1, 1]-q[2, 2], 0.0),
-        (                0.0,                 0.0,                 0.0, 1.0)
+        (1.0 - q[2, 2] - q[3, 3], q[1, 2] - q[3, 0], q[1, 3] + q[2, 0], 0.0),
+        (q[1, 2] + q[3, 0], 1.0 - q[1, 1] - q[3, 3], q[2, 3] - q[1, 0], 0.0),
+        (q[1, 3] - q[2, 0], q[2, 3] + q[1, 0], 1.0 - q[1, 1] - q[2, 2], 0.0),
+        (0.0, 0.0, 0.0, 1.0)
         ), dtype=numpy.float64)
 
 
@@ -1247,7 +1247,7 @@ def quaternion_from_matrix(matrix, isprecise=False):
     """
     M = numpy.array(matrix, dtype=numpy.float64, copy=False)[:4, :4]
     if isprecise:
-        q = numpy.empty((4, ), dtype=numpy.float64)
+        q = numpy.empty((4,), dtype=numpy.float64)
         t = numpy.trace(M)
         if t > M[3, 3]:
             q[0] = t
@@ -1277,10 +1277,10 @@ def quaternion_from_matrix(matrix, isprecise=False):
         m21 = M[2, 1]
         m22 = M[2, 2]
         # symmetric matrix K
-        K = numpy.array(((m00-m11-m22, 0.0, 0.0, 0.0),
-                         (m01+m10, m11-m00-m22, 0.0, 0.0),
-                         (m02+m20, m12+m21, m22-m00-m11, 0.0),
-                         (m21-m12, m02-m20, m10-m01, m00+m11+m22)))
+        K = numpy.array(((m00 - m11 - m22, 0.0, 0.0, 0.0),
+                         (m01 + m10, m11 - m00 - m22, 0.0, 0.0),
+                         (m02 + m20, m12 + m21, m22 - m00 - m11, 0.0),
+                         (m21 - m12, m02 - m20, m10 - m01, m00 + m11 + m22)))
         K /= 3.0
         # quaternion is eigenvector of K that corresponds to largest eigenvalue
         l, V = numpy.linalg.eigh(K)
@@ -1302,10 +1302,10 @@ def quaternion_multiply(quaternion1, quaternion0):
     w0, x0, y0, z0 = quaternion0
     w1, x1, y1, z1 = quaternion1
     return numpy.array((
-        -x1*x0 - y1*y0 - z1*z0 + w1*w0,
-         x1*w0 + y1*z0 - z1*y0 + w1*x0,
-        -x1*z0 + y1*w0 + z1*x0 + w1*y0,
-         x1*y0 - y1*x0 + z1*w0 + w1*z0), dtype=numpy.float64)
+        - x1 * x0 - y1 * y0 - z1 * z0 + w1 * w0,
+         x1 * w0 + y1 * z0 - z1 * y0 + w1 * x0,
+        - x1 * z0 + y1 * w0 + z1 * x0 + w1 * y0,
+         x1 * y0 - y1 * x0 + z1 * w0 + w1 * z0), dtype=numpy.float64)
 
 
 def quaternion_conjugate(quaternion):
@@ -1318,7 +1318,7 @@ def quaternion_conjugate(quaternion):
 
     """
     return numpy.array((quaternion[0], -quaternion[1],
-                       -quaternion[2], -quaternion[3]), dtype=numpy.float64)
+                       - quaternion[2], -quaternion[3]), dtype=numpy.float64)
 
 
 def quaternion_inverse(quaternion):
@@ -1418,10 +1418,10 @@ def random_quaternion(rand=None):
     pi2 = math.pi * 2.0
     t1 = pi2 * rand[1]
     t2 = pi2 * rand[2]
-    return numpy.array((numpy.cos(t2)*r2,
-                        numpy.sin(t1)*r1,
-                        numpy.cos(t1)*r1,
-                        numpy.sin(t2)*r2), dtype=numpy.float64)
+    return numpy.array((numpy.cos(t2) * r2,
+                        numpy.sin(t1) * r1,
+                        numpy.cos(t1) * r1,
+                        numpy.sin(t2) * r2), dtype=numpy.float64)
 
 
 def random_rotation_matrix(rand=None):
@@ -1482,7 +1482,7 @@ class Arcball(object):
             initial = numpy.array(initial, dtype=numpy.float64)
             if initial.shape == (4, 4):
                 self._qdown = quaternion_from_matrix(initial)
-            elif initial.shape == (4, ):
+            elif initial.shape == (4,):
                 initial /= vector_norm(initial)
                 self._qdown = initial
             else:
@@ -1547,7 +1547,7 @@ class Arcball(object):
 
     def next(self, acceleration=0.0):
         """Continue rotation in direction of last drag."""
-        q = quaternion_slerp(self._qpre, self._qnow, 2.0+acceleration, False)
+        q = quaternion_slerp(self._qpre, self._qnow, 2.0 + acceleration, False)
         self._qpre, self._qnow = self._qnow, q
 
     def matrix(self):
@@ -1560,7 +1560,7 @@ def arcball_map_to_sphere(point, center, radius):
     v = numpy.array(((point[0] - center[0]) / radius,
                      (center[1] - point[1]) / radius,
                      0.0), dtype=numpy.float64)
-    n = v[0]*v[0] + v[1]*v[1]
+    n = v[0] * v[0] + v[1] * v[1]
     if n > 1.0:
         v /= math.sqrt(n) # position outside of sphere
     else:
@@ -1692,7 +1692,7 @@ def unit_vector(data, axis=None, out=None):
         if out is not data:
             out[:] = numpy.array(data, copy=False)
         data = out
-    length = numpy.atleast_1d(numpy.sum(data*data, axis))
+    length = numpy.atleast_1d(numpy.sum(data * data, axis))
     numpy.sqrt(length, length)
     if axis is not None:
         length = numpy.expand_dims(length, axis)
@@ -1798,6 +1798,5 @@ def is_same_transform(matrix0, matrix1):
 
 if __name__ == '__main__':
     import doctest
-    import random
     numpy.set_printoptions(suppress=True, precision=5)
     doctest.testmod()

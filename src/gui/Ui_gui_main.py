@@ -22,7 +22,7 @@ class Ui_SimGui(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/neural_sim_server.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SimGui.setWindowIcon(icon)
         SimGui.setDockNestingEnabled(True)
-        SimGui.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AnimatedDocks)
+        SimGui.setDockOptions(QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AnimatedDocks)
         SimGui.setUnifiedTitleAndToolBarOnMac(True)
         self.centralwidget = QtGui.QWidget(SimGui)
         self.centralwidget.setObjectName("centralwidget")

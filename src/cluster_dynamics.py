@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -69,30 +69,27 @@ class ClusterDynamics(dict):
 
     ## properties
 
-    @property
-    def o2rate(self):
+    def get_o2rate(self):
         return self._o2rate
-    @o2rate.setter
-    def o2rate(self, value):
+    def set_o2rate(self, value):
         self._o2rate = float(value)
+    o2_rate = property(get_o2rate, set_o2rate)
 
-    @property
-    def o3rate(self):
+    def get_o3rate(self):
         return self._o3rate
-    @o3rate.setter
-    def o3rate(self, value):
+    def set_o3rate(self, value):
         self._o3rate = float(value)
+    o3_rate = property(get_o3rate, set_o3rate)
 
-    @property
-    def sample_rate(self):
+    def get_sample_rate(self):
         return self._srate
-    @sample_rate.setter
-    def sample_rate(self, value):
+    def set_sample_rate(self, value):
         self._srate = float(value)
+    sample_rate = property(get_sample_rate, set_sample_rate)
 
-    @property
-    def singleton_offset(self):
+    def get_singleton_offset(self):
         return self._soffs
+    singleton_offset = property(get_singleton_offset)
 
     ## interface
 
@@ -126,7 +123,7 @@ class ClusterDynamics(dict):
             self[cls_idx] = {}
 
         # append to cluster and return cls_idx
-        self[cls_idx][id(neuron)] =[neuron, []]
+        self[cls_idx][id(neuron)] = [neuron, []]
         return cls_idx
 
     def remove_neuron(self, key):
@@ -296,7 +293,7 @@ def cluster_process(single_rates, nsmpls, srate, o2rate=5.0, o3rate=1.0):
             my_ev = int(N.rand() * nsmpls)
             u1_ev, _ = find_close(my_ev, rval[u1])
             u2_ev, _ = find_close(my_ev, rval[u2])
-            my_ev = jitter_overlaps(my_ev, int(srate/1000.0), 2)
+            my_ev = jitter_overlaps(my_ev, int(srate / 1000.0), 2)
 
             # save info and replace events with new overlap event
             rval[u1].insert(u1_ev, my_ev[0])
@@ -324,7 +321,7 @@ def cluster_process(single_rates, nsmpls, srate, o2rate=5.0, o3rate=1.0):
             u1_ev, _ = find_close(my_ev, rval[u1])
             u2_ev, _ = find_close(my_ev, rval[u2])
             u3_ev, _ = find_close(my_ev, rval[u3])
-            my_ev = jitter_overlaps(my_ev, int(srate/1000.0), 3)
+            my_ev = jitter_overlaps(my_ev, int(srate / 1000.0), 3)
 
             # save info and replace events with new overlap event
             rval[u1].insert(u1_ev, my_ev[0])
@@ -356,14 +353,13 @@ def label_event(props):
     # inits
     if props.sum() != 1.0:
         raise ValueError('props is not normalized')
-    rval = None
 
     # labeling
     rnd = N.rand()
     for i in xrange(props.size):
         if rnd <= props.cumsum()[i]:
             return i
-    return -1
+    return - 1
 
 
 def find_close(x, y_vec):
@@ -430,7 +426,7 @@ def poi_pproc_refper(frate, srate, nsmpls, refper=2.5):
     # inits
     rval = []
     lam = float(srate - frate * refper) / float(frate)
-    interval_kernel = lambda: -lam * N.log(N.rand())
+    interval_kernel = lambda:-lam * N.log(N.rand())
 
     # produce train
     now = refper
@@ -461,7 +457,7 @@ if __name__ == '__main__':
     # inits
     srate = 16000.0
     nsmpls = 2 * srate
-    urates = N.array([35.,  10.,  15.])
+    urates = N.array([35., 10., 15.])
     uprops = urates / urates.sum()
     ulabels = ['N35', 'N10', 'N15']
 
@@ -482,7 +478,7 @@ if __name__ == '__main__':
     print
     print '## BASICS ##'
     print 'testing label generator with [rates, props, labels]:',
-    print urates, uprops,  ulabels
+    print urates, uprops, ulabels
     events = []
     print 'generateing', len(events_wo_lbls), 'labels:',
     for e in events_wo_lbls:
@@ -510,7 +506,7 @@ if __name__ == '__main__':
         def __str__(self):
             return 'neuron%02d' % self.name
     CD = ClusterDynamics(srate)
-    nrns = [mynrn(5*(i+1), i) for i in xrange(7)]
+    nrns = [mynrn(5 * (i + 1), i) for i in xrange(7)]
     print 'adding for no cluster:', CD.add_neuron(nrns[0])
     print 'adding for cluster 5:', CD.add_neuron(nrns[1], 5)
     print 'adding for cluster 5:', CD.add_neuron(nrns[2], 5)

@@ -49,7 +49,7 @@ class Ui_AddRecorderDialog(object):
         self.lo_form0_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.edt_snr)
         self.lo_vert0.addLayout(self.lo_form0_2)
         self.bbox_dialog = QtGui.QDialogButtonBox(AddRecorderDialog)
-        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort|QtGui.QDialogButtonBox.Save)
+        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort | QtGui.QDialogButtonBox.Save)
         self.bbox_dialog.setCenterButtons(True)
         self.bbox_dialog.setObjectName("bbox_dialog")
         self.lo_vert0.addWidget(self.bbox_dialog)

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -24,15 +24,8 @@
 # 2010-06-08
 #
 
-"""interpolation routines"""
+"""linear interpolation routines"""
 __docformat__ = 'restructuredtext'
-
-
-##---IMPORTS
-
-from scipy.interpolate import interp1d, interp2d
-import scipy as N
-from scipy.linalg import norm
 
 
 ##--FUNCTIONS
@@ -72,5 +65,4 @@ def LERP3(x, y, z, v000, v100, v010, v110, v001, v101, v011, v111):
 ##---MAIN
 
 if __name__ == '__main__':
-
-   pass
+    pass

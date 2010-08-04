@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -32,7 +32,6 @@ __doctype__ = 'restructuredtext'
 
 # packages
 import scipy as N
-from scipy.stats import poisson
 # own packages
 from sim_object import SimObject
 from math3d import quaternion_matrix, vector_norm
@@ -94,32 +93,29 @@ class Neuron(SimObject):
 
     ## properties
 
-    @property
-    def active(self):
+    def get_active(self):
         return self._active
-    @active.setter
-    def active(self, value):
+    def set_active(self, value):
         self._active = bool(value)
+    active = property(get_active, set_active)
 
-    @property
-    def amplitude(self):
+    def get_amplitude(self):
         return self._amplitude
-    @amplitude.setter
-    def amplitude(self, value):
+    def set_amplitude(self, value):
         self._amplitude = float(value)
+    amplitude = property(get_amplitude, set_amplitude)
 
-    @property
-    def rate_of_fire(self):
+    def get_rate_of_fire(self):
         return self._rate_of_fire
-    @rate_of_fire.setter
-    def rate_of_fire(self, value):
+    def set_rate_of_fire(self, value):
         self._rate_of_fire = float(value)
         if self._rate_of_fire <= 0.0:
             self._rate_of_fire = 1.0
+    rate_of_fire = property(get_rate_of_fire, set_rate_of_fire)
 
-    @property
-    def sphere_radius(self):
+    def get_sphere_radius(self):
         return self._neuron_data.sphere_radius
+    sphere_radius = property(get_sphere_radius)
 
     ## event slots
 
@@ -202,14 +198,14 @@ class Neuron(SimObject):
         # if we have orientation, rotate rel_pos accordingly
         if self._orientation:
             rel_pos = N.dot(
-                quaternion_matrix(self._orientation)[:3,:3],
+                quaternion_matrix(self._orientation)[:3, :3],
                 rel_pos.T
             ).T
 
         # copy waveforms per position (resp. channel)
         for i in xrange(rel_pos.shape[0]):
             if rel_pos_valid[i]:
-                wf[:,i] = self._neuron_data.get_data(rel_pos[i])
+                wf[:, i] = self._neuron_data.get_data(rel_pos[i])
         # adjust for amplitude
         if self._amplitude != 1.0:
             wf *= self._amplitude

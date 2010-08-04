@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -64,9 +64,9 @@ class SimQt4Delegate(QtCore.QObject, SimExternalDelegate):
 
     ## signals
 
-    sig_frame       = QtCore.pyqtSignal(long)
-    sig_frame_size  = QtCore.pyqtSignal(int)
-    sig_log         = QtCore.pyqtSignal(str)
+    sig_frame = QtCore.pyqtSignal(long)
+    sig_frame_size = QtCore.pyqtSignal(int)
+    sig_log = QtCore.pyqtSignal(str)
     sig_sample_rate = QtCore.pyqtSignal(float)
 
     ## constructor
@@ -221,11 +221,11 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self._log_model.removeRow(0)
         self._log_model.insertRow(self._log_model.rowCount())
         self._log_model.setData(
-            self._log_model.index(self._log_model.rowCount()-1),
+            self._log_model.index(self._log_model.rowCount() - 1),
             str(log_str)
         )
         self.lst_log.scrollTo(
-            self._log_model.index(self._log_model.rowCount()-1)
+            self._log_model.index(self._log_model.rowCount() - 1)
         )
 
     @QtCore.pyqtSlot(long)
@@ -304,7 +304,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
         for i in xrange(nframes):
             self._sim.simulate()
-            self.progress.setValue(i+1)
+            self.progress.setValue(i + 1)
         self.progress.reset()
         self.progress.setVisible(False)
 
@@ -825,5 +825,5 @@ def main(args):
 
 if __name__ == '__main__':
 
-    import sys 
+    import sys
     sys.exit(main(sys.argv))

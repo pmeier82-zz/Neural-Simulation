@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -120,7 +120,7 @@ class ArNoiseGen(NoiseGen):
         if len(noise_params) == 1:
             if not issubclass(noise_params[0].__class__, N.ndarray):
                 raise ValueError('noise strip should be ndarray')
-            A, C, c = ar_fit(noise)
+            A, C = ar_fit(noise_params[0])[:2]
         elif len(noise_params) == 2:
             if not issubclass(noise_params[0].__class__, N.ndarray) or \
             not issubclass(noise_params[1].__class__, N.ndarray):
@@ -132,7 +132,7 @@ class ArNoiseGen(NoiseGen):
         # check model
         if A.shape[0] != C.shape[0] != C.shape[1]:
             raise ValueError('A and C matrix dont fit each other. %s and %s' %
-                (str(A.shape), str(B.shape)))
+                (str(A.shape), str(C.shape)))
         if ar_model_check_stable(A) is False:
             raise ValueError('estimated model is not stable')
 
@@ -166,7 +166,7 @@ class ArNoiseGen(NoiseGen):
         # generate noise
         for k in xrange(size):
             rval[k] += N.dot(self.coeffs_mem, self.coeffs)
-            self.coeffs_mem.extendleft(rval[k,::-1])
+            self.coeffs_mem.extendleft(rval[k, ::-1])
         return rval
 
 

@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+##!/usr/bin/env python
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -41,17 +41,17 @@ if version < '2.2.3':
 ##---STINGS
 
 ##required
-NAME                = 'Neural Simulation'
-VERSION             = '0.3.a12'
-URL                 = 'http://ni.cs.tu-berlin.de'
-DESCRIPTION         = 'A simulation framework for extracellular recordings'
+NAME = 'Neural Simulation'
+VERSION = '0.3.a12'
+URL = 'http://ni.cs.tu-berlin.de'
+DESCRIPTION = 'A simulation framework for extracellular recordings'
 ## mandatory
-AUTHOR              = 'Neural Simulation Team'
-AUTHOR_EMAIL        = 'ff@ni.cs.tu-berlin.de'
-MAINTAINER          = 'Philipp Meier'
-MAINTAINER_EMAIL    = 'pmeier82@googlemail.com'
+AUTHOR = 'Neural Simulation Team'
+AUTHOR_EMAIL = 'ff@ni.cs.tu-berlin.de'
+MAINTAINER = 'Philipp Meier'
+MAINTAINER_EMAIL = 'pmeier82@googlemail.com'
 ## long strings
-LONG_DESCRIPTION    = """%s
+LONG_DESCRIPTION = """%s
 
 Extracellular recordings are a key tool to study the activity of
 neurons in vivo. Especially in the case of experiments with behaving
@@ -79,20 +79,20 @@ spike sorter is possible.
 
 setup(
     # package identification
-    name = NAME,
-    version = VERSION,
+    name=NAME,
+    version=VERSION,
     # contact information
-    author = AUTHOR,
-    author_email = AUTHOR_EMAIL,
-    maintainer = MAINTAINER,
-    maintainer_email = MAINTAINER_EMAIL,
-    url = URL,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    maintainer=MAINTAINER,
+    maintainer_email=MAINTAINER_EMAIL,
+    url=URL,
     # description strings
-    description = DESCRIPTION,
-    long_description = LONG_DESCRIPTION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     # package paths
-    packages = ['nrl_sim'],
-    package_dir = {
+    packages=['nrl_sim'],
+    package_dir={
         '':'src'
     },
     # package option
@@ -101,7 +101,7 @@ setup(
     # licens information
     license='EUPL v1.1',
     # trove classifiers
-    classifiers = [
+    classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: European Union Public Licence 1.1 (EUPL 1.1)',
         'Operating System :: OS Independent',

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -165,9 +165,9 @@ class NeuronData(object):
         reference_pos = N.floor(scaled_pos)
 
         #Grid coordinates of unit cube in which we want to interpolate
-        x = N.array([0., 0., 0., 0., 1., 1., 1., 1.])+reference_pos[0]
-        y = N.array([0., 1., 1., 0., 0., 1., 1., 0.])+reference_pos[1]
-        z = N.array([0., 0., 1., 1., 0., 0., 1., 1.])+reference_pos[2]
+        x = N.array([0., 0., 0., 0., 1., 1., 1., 1.]) + reference_pos[0]
+        y = N.array([0., 1., 1., 0., 0., 1., 1., 0.]) + reference_pos[1]
+        z = N.array([0., 0., 1., 1., 0., 0., 1., 1.]) + reference_pos[2]
 
         v = N.zeros((8, len(phase)))
 
@@ -197,7 +197,7 @@ class NeuronData(object):
 
         offset = (grid_size - 1) / 2
         return (
-            grid_size**2 * (pos[0] + offset) +
+            grid_size ** 2 * (pos[0] + offset) +
             grid_size * (pos[1] + offset) +
             (pos[2] + offset)
         )
@@ -212,7 +212,7 @@ class NeuronData(object):
         else:
             return self.filename == other.filename
     def __hash__(self):
-        return hash(ospp.join(self.dirname, self.fname))
+        return hash(osp.join(self.dirname, self.fname))
 
 
 class NeuronDataContainer(dict):
@@ -271,7 +271,7 @@ class NeuronDataContainer(dict):
                                 continue
 
             else:
-                continueq
+                continue
 
         return rval
 
@@ -343,7 +343,7 @@ if __name__ == '__main__':
         # plot phil interpolation
         t0 = datetime.now()
         wave = neuron.get_data(
-            N.array((-10+.1*i, -10+.1*i, -10+.1*i))*neuron.grid_step
+            N.array((-10 + .1 * i, -10 + .1 * i, -10 + .1 * i)) * neuron.grid_step
         )
         t1 = datetime.now()
         times_phil += t1 - t0

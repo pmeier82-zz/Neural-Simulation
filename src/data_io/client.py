@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -30,13 +30,13 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-# builtins
+import scipy as N
 from select import select
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Event, Thread
 from time import sleep
 from Queue import Queue
-# own packages
+
 from package import SimPkg, recv_pkg, send_pkg
 
 
@@ -156,7 +156,6 @@ class SimIOConnection(Thread):
 if __name__ == '__main__':
 
     from Queue import Empty
-    from time import sleep
 
     print 'initialize'
     q_r, q_s = Queue(), Queue()
@@ -179,7 +178,7 @@ if __name__ == '__main__':
                 print 'client not alive :('
                 break
             if client.status is not None and not moved:
-                ident = client.status[client.status[:,1]==20,0]
+                ident = client.status[client.status[:, 1] == 20, 0]
                 pos_pkg = SimPkg(tid=SimPkg.T_STS, ident=ident, cont=N.asarray([150, 9999]))
                 q_s.put(pos_pkg)
                 moved = True

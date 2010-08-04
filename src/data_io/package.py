@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -101,7 +101,7 @@ class ContentItem(object):
     ## special methods
 
     def __call__(self):
-       return self.payload
+        return self.payload
 
     def __len__(self):
         return self.HLEN + self.cont.nbytes
@@ -163,7 +163,7 @@ class SimPkg(object):
 
         # contents
         if not isinstance(cont, tuple):
-            cont = (cont, )
+            cont = (cont,)
         for item in cont:
             self.cont.append(ContentItem(item))
 
@@ -188,7 +188,7 @@ class SimPkg(object):
     ## special methods
 
     def __call__(self):
-       return self.payload
+        return self.payload
 
     def __eq__(self, other):
         if not isinstance(other, SimPkg):
@@ -241,20 +241,20 @@ class SimPkg(object):
 
         # read header
         idx = SimPkg.HLEN
-        tid, ident, frame, nitems= unpack(SimPkg.HDEF, data[:idx])
+        tid, ident, frame, nitems = unpack(SimPkg.HDEF, data[:idx])
         cont = []
 
         # content loop
         while idx < len(data):
 
             # read contents header
-            dim0, dim1, nbytes, dtype_str = unpack(ContentItem.HDEF, data[idx:idx+ContentItem.HLEN])
+            dim0, dim1, nbytes, dtype_str = unpack(ContentItem.HDEF, data[idx:idx + ContentItem.HLEN])
 
             idx += ContentItem.HLEN
 
             # read content data
             cont_item = N.fromstring(
-                data[idx:idx+nbytes],
+                data[idx:idx + nbytes],
                 dtype=N.dtype(dtype_str)
             )
             if dim0 >= 0:
@@ -268,6 +268,7 @@ class SimPkg(object):
             idx += nbytes
 
         # return
+        assert len(cont) == nitems, 'cont list length (%s) does not match nitems (%s)!' % (len(cont), nitems)
         return SimPkg(tid, ident, frame, tuple(cont))
 
 
@@ -278,7 +279,7 @@ def receive_n_bytes(sock, nbytes):
 
     received = 0
     buf = ''
-    while received != n:
+    while received != nbytes:
         temp = sock.recv(nbytes - received)
         if not temp:
             raise IOError('remote connection closed')
@@ -321,7 +322,7 @@ if __name__ == '__main__':
 
     print
     print 'PACKAGE TEST - constructor with randn(4,4) and arange(10)'
-    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (N.randn(4,4), N.arange(10)))
+    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (N.randn(4, 4), N.arange(10)))
     print mypkg
     print
     print 'PACKAGE TEST - from package'

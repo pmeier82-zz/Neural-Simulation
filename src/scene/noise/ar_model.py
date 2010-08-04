@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+#﻿# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -92,9 +92,9 @@ def ar_fit(p_data, p_or_plist=range(100), selector='sbc'):
     # R = |          |
     #     |  0   R22 |
     #
-    R11 = R[:np,:np]
-    R12 = R[:np,npmax:]
-    R22 = R[np:,npmax:]
+    R11 = R[:np, :np]
+    R12 = R[:np, npmax:]
+    R22 = R[np:, npmax:]
 
     # build the model
     A = N.dot(NL.inv(R11), R12).T
@@ -136,7 +136,7 @@ def _ar_model_select(R, m, ne, p_range):
     # R = |          |
     #     |  0   R22 |
     #
-    R22 = R[np[-1]:np[-1]+m,:][:,np[-1]:np[-1]+m]
+    R22 = R[np[-1]:np[-1] + m, :][:, np[-1]:np[-1] + m]
     invR22 = NL.inv(R22)
     Mp = N.dot(invR22, invR22.T)
 
@@ -147,18 +147,18 @@ def _ar_model_select(R, m, ne, p_range):
         if p_range[i] < p_max:
 
             # downdated part of R
-            Rp = R[np[i]:np[i]+m,:][:,np[-1]:np[-1]+m]
+            Rp = R[np[i]:np[i] + m, :][:, np[-1]:np[-1] + m]
 
             # woodbury formular
-            L = NL.cholesky(N.eye(m) + N.dot(N.dot(Rp,Mp), Rp.T), lower=True)
+            L = NL.cholesky(N.eye(m) + N.dot(N.dot(Rp, Mp), Rp.T), lower=True)
             Np = N.dot(N.dot(NL.inv(L), Rp), Mp)
             Mp = Mp - N.dot(Np.T, Np)
 
-            ldp[i] = ldp[i+1] + 2.0 * N.log(NL.det(L))
+            ldp[i] = ldp[i + 1] + 2.0 * N.log(NL.det(L))
 
         # selector metrics
-        sbc[i] = ldp[i]/m - N.log(ne) * (ne - np[i])/ne
-        fpe[i] = ldp[i]/m - N.log(ne * (ne - np[i])/(ne + np[i]))
+        sbc[i] = ldp[i] / m - N.log(ne) * (ne - np[i]) / ne
+        fpe[i] = ldp[i] / m - N.log(ne * (ne - np[i]) / (ne + np[i]))
 
     # return
     return sbc, fpe, ldp, np
@@ -182,15 +182,15 @@ def _ar_model_qr(data, p=1):
 
     # compute predictors
     for i in xrange(p):
-        K[:,m*i:m*(i+1)] = data[p-i-1:n-i-1,:]
-    K[:,np:np+m] = data[p:n,:]
+        K[:, m * i:m * (i + 1)] = data[p - i - 1:n - i - 1, :]
+    K[:, np:np + m] = data[p:n, :]
 
     # contition the matrix and factorize
-    scale = N.sqrt( ((np+m)**2 + np + m + 1) * EPS)
+    scale = N.sqrt(((np + m) ** 2 + np + m + 1) * EPS)
     R = NL.qr(
         N.concatenate((
             K,
-            scale * N.diag([NL.norm(K[:,i]) for i in xrange(K.shape[1])])
+            scale * N.diag([NL.norm(K[:, i]) for i in xrange(K.shape[1])])
         )),
         mode='r'
     )
@@ -239,11 +239,11 @@ def _ar_model_sim(A, C, n=1, n_discard=0, mean=None, check=False):
 
     for k in xrange(p, p + n_discard + n):
         for j in xrange(p):
-            x[j,:] = N.dot(rval[k-j-1,:], A[:,j*m:(j+1)*m])
-        rval[k,:] = x.sum(axis=0) + err[k-p,:]
+            x[j, :] = N.dot(rval[k - j - 1, :], A[:, j * m:(j + 1) * m])
+        rval[k, :] = x.sum(axis=0) + err[k - p, :]
 
     # return
-    return rval[p+n_discard:,:]
+    return rval[p + n_discard:, :]
 
 
 def ar_model_check_stable(A):
@@ -264,8 +264,8 @@ def ar_model_check_stable(A):
     A1 = N.concatenate((
         A,
         N.concatenate((
-            N.eye((p-1)*m),
-            N.zeros(((p-1)*m, m))
+            N.eye((p - 1) * m),
+            N.zeros(((p - 1) * m, m))
         ), axis=1)
     ))
     lambdas = NL.eigvals(A1)
@@ -286,7 +286,7 @@ def get_noise_sample(idx=None, size=None, filename=None):
         size = 10000
 
     # load data
-    from spike.util.datafile import XpdFile
+    from common.datafile import XpdFile
     data = XpdFile(filename).get_data(item=15)
 
     # return
@@ -295,7 +295,7 @@ def get_noise_sample(idx=None, size=None, filename=None):
         idx = 0
     if idx is None:
         idx = NR.randint(data.shape[0] - size)
-    return data[idx:idx+size].copy()
+    return data[idx:idx + size].copy()
 
 
 ##---MAIN
@@ -304,23 +304,23 @@ if __name__ == '__main__':
 
     noise = get_noise_sample()
     noise = noise.astype('float64')
-    noise = noise[:10000,:]
+    noise = noise[:10000, :]
 
     A, C, c = ar_fit(noise)
 
-    from spike.gui.plot import P, dataplot
+    from common.plot import dataplot, P
     P.interactive(True)
     X = _ar_model_sim(A, C, 10000, 0, check=True)
     dataplot(noise)
     dataplot(X)
 
-    from spike.util import TimeSeriesCovE
+    from common import TimeSeriesCovE
     TS_noise = TimeSeriesCovE(tf=65)
     TS_noise.update(noise)
     P.matshow(TS_noise.get_covmx())
-    P.colorbar(boundaries=range(-5,16))
+    P.colorbar(boundaries=range(-5, 16))
 
     TS_X = TimeSeriesCovE(tf=65)
     TS_X.update(X)
     P.matshow(TS_X.get_covmx())
-    P.colorbar(boundaries=range(-5,16))
+    P.colorbar(boundaries=range(-5, 16))

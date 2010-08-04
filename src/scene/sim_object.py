@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 ################################################################################
 ##
 ##  Copyright 2010 Philipp Meier <pmeier82@googlemail.com>
@@ -94,30 +94,26 @@ class SimObject(object):
 
     ## properties
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name
-    @name.setter
-    def name(self, value):
+    def set_name(self, value):
         self._name = str(value)
+    name = property(get_name, set_name)
 
-    @property
-    def position(self):
+    def get_position(self):
         return self._position
-    @position.setter
-    def position(self, value):
+    def set_position(self, value):
         self._position = N.asarray(value)
+    position = property(get_position, set_position)
 
-    @property
-    def orientation(self):
+    def get_orientation(self):
         return self._orientation
-    @orientation.setter
-    def orientation(self, value):
+    def set_orientation(self, value):
         if isinstance(value, (list, N.ndarray)):
             value = N.asarray(value)
             # find quaternion for rotation
-            n = N.cross([0,0,1], unit_vector(value[:3]))
-            phi = N.arccos(N.dot([0,0,1], unit_vector(value[:3])))
+            n = N.cross([0, 0, 1], unit_vector(value[:3]))
+            phi = N.arccos(N.dot([0, 0, 1], unit_vector(value[:3])))
             self._orientation = quaternion_about_axis(phi, n)
         elif value is True:
             # random orientation
@@ -125,30 +121,29 @@ class SimObject(object):
         else:
             # other stuff goes no orientation
             self._orientation = False
+    orientation = property(get_orientation, set_orientation)
 
-    @property
-    def sample_rate(self):
+    def get_sample_rate(self):
         return self._sample_rate
-    @sample_rate.setter
-    def sample_rate(self, value):
+    def set_sample_rate(self, value):
         self._sample_rate = float(value)
         if self._sample_rate <= 0.0:
             self._sample_rate = 1.0
+    sample_rate = property(get_sample_rate, set_sample_rate)
 
-    @property
-    def points(self):
+    def get_points(self):
         # if we have no points, return self.position
         if self._points is None:
-            rval = N.zeros((1,3,))
+            rval = N.zeros((1, 3,))
         else:
             rval = self._points.copy()
         if self.orientation is not False:
-            rval = N.dot(quaternion_matrix(self.orientation)[:3,:3], rval.T).T
+            rval = N.dot(quaternion_matrix(self.orientation)[:3, :3], rval.T).T
         rval += self.position
         return N.asarray(rval)
-    @points.setter
-    def points(self, value):
+    def set_points(self, value):
         self._points = value
+    points = property(get_points, set_points)
 
     ## special methods
 
