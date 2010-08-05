@@ -80,7 +80,7 @@ setup(
     download_url='http://github.com/pmeier82/Neural-Simulation/zipball/master',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    packages=['nsim', 'nsim.data_io', 'nsim.gui', 'nsim.scene'],
+    packages=['nsim', 'nsim.data_io', 'nsim.gui', 'nsim.scene', 'nsim.scene.data', 'nsim.scene.noise'],
     package_data={'res':['*.*'],
                   'nsim.gui':['*.ui', '*.qrc', '*.png']},
     zip_safe=False,
