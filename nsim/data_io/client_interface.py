@@ -344,6 +344,9 @@ class NTrodeDataInterface(QtCore.QObject):
     def on_notify(self):
         """called if notified for new package"""
 
+        if self._io is None or not self._io.is_alive():
+            return
+
         while not self._io.q_recv.empty():
 
             # try to get a package
@@ -397,8 +400,8 @@ class NTrodeDataInterface(QtCore.QObject):
                 meaningfull here. Position along the trajector in µm.
             velocity : float
                 The velocity to use for the movement in µm/s.
-                Default=%s
-        """ % DEFAULT_VELOCITY
+                Default=9999.0
+        """
 
         self._io.q_send.put(
             SimPkg(

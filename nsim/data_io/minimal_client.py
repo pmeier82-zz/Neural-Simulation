@@ -65,8 +65,6 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             axis_range=axis_range,
             replot=True
         )
-        #self.lo_content.addWidget(self.dataplot)
-        self.dataplot.show()
         # IO SETUP
         self.io_params = {
             'cnk_len'   : cnk_len,
@@ -96,6 +94,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         # initialize members
         self._io = NTrodeDataInterface(**self.io_params)
         self._io.initialize()
+        self.dataplot.show()
 
         # connections
         self._io.sig_new_data.connect(self.on_new_data)
@@ -115,6 +114,9 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             self._io.finalize()
             self._io.deleteLater()
             self._io = None
+        self.dataplot.close()
+        self.dataplot.deleteLater()
+        self.dataplot = None
 
         # reset flags
         self._initialized = False
@@ -142,7 +144,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
     @QtCore.pyqtSlot()
     def on_move(self):
 
-        self._io.send_to_position(self.ctl_input_position.value(), DEFAULT_VELOCITY)
+        self._io.send_to_position(float(self.ctl_input_position.value()), DEFAULT_VELOCITY)
 
 
 ##--- MAIN

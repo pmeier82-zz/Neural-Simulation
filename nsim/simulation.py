@@ -365,9 +365,10 @@ class BaseSimulation(dict):
                             continue
 
                         # send position acknowledgement
-                        self.io_man.send_position(
-                            self._frame,
+                        self.io_man.send_package(
+                            SimPkg.T_POS,
                             pkg.ident,
+                            self._frame,
                             self[pkg.ident].trajectory_pos
                         )
 
