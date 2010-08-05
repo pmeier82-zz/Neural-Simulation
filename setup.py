@@ -71,7 +71,7 @@ spike sorter is possible.
 
 setup(
     name='Neural Simulation',
-    version='0.0.54',
+    version='0.1.54',
     author='Philipp Meier',
     author_email='pmeier82@googlemail.com',
     maintainer='Philipp Meier',
