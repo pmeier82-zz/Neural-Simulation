@@ -44,12 +44,12 @@ import traceback
 # packages
 from PyQt4 import QtCore, QtGui
 # own packages
-from gui import (
+from nsim.gui import (
     Ui_AddNeuronDialog,
     Ui_AddRecorderDialog,
     Ui_SimGui
 )
-from simulation import BaseSimulation, SimExternalDelegate
+from nsim.simulation import BaseSimulation, SimExternalDelegate
 
 
 ##---CONSTANTS

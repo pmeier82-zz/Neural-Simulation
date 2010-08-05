@@ -15,7 +15,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from PyQt4 import QtGui
-from data_io import MinimalClient
+from nsim.data_io import MinimalClient
 
 
 ##---CLASSES
