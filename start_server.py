@@ -39,8 +39,7 @@ __doctype__ = 'restructuredtext'
 
 ##---IMPORTS
 
-import sys
-import traceback
+import sys, traceback
 from PyQt4 import QtCore, QtGui
 from nsim.gui import (
     Ui_AddNeuronDialog,
@@ -726,8 +725,8 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
     def error_dialog(self):
         try:
-            from debug_helpers import print_top_100
-            print_top_100()
+#            from debug_helpers import print_top_100
+#            print_top_100()
             ei = sys.exc_info()
 
             QtGui.QMessageBox.critical(
