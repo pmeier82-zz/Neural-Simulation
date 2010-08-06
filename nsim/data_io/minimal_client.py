@@ -15,7 +15,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from PyQt4 import QtCore, QtGui
-from client_interface import DataContainer, NTrodeDataInterface, DEFAULT_VELOCITY
+from client_interface import ChunkContainer, NTrodeDataInterface, DEFAULT_VELOCITY
 from nsim.gui import NTrodePlot, Ui_RecorderControll
 
 
@@ -123,7 +123,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
 
     ## slots
 
-    @QtCore.pyqtSlot(DataContainer)
+    @QtCore.pyqtSlot(ChunkContainer)
     def on_new_data(self, data):
         """slot to fetch newly available data"""
 

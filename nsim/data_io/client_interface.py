@@ -35,31 +35,141 @@ DEFAULT_VELOCITY = 9999.0       # development value
 
 ##---CLASSES
 
-class DataContainer(object):
-    """container class to channel data via signal->slot system
+class ChunkContainer(object):
+    """container class to store data for one chunk
 
-    was introduced because dictionary keys as python str get somehow converted
-    to QString after passing through the signal->slot system
+    was introduced because python strings as dictionary keys get somehow
+    converted to QString after passing through the signal->slot system.
     """
 
-    def __init__(self, noise, wform, gtrth):
+    def __init__(self, cnklen):
         """
         :Parameters:
-            noise : ndarray
-            wform : list of ndarray
-            gtrth : list of ndarray
+            cnklen : int
+                defining how long this chunk is in samples
         """
 
-        self.noise = noise
-        self.wform = wform
-        self.gtrth = gtrth
+        self.cnklen = int(cnklen)
+        self.cnkptr = 0
+        self.noise = None
+        self.units = {}
+        self._finalized = False
 
-    @staticmethod
-    def from_dict(d):
-        noise = d['noise']
-        wform = d['waveform'][::2]
-        gtrth = d['waveform'][1::2]
-        return DataContainer(noise, wform, gtrth)
+    def append(self, item_list):
+        """append to the container the contents of a SimPkg
+        
+        will only append up to the cnk_len!
+        
+        :Parameters:
+            item_list : list
+                The contents of a T_REC package.
+        :Return:
+            None : if append was ok and did not overshoot the chunk length
+            list : residual item_list if the append overshoots the chunk length
+        """
+
+        # checks
+        if len(item_list) == 0:
+            raise ValueError('contents have to include at least the noise strip')
+        if len(item_list) - 1 % 3 != 0:
+            raise ValueError('invalid content count! has to be noise + 3tuples')
+        # TODO: more checks ?
+
+        # prepare
+        rval = None
+        noise = item_list.pop(0)
+        appendlen = noise.shape[0]
+        if self.noise is None:
+            self.noise = N.empty((self.cnklen, noise.shape[1]))
+
+        # normal append case
+        if appendlen + self.cnkptr >= self.cnklen:
+            # append noise
+            copy_ar(
+                noise,
+                slice(0, appendlen),
+                self.noise,
+                slice(self.cnkptr, self.cnkptr + appendlen)
+            )
+
+            # append unit data
+            while len(item_list) > 0:
+                # get data
+                ident = item_list.pop(0)
+                wform = item_list.pop(0)
+                gtrth = item_list.pop(0)
+                # do we know this ident?
+                if ident not in self.units:
+                    self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
+                # handle waveform
+                wform_key = -1
+                for i in xrange(len(self.units[ident]['wf_buf'])):
+                    if N.allclose(wform, self.units[ident]['wf_buf'][i]):
+                        wform_key = i
+                        break
+                if wform_key == -1:
+                    self.units[ident]['wf_buf'].append(wform)
+                    wform_key = len(self.units[ident]['wf_buf'])
+                # handle ground truth
+                for item in gtrth:
+                    # try to fix fragmented waveforms
+                    if len(self.units[ident]['gt_buf']) > 0 and \
+                        item[2] == self.units[ident]['gt_buf'][-1][4] + 1:
+                        self.units[ident]['gt_buf'][-1][2] = item[1] + self.cnkptr
+                        self.units[ident]['gt_buf'][-1][4] = item[3]
+                    else:
+                        self.units[ident]['gt_buf'].append([
+                            wform_key,
+                            item[0] + self.cnkptr,
+                            item[1] + self.cnkptr,
+                            item[2],
+                            item[3]
+                        ])
+        # overshooting append case
+        else:
+            # determine length to keep
+            keeplen = self.cnklen - self.cnkptr
+            # append noise
+            copy_ar(
+                noise,
+                slice(0, keeplen),
+                self.noise,
+                slice(self.cnkptr, self.cnkptr + keeplen)
+            )
+
+            # append unit data
+            while len(item_list) > 0:
+                # get data
+                ident = item_list.pop(0)
+                wform = item_list.pop(0)
+                gtrth = item_list.pop(0)
+                # do we know this ident?
+                if ident not in self.units:
+                    self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
+                # handle waveform
+                wform_key = -1
+                for i in xrange(len(self.units[ident]['wf_buf'])):
+                    if N.allclose(wform, self.units[ident]['wf_buf'][i]):
+                        wform_key = i
+                        break
+                if wform_key == -1:
+                    self.units[ident]['wf_buf'].append(wform)
+                    wform_key = len(self.units[ident]['wf_buf'])
+                # handle ground truth
+                for item in gtrth:
+                    # try to fix fragmented waveforms
+                    if len(self.units[ident]['gt_buf']) > 0 and \
+                        item[2] == self.units[ident]['gt_buf'][-1][4] + 1:
+                        self.units[ident]['gt_buf'][-1][2] = item[1] + self.cnkptr
+                        self.units[ident]['gt_buf'][-1][4] = item[3]
+                    else:
+                        self.units[ident]['gt_buf'].append([
+                            wform_key,
+                            item[0] + self.cnkptr,
+                            item[1] + self.cnkptr,
+                            item[2],
+                            item[3]
+                        ])
 
 
 class InitDlg(QtGui.QDialog, Ui_InitDialog):
@@ -154,7 +264,7 @@ class NTrodeDataInterface(QtCore.QObject):
 
     ## qt-signals
 
-    sig_new_data = QtCore.pyqtSignal(DataContainer)
+    sig_new_data = QtCore.pyqtSignal(ChunkContainer)
     sig_update_pos = QtCore.pyqtSignal(float)
 
     ## constructor
@@ -176,18 +286,18 @@ class NTrodeDataInterface(QtCore.QObject):
         :Parameters:
             cnk_len : float
                 The length of data chunk in seconds. The actuall length in
-                samples will be calculate once the io-object is connected and
+                samples will be calculate once the io - object is connected and
                 the sample rate is known.
-                Default=0.1
+                Default = 0.1
             io_cls : class
                 The io class. Should have members 'delegate', 'q_r' and 'q_s'
-                Default=None
+                Default = None
             addr : tuple len 2
                 A tuple specifying the address of the server to connect to.
-                Default=None
+                Default = None
             parent : QObject
                 Qt parent.
-                Default=None
+                Default = None
 # <REFACTOR>
 #            position_tolerance: float
 #                Defines the tolerance with which two positions are thought to be
@@ -299,7 +409,7 @@ class NTrodeDataInterface(QtCore.QObject):
             )
 
             # emit and reset
-            self.sig_new_data.emit(DataContainer.from_dict(self._cnk_buf))
+            self.sig_new_data.emit(ChunkContainer.from_dict(self._cnk_buf))
             self._cnk_buf['noise'][:] = 0
             self._cnk_buf['waveform'] = []
             self._cnk_ptr = 0
@@ -399,8 +509,8 @@ class NTrodeDataInterface(QtCore.QObject):
                 defined as the entry point, so usually only positive values are
                 meaningfull here. Position along the trajector in µm.
             velocity : float
-                The velocity to use for the movement in µm/s.
-                Default=9999.0
+                The velocity to use for the movement in µm / s.
+                Default = 9999.0
         """
 
         self._io.q_send.put(

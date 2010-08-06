@@ -213,7 +213,7 @@ class Neuron(SimObject):
             wf *= self._amplitude
 
         # return
-        return wf, self._interval_waveform
+        return id(self), wf, self._interval_waveform
 
 
 ##---PACKAGE
