@@ -414,6 +414,7 @@ def poi_pproc_refper(frate, srate, nsmpls, refper=2.5):
             generate spike train for that many samples
         refper : int
             refractory period in ms
+            Default=2.5
     :Returns:
         list : spiketrain
     """
@@ -429,18 +430,16 @@ def poi_pproc_refper(frate, srate, nsmpls, refper=2.5):
     interval_kernel = lambda:-lam * N.log(N.rand())
 
     # produce train
-    now = refper
-    while now < nsmpls:
+    event_current = 0
+    while event_current < nsmpls:
 
-        # draw samples
-        next = int(interval_kernel())
-        if next < refper:
+        # draw interval sample
+        interv = int(interval_kernel())
+        if interv < refper:
             continue
-            # XXX: wasteful looping?!
-
         # its ok
-        now += next
-        rval.append(now)
+        event_current += interv
+        rval.append(event_current)
 
     if len(rval) > 0:
         if rval[-1] >= nsmpls:
@@ -470,10 +469,10 @@ if __name__ == '__main__':
     print events_wo_lbls
     print 'generated N =', len(events_wo_lbls), 'events,',
     print 'expected', nsmpls / srate * urates.sum()
-    print 'assert the refper in 100000 cycles:',
+    print 'assert the refper in 1000 cycles:',
     res = []
-    for i in xrange(100000):
-        res.append(N.any(N.diff(poi_pproc_refper(urates.sum(), srate, nsmpls)) < 40))
+    for i in xrange(1000):
+        res.append(N.any(N.diff(poi_pproc_refper(urates.sum(), srate, nsmpls, 2.5)) < 2.5 * srate / 1000.0))
     print sum(res), 'errors'
     print
     print '## BASICS ##'
