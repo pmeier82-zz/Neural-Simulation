@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class Hierarchy</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="nsim-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Trees&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural-Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">&nbsp;</td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="class-tree.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<center><b>
+ [ <a href="module-tree.html">Module Hierarchy</a>
+ | <a href="class-tree.html">Class Hierarchy</a> ]
+</b></center><br />
+<h1 class="epydoc">Class Hierarchy</h1>
+<ul class="nomargin-top">
+    <li> <strong class="uidlink">SocketServer.BaseRequestHandler</strong>:
+      <em class="summary">Base class for request handler classes.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.server.SimIOProtocol-class.html">nsim.data_io.server.SimIOProtocol</a></strong>:
+      <em class="summary">the protocoll implementation</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">SocketServer.BaseServer</strong>:
+      <em class="summary">Base class for server classes.</em>
+    <ul>
+    <li> <strong class="uidlink">SocketServer.TCPServer</strong>:
+      <em class="summary">Base class for various socket-based server classes.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.server.SimIOServer-class.html">nsim.data_io.server.SimIOServer</a></strong>:
+      <em class="summary">the server thread spawning one thread per connection</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">SocketServer.ThreadingMixIn</strong>:
+      <em class="summary">Mix-in class to handle each request in a new thread.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.server.SimIOServer-class.html">nsim.data_io.server.SimIOServer</a></strong>:
+      <em class="summary">the server thread spawning one thread per connection</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">object</strong>:
+      <em class="summary">The most base type</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.scene.math3d.Arcball-class.html">nsim.scene.math3d.Arcball</a></strong>:
+      <em class="summary">Virtual Trackball Control.</em>
+    </li>
+    <li> <strong class="uidlink">exceptions.BaseException</strong>:
+      <em class="summary">Common base class for all exceptions</em>
+    <ul>
+    <li> <strong class="uidlink">exceptions.Exception</strong>:
+      <em class="summary">Common base class for all non-exit exceptions.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.scene.neuron.BadNeuronQuery-class.html">nsim.scene.neuron.BadNeuronQuery</a></strong>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.package.ContentItem-class.html" onclick="show_private();">nsim.data_io.package.ContentItem</a></strong>:
+      <em class="summary">one item in a package</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.DataContainer-class.html">nsim.data_io.client_interface.DataContainer</a></strong>:
+      <em class="summary">container class to channel data via signal-&gt;slot system</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.scene.data.NeuronData-class.html">nsim.scene.data.NeuronData</a></strong>:
+      <em class="summary">data container to access the neuron data provided by Einevoll group</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.scene.noise.NoiseGen-class.html">nsim.scene.noise.NoiseGen</a></strong>:
+      <em class="summary">generic noise generator</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.scene.noise.ArNoiseGen-class.html">nsim.scene.noise.ArNoiseGen</a></strong>:
+      <em class="summary">multivariate noise process from an autoregressive model</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.simulation.SimExternalDelegate-class.html">nsim.simulation.SimExternalDelegate</a></strong>:
+      <em class="summary">delegate class, subclass for specific GUI kit or other interface</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client.SimIOClientNotifier-class.html">nsim.data_io.client.SimIOClientNotifier</a></strong>:
+      <em class="summary">delegate class, subclass for specific GUI kit or other interface</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.QNotifier-class.html">nsim.data_io.client_interface.QNotifier</a></strong>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.server.SimIOManager-class.html">nsim.data_io.server.SimIOManager</a></strong>:
+      <em class="summary">the singleton input/output manager thread</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.scene.sim_object.SimObject-class.html">nsim.scene.sim_object.SimObject</a></strong>:
+      <em class="summary">simulation object base class</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.scene.neuron.Neuron-class.html">nsim.scene.neuron.Neuron</a></strong>:
+      <em class="summary">neuron class for the simulator</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.scene.recorder.Recorder-class.html">nsim.scene.recorder.Recorder</a></strong>:
+      <em class="summary">multichanneled recorder object with an intrinsic noise process</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.scene.recorder.Tetrode-class.html">nsim.scene.recorder.Tetrode</a></strong>:
+      <em class="summary">tetrode object, resembling a tetrode as build by Thomas Recording GmbH</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.package.SimPkg-class.html">nsim.data_io.package.SimPkg</a></strong>:
+      <em class="summary">package protocoll base class</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog-class.html">nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog-class.html">nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.Ui_init_dialog.Ui_InitDialog-class.html">nsim.gui.Ui_init_dialog.Ui_InitDialog</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.InitDlg-class.html">nsim.data_io.client_interface.InitDlg</a></strong>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.Ui_recorder_controll.Ui_RecorderControll-class.html">nsim.gui.Ui_recorder_controll.Ui_RecorderControll</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.minimal_client.MinimalClient-class.html">nsim.data_io.minimal_client.MinimalClient</a></strong>:
+      <em class="summary">control widget for a recorder (tetrode)</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.Ui_gui_main.Ui_SimGui-class.html">nsim.gui.Ui_gui_main.Ui_SimGui</a></strong>
+    </li>
+    <li> <strong class="uidlink">threading._Verbose</strong>
+    <ul>
+    <li> <strong class="uidlink">threading.Thread</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client.SimIOConnection-class.html">nsim.data_io.client.SimIOConnection</a></strong>:
+      <em class="summary">connection thread for the sim client stub</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.server.SimIOServer-class.html">nsim.data_io.server.SimIOServer</a></strong>:
+      <em class="summary">the server thread spawning one thread per connection</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">dict</strong>:
+      <em class="summary">dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+    (key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+    in the keyword argument list.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.simulation.BaseSimulation-class.html">nsim.simulation.BaseSimulation</a></strong>:
+      <em class="summary">simulation class controlling the scene</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.cluster_dynamics.ClusterDynamics-class.html">nsim.cluster_dynamics.ClusterDynamics</a></strong>:
+      <em class="summary">class to administrate the firing behavior of several clusters</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.scene.data.NeuronDataContainer-class.html">nsim.scene.data.NeuronDataContainer</a></strong>:
+      <em class="summary">container for NeuronData objects</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">int</strong>:
+      <em class="summary">int(x[, base]) -&gt; integer</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="PyQt4.Qwt5.Qwt.QwtPlot.Axis-class.html">PyQt4.Qwt5.Qwt.QwtPlot.Axis</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.Qwt5.Qwt.QwtRasterData.ConrecAttribute-class.html">PyQt4.Qwt5.Qwt.QwtRasterData.ConrecAttribute</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QDialog.DialogCode-class.html">PyQt4.QtGui.QDialog.DialogCode</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.Qwt5.Qwt.QwtPlot.LegendPosition-class.html">PyQt4.Qwt5.Qwt.QwtPlot.LegendPosition</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QPaintDevice.PaintDeviceMetric-class.html">PyQt4.QtGui.QPaintDevice.PaintDeviceMetric</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QWidget.RenderFlag-class.html">PyQt4.QtGui.QWidget.RenderFlag</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QFrame.Shadow-class.html">PyQt4.QtGui.QFrame.Shadow</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QFrame.Shape-class.html">PyQt4.QtGui.QFrame.Shape</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QFrame.StyleMask-class.html">PyQt4.QtGui.QFrame.StyleMask</a></strong>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><i>unreachable</i>.simplewrapper</strong>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.QtGui.QPaintDevice</strong>:
+      <em class="summary">QPaintDevice()</em>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.QtGui.QWidget</strong>:
+      <em class="summary">QWidget(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.NTrodePlot-class.html">nsim.gui.ploting.NTrodePlot</a></strong>:
+      <em class="summary">a plot for (multichanneled) timeseries data</em>
+    </li>
+    <li> <strong class="uidlink">PyQt4.QtGui.QDialog</strong>:
+      <em class="summary">QDialog(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.InitDlg-class.html">nsim.data_io.client_interface.InitDlg</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.minimal_client.MinimalClient-class.html">nsim.data_io.minimal_client.MinimalClient</a></strong>:
+      <em class="summary">control widget for a recorder (tetrode)</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">PyQt4.QtGui.QFrame</strong>:
+      <em class="summary">QFrame(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.Qwt5.Qwt.QwtPlot</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.MatShow-class.html">nsim.gui.ploting.MatShow</a></strong>:
+      <em class="summary">Plot showing a matrix as colormap</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.QualityPlot-class.html">nsim.gui.ploting.QualityPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.TimeSeriesPlot-class.html">nsim.gui.ploting.TimeSeriesPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="PyQt4.QtGui.QWidget.RenderFlags-class.html">PyQt4.QtGui.QWidget.RenderFlags</a></strong>:
+      <em class="summary">QWidget.RenderFlags(QWidget.RenderFlags)
+QWidget.RenderFlags(int)
+QWidget.RenderFlags()</em>
+    </li>
+    <li> <strong class="uidlink"><i>unreachable</i>.wrapper</strong>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.QtCore.QObject</strong>:
+      <em class="summary">QObject(QObject parent=None)</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.NTrodeDataInterface-class.html">nsim.data_io.client_interface.NTrodeDataInterface</a></strong>:
+      <em class="summary">interface to multichanneled data from a remote data source</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.QNotifier-class.html">nsim.data_io.client_interface.QNotifier</a></strong>
+    </li>
+    <li> <strong class="uidlink">PyQt4.QtGui.QWidget</strong>:
+      <em class="summary">QWidget(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.NTrodePlot-class.html">nsim.gui.ploting.NTrodePlot</a></strong>:
+      <em class="summary">a plot for (multichanneled) timeseries data</em>
+    </li>
+    <li> <strong class="uidlink">PyQt4.QtGui.QDialog</strong>:
+      <em class="summary">QDialog(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.data_io.client_interface.InitDlg-class.html">nsim.data_io.client_interface.InitDlg</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.data_io.minimal_client.MinimalClient-class.html">nsim.data_io.minimal_client.MinimalClient</a></strong>:
+      <em class="summary">control widget for a recorder (tetrode)</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">PyQt4.QtGui.QFrame</strong>:
+      <em class="summary">QFrame(QWidget parent=None, Qt.WindowFlags flags=0)</em>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.Qwt5.Qwt.QwtPlot</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.MatShow-class.html">nsim.gui.ploting.MatShow</a></strong>:
+      <em class="summary">Plot showing a matrix as colormap</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.QualityPlot-class.html">nsim.gui.ploting.QualityPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.TimeSeriesPlot-class.html">nsim.gui.ploting.TimeSeriesPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">PyQt4.Qwt5.Qwt.QwtPlotDict</strong>
+    <ul>
+    <li> <strong class="uidlink">PyQt4.Qwt5.Qwt.QwtPlot</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.MatShow-class.html">nsim.gui.ploting.MatShow</a></strong>:
+      <em class="summary">Plot showing a matrix as colormap</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.QualityPlot-class.html">nsim.gui.ploting.QualityPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.TimeSeriesPlot-class.html">nsim.gui.ploting.TimeSeriesPlot</a></strong>:
+      <em class="summary">a plot for a single channel time series data with event markers</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">PyQt4.Qwt5.Qwt.QwtRasterData</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="nsim.gui.ploting.MatrixData-class.html">nsim.gui.ploting.MatrixData</a></strong>:
+      <em class="summary">QWT RasterData implementation for matrix (2d) colormaps</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+</ul>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="nsim-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Trees&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural-Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Aug  6 20:18:51 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
