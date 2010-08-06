@@ -39,11 +39,9 @@ __doctype__ = 'restructuredtext'
 
 ##---IMPORTS
 
-# builtins
+import sys
 import traceback
-# packages
 from PyQt4 import QtCore, QtGui
-# own packages
 from nsim.gui import (
     Ui_AddNeuronDialog,
     Ui_AddRecorderDialog,
@@ -261,8 +259,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
         try:
             self._sim.frame_size = float(self.cb_frame_size.itemText(inp))
-        except:
-            pass
         finally:
             self.cb_frame_size.clearFocus()
             self.scene_build_model()
@@ -272,8 +268,6 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
         try:
             self._sim.sample_rate = float(self.cb_sample_rate.itemText(inp))
-        except:
-            pass
         finally:
             self.cb_sample_rate.clearFocus()
             self.scene_build_model()
@@ -731,12 +725,19 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         )
 
     def error_dialog(self):
+        try:
+            from debug_helpers import print_top_100
+            print_top_100()
+            ei = sys.exc_info()
 
-        QtGui.QMessageBox.critical(
-            self,
-            'EXCEPTION',
-            traceback.format_exc()
-        )
+            QtGui.QMessageBox.critical(
+                self,
+                'EXCEPTION',
+                '\n'.join(traceback.format_exception(*ei))
+            )
+        finally:
+            del ei
+            sys.exc_clear()
 
     ## events
 
