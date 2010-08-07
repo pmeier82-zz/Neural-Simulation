@@ -36,7 +36,7 @@ from socket import socket, AF_INET, SOCK_STREAM
 from threading import Event, Thread
 from time import sleep
 from Queue import Queue
-
+from server import MAXQUEUESIZE
 from package import SimPkg, recv_pkg, send_pkg
 
 
@@ -100,8 +100,8 @@ class SimIOConnection(Thread):
         # inits
         self.addr_ini = addr
         self.poll = float(poll)
-        self.q_recv = q_recv or Queue()
-        self.q_send = q_send or Queue()
+        self.q_recv = q_recv or Queue(maxsize=MAXQUEUESIZE)
+        self.q_send = q_send or Queue(maxsize=MAXQUEUESIZE)
         self.delegate = delegate
         self.status = None
         self._online = False

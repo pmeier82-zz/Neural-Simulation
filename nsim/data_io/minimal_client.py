@@ -30,7 +30,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         self,
         parent=None,
         # io object parameters
-        cnk_len=0.25,
+        cnklen=0.25,
         addr=('localhost', 31337),
         # gui parameters
         axis_range=1.0,
@@ -41,7 +41,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         :Parameters:
             parent : QWidget
                 The QT parent of the GUI elements.
-            cnk_len : float
+            cnklen : float
                 The internal buffer size. Defines the amount/size of data that
                 is buffered, analyzed and displayed to the screen in one cycle.
                 Default=0.25
@@ -67,12 +67,13 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         )
         # IO SETUP
         self.io_params = {
-            'cnk_len'   : cnk_len,
+            'cnklen'    : cnklen,
             'addr'      : addr,
         }
         self._io = None
 
         # OTHER SETUP
+        self.chunk = None
         self._initialized = False
 
     ## gui methods
@@ -126,17 +127,30 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
     @QtCore.pyqtSlot(ChunkContainer)
     def on_new_data(self, data):
         """slot to fetch newly available data"""
+        try:
+            # save chunk
+            self.chunk = data
+            noise = data.noise
+            signal = noise.copy()
+            # selection: noise
+            if 0 not in self._io._config:
+                signal[:] = 0.0
+            gtrth = {}
+            for ident in data.units:
+                for item in data.units[ident]['gt_buf']:
+                    # selection: waveforms 
+                    if 1 in self._io._config:
+                        signal[item[1]:item[2], :] += data.units[ident]['wf_buf'][item[0]][item[3]:item[4], :]
+                    # selection: groundtruth
+                    if 2 in self._io._config:
+                        if ident not in gtrth:
+                            gtrth[ident] = []
+                        gtrth[ident].append(item[0] + int((item[1] - item[0]) / 2))
+            self.handle_data(signal, noise, gtrth)
+        except:
+            print 'error'
 
-        noise = data.noise
-        wvfrm = data.wform
-        gtrth = data.gtrth
-        signal = noise.copy()
-        for i in xrange(len(wvfrm)):
-            for j in xrange(len(gtrth[i])):
-                signal[gtrth[i][j, 0]:gtrth[i][j, 1], :] += wvfrm[i][gtrth[i][j, 2]:gtrth[i][j, 3]]
-        self.handle_data(signal, noise, wvfrm, gtrth)
-
-    def handle_data(self, signal, noise, wvfrm, gtrth):
+    def handle_data(self, signal, noise, gtrth):
         """abstract handler"""
 
         pass

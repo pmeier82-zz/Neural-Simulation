@@ -47,6 +47,11 @@ from package import SimPkg, recv_pkg, send_pkg
 __all__ = ['SimIOManager', 'SimIOProtocol', 'SimIOServer']
 
 
+##---CONSTANTS
+
+MAXQUEUESIZE = 1000
+
+
 ##---LOGGING
 
 logging.basicConfig(level=logging.DEBUG)
@@ -71,7 +76,7 @@ class SimIOProtocol(BaseRequestHandler):
         self.sq_lock = self.server.send_queues_lock
         self.q_recv = self.server.q_recv
         with self.sq_lock:
-            self.server.send_queues[self.client_address] = Queue()
+            self.server.send_queues[self.client_address] = Queue(maxsize=MAXQUEUESIZE)
         self.q_send = self.server.send_queues[self.client_address]
         if self.server.status is not None:
             self.q_send.put(self.server.status)
@@ -185,7 +190,10 @@ class SimIOServer(ThreadingMixIn, TCPServer, Thread):
             item = self.q_send.get()
             with self.send_queues_lock:
                 for q in self.send_queues.values():
-                    q.put(item)
+                    try:
+                        q.put(item)
+                    except:
+                        logging.error('queue was not accessable')
             self.q_send.task_done()
 
     def run(self):
@@ -244,8 +252,8 @@ class SimIOManager(object):
         # io members
         self.addr_ini = (kwargs.get('addr', '0.0.0.0'), kwargs.get('port', 31337))
         self.addr = 'not connected'
-        self._q_recv = Queue()
-        self._q_send = Queue()
+        self._q_recv = Queue(maxsize=MAXQUEUESIZE)
+        self._q_send = Queue(maxsize=MAXQUEUESIZE)
         self._srv = None
         self._is_initialized = False
 

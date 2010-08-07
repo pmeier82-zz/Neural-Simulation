@@ -58,7 +58,7 @@ class ChunkContainer(object):
     def append(self, item_list):
         """append to the container the contents of a SimPkg
         
-        will only append up to the cnk_len!
+        will only append up to the cnklen!
         
         :Parameters:
             item_list : list
@@ -71,105 +71,87 @@ class ChunkContainer(object):
         # checks
         if len(item_list) == 0:
             raise ValueError('contents have to include at least the noise strip')
-        if len(item_list) - 1 % 3 != 0:
+        if (len(item_list) - 1) % 3 != 0:
             raise ValueError('invalid content count! has to be noise + 3tuples')
         # TODO: more checks ?
-
         # prepare
-        rval = None
+        rval = []
         noise = item_list.pop(0)
-        appendlen = noise.shape[0]
+        appendlen, nchan = noise.shape
         if self.noise is None:
-            self.noise = N.empty((self.cnklen, noise.shape[1]))
-
+            self.noise = N.empty((self.cnklen, nchan))
         # normal append case
-        if appendlen + self.cnkptr >= self.cnklen:
-            # append noise
-            copy_ar(
-                noise,
-                slice(0, appendlen),
-                self.noise,
-                slice(self.cnkptr, self.cnkptr + appendlen)
-            )
-
-            # append unit data
-            while len(item_list) > 0:
-                # get data
-                ident = item_list.pop(0)
-                wform = item_list.pop(0)
-                gtrth = item_list.pop(0)
-                # do we know this ident?
-                if ident not in self.units:
-                    self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
-                # handle waveform
-                wform_key = -1
-                for i in xrange(len(self.units[ident]['wf_buf'])):
-                    if N.allclose(wform, self.units[ident]['wf_buf'][i]):
-                        wform_key = i
-                        break
-                if wform_key == -1:
-                    self.units[ident]['wf_buf'].append(wform)
-                    wform_key = len(self.units[ident]['wf_buf'])
-                # handle ground truth
-                for item in gtrth:
-                    # try to fix fragmented waveforms
-                    if len(self.units[ident]['gt_buf']) > 0 and \
-                        item[2] == self.units[ident]['gt_buf'][-1][4] + 1:
-                        self.units[ident]['gt_buf'][-1][2] = item[1] + self.cnkptr
-                        self.units[ident]['gt_buf'][-1][4] = item[3]
-                    else:
-                        self.units[ident]['gt_buf'].append([
-                            wform_key,
-                            item[0] + self.cnkptr,
-                            item[1] + self.cnkptr,
-                            item[2],
-                            item[3]
-                        ])
-        # overshooting append case
-        else:
-            # determine length to keep
-            keeplen = self.cnklen - self.cnkptr
-            # append noise
-            copy_ar(
-                noise,
-                slice(0, keeplen),
-                self.noise,
-                slice(self.cnkptr, self.cnkptr + keeplen)
-            )
-
-            # append unit data
-            while len(item_list) > 0:
-                # get data
-                ident = item_list.pop(0)
-                wform = item_list.pop(0)
-                gtrth = item_list.pop(0)
-                # do we know this ident?
-                if ident not in self.units:
-                    self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
-                # handle waveform
-                wform_key = -1
-                for i in xrange(len(self.units[ident]['wf_buf'])):
-                    if N.allclose(wform, self.units[ident]['wf_buf'][i]):
-                        wform_key = i
-                        break
-                if wform_key == -1:
-                    self.units[ident]['wf_buf'].append(wform)
-                    wform_key = len(self.units[ident]['wf_buf'])
-                # handle ground truth
-                for item in gtrth:
-                    # try to fix fragmented waveforms
-                    if len(self.units[ident]['gt_buf']) > 0 and \
-                        item[2] == self.units[ident]['gt_buf'][-1][4] + 1:
-                        self.units[ident]['gt_buf'][-1][2] = item[1] + self.cnkptr
-                        self.units[ident]['gt_buf'][-1][4] = item[3]
-                    else:
-                        self.units[ident]['gt_buf'].append([
-                            wform_key,
-                            item[0] + self.cnkptr,
-                            item[1] + self.cnkptr,
-                            item[2],
-                            item[3]
-                        ])
+        thislen = appendlen
+        if self.cnkptr + thislen >= self.cnklen:
+            thislen = self.cnklen - self.cnkptr
+        # append noise
+        copy_ar(
+            noise,
+            slice(0, thislen),
+            self.noise,
+            slice(self.cnkptr, self.cnkptr + thislen)
+        )
+        if thislen != appendlen:
+            rval.append(noise[thislen:, :].copy())
+        # append unit data
+        while len(item_list) > 0:
+            # get data
+            ident = item_list.pop(0)
+            if isinstance(ident, N.ndarray):
+                ident = ident[0]
+            wform = item_list.pop(0)
+            gtrth = item_list.pop(0)
+            if len(gtrth) == 0:
+                continue
+            # do we know this ident?
+            if ident not in self.units:
+                self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
+            # handle waveform
+            wform_key = -1
+            for i in xrange(len(self.units[ident]['wf_buf'])):
+                if N.allclose(wform, self.units[ident]['wf_buf'][i]):
+                    wform_key = i
+                    break
+            if wform_key == -1:
+                self.units[ident]['wf_buf'].append(wform)
+                wform_key = len(self.units[ident]['wf_buf']) - 1
+            # handle ground truth
+            gtrth_resid = []
+            for item in gtrth:
+                # interval out of scope
+                if item[0] + self.cnkptr > self.cnklen:
+                    item = [item[0] - thislen, item[1] - thislen, item[2], item[3]]
+                    gtrth_resid.append(item)
+                # interval ok, but end out of scope
+                elif item[1] + self.cnkptr > self.cnklen:
+                    self.units[ident]['gt_buf'].append([
+                        wform_key,
+                        item[0] + self.cnkptr,
+                        self.cnklen,
+                        item[2],
+                        thislen - item[0] + item[2]
+                    ])
+                    gtrth_resid.append([
+                        0,
+                        item[1] - thislen,
+                        item[3] - item[1] + thislen,
+                        item[3]
+                    ])
+                else:
+                    self.units[ident]['gt_buf'].append([
+                        wform_key,
+                        item[0] + self.cnkptr,
+                        item[1] + self.cnkptr,
+                        item[2],
+                        item[3]
+                    ])
+            # rval building
+            if len(gtrth_resid) > 0:
+                gtrth_resid = N.vstack(gtrth_resid)
+                rval.extend([ident, wform, gtrth_resid])
+        # return
+        self.cnkptr += thislen
+        return rval
 
 
 class InitDlg(QtGui.QDialog, Ui_InitDialog):
@@ -272,7 +254,7 @@ class NTrodeDataInterface(QtCore.QObject):
     def __init__(
         self,
         # internals
-        cnk_len=0.25,
+        cnklen=0.25,
 # <REFACTOR>
 #        position_tolerance = 0.1,
 # </REFACTOR>
@@ -284,7 +266,7 @@ class NTrodeDataInterface(QtCore.QObject):
     ):
         """
         :Parameters:
-            cnk_len : float
+            cnklen : float
                 The length of data chunk in seconds. The actuall length in
                 samples will be calculate once the io - object is connected and
                 the sample rate is known.
@@ -314,13 +296,12 @@ class NTrodeDataInterface(QtCore.QObject):
 # <REFACTOR>
 #        self.position_tolerance = float(position_tolerance)
 # </REFACTOR>
-        self.cnk_len_init = float(cnk_len)
+        self.cnklen_init = float(cnklen)
         self.addr = addr
 
-        # private members
-        self._cnk_buf = None        # buffer of the curently received chunk
-        self._cnk_len = None        # prop: length of one chunk
-        self._cnk_ptr = 0           # pointer in to the currently received chunk
+        # members
+        self._cnk = None            # the chunk container
+        self._cnklen = None         # prop: length of one chunk
         self._identity = None       # prop: identity
         self._io = None             # the io object
         self._io_cls = io_cls       # io object class
@@ -349,13 +330,14 @@ class NTrodeDataInterface(QtCore.QObject):
 
     ## properties
 
-    def get_cnk_len(self):
-        return self._cnk_len
-    def set_cnk_len(self, value):
+    def get_cnklen(self):
+        return self._cnklen
+    def set_cnklen(self, value):
         if self._sample_rate is None:
             return
-        self._cnk_len = int(float(value) * self._sample_rate)
-    cnk_len = property(get_cnk_len, set_cnk_len)
+        self._cnklen = int(float(value) * self._sample_rate)
+        self._cnk = ChunkContainer(self._cnklen)
+    cnklen = property(get_cnklen, set_cnklen)
 
     def get_identity(self):
         return self._identity
@@ -378,81 +360,27 @@ class NTrodeDataInterface(QtCore.QObject):
     def handle_recorder_package(self, pkg):
         """write the package data into the chunk buffer"""
 
+        # checks
+        if self._cnklen is None or self._cnk is None:
+            raise ValueError('trying to handle a recorder package when the chunk length is not known!')
+        if pkg.tid != SimPkg.T_REC:
+            raise ValueError('trying to handle non recorder package!')
+
         # inits
-        frm_len, nchan = pkg.cont[0].cont.shape
-
-        # new buffer needed
-        if self._cnk_buf is None:
-            self._cnk_buf = {
-                'noise' : N.zeros((self._cnk_len, nchan)),
-                'waveform' : [],
-            }
-
-        if self._cnk_ptr + frm_len >= self.cnk_len:
-            # will overshoot
-
-            rem_cnk_len = self.cnk_len - self._cnk_ptr
-
-            # copy part that fits in the current chunk
-            copy_ar(
-                pkg.cont[0].cont,
-                slice(0, rem_cnk_len),
-                self._cnk_buf['noise'],
-                slice(self._cnk_ptr, self._cnk_ptr + rem_cnk_len),
-            )
-            copy_gt(
-                [item.cont for item in pkg.cont[1:pkg.nitems:2]],
-                [item.cont for item in pkg.cont[2:pkg.nitems:2]],
-                self._cnk_buf['waveform'],
-                rem_cnk_len,
-                self._cnk_ptr
-            )
-
-            # emit and reset
-            self.sig_new_data.emit(ChunkContainer.from_dict(self._cnk_buf))
-            self._cnk_buf['noise'][:] = 0
-            self._cnk_buf['waveform'] = []
-            self._cnk_ptr = 0
-
-            # copy part overshoots into new chunk buffer
-            new_cnk_len = frm_len - rem_cnk_len
-            copy_ar(
-                pkg.cont[0].cont,
-                slice(rem_cnk_len, frm_len),
-                self._cnk_buf['noise'],
-                slice(self._cnk_ptr, new_cnk_len),
-            )
-            copy_gt(
-                [item.cont for item in pkg.cont[1:pkg.nitems:2]],
-                [item.cont for item in pkg.cont[2:pkg.nitems:2]],
-                self._cnk_buf['waveform'],
-                - rem_cnk_len
-            )
-
-            # set new chunk pointer
-            self._cnk_ptr = new_cnk_len
-
-        # just add to currently recorded chunk
-        else:
-            copy_ar(
-                pkg.cont[0].cont,
-                slice(0, frm_len),
-                self._cnk_buf['noise'],
-                slice(self._cnk_ptr, self._cnk_ptr + frm_len)
-            )
-            copy_gt(
-                [item.cont for item in pkg.cont[1:pkg.nitems:2]],
-                [item.cont for item in pkg.cont[2:pkg.nitems:2]],
-                self._cnk_buf['waveform'],
-                offset=self._cnk_ptr
-            )
-            self._cnk_ptr += frm_len
+        residual = [cont.cont for cont in pkg.cont]
+        while len(residual) > 0:
+            residual = self._cnk.append(residual)
+            if len(residual) > 0:
+                self.sig_new_data.emit(self._cnk)
+                self._cnk = ChunkContainer(self._cnklen)
 
     ## qt slots
 
     @QtCore.pyqtSlot()
     def on_notify(self):
         """called if notified for new package"""
+
+        # XXX: this is called too often on shutdown! investigate
 
         if self._io is None or not self._io.is_alive():
             return
@@ -471,7 +399,7 @@ class NTrodeDataInterface(QtCore.QObject):
                     # intitialize internals
                     self._identity, self._sample_rate, self._config = \
                         InitDlg.init_dialog(pkg.cont[0].cont)
-                    self.cnk_len = self.cnk_len_init
+                    self.cnklen = self.cnklen_init
                     self._status = pkg.cont[0].cont
                     # request position to get initial update
                     self.request_position()
@@ -551,7 +479,7 @@ class NTrodeDataInterface(QtCore.QObject):
 # </REFACTOR>
 
 
-##---FUNCTIONS
+##---FUNCTIONS - historic
 
 def copy_ar(src, src_slc, dst, dst_slc):
     """copy src[src_slc] to dst[dst_slc]

@@ -23,7 +23,7 @@ from nsim.data_io import MinimalClient
 class TestClient(MinimalClient):
     """test client"""
 
-    def handle_data(self, signal, noise, wvfrm, gtrth):
+    def handle_data(self, signal, noise, gtrth):
         """abstract handler"""
 
         try:
