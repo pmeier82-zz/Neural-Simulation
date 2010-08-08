@@ -17,6 +17,7 @@ __docformat__ = 'restructuredtext'
 from PyQt4 import QtCore, QtGui
 from client_interface import ChunkContainer, NTrodeDataInterface, DEFAULT_VELOCITY
 from nsim.gui import NTrodePlot, Ui_RecorderControll
+import scipy as N
 
 
 ##---CLASSES
@@ -125,27 +126,32 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
     ## slots
 
     @QtCore.pyqtSlot(ChunkContainer)
-    def on_new_data(self, data):
-        """slot to fetch newly available data"""
+    def on_new_data(self, chunk):
+        """slot to fetch newly available chunk"""
         try:
             # save chunk
-            self.chunk = data
-            noise = data.noise
-            signal = noise.copy()
+            self.chunk = chunk
+            noise = chunk.noise
             # selection: noise
             if 0 not in self._io._config:
-                signal[:] = 0.0
+                signal = N.zeros_like(noise)
+            else:
+                signal = noise.copy()
             gtrth = {}
-            for ident in data.units:
-                for item in data.units[ident]['gt_buf']:
+            for ident in chunk.units:
+                for item in chunk.units[ident]['gt_buf']:
                     # selection: waveforms 
                     if 1 in self._io._config:
-                        signal[item[1]:item[2], :] += data.units[ident]['wf_buf'][item[0]][item[3]:item[4], :]
+                        signal[item[1]:item[2], :] += chunk.units[ident]['wf_buf'][item[0]][item[3]:item[4], :]
                     # selection: groundtruth
                     if 2 in self._io._config:
-                        if ident not in gtrth:
-                            gtrth[ident] = []
-                        gtrth[ident].append(item[0] + int((item[1] - item[0]) / 2))
+                        if item[3] == 0:
+                            if ident not in gtrth:
+                                gtrth[ident] = []
+                            gtrth[ident].append(item[1])
+            # show in the dataplot
+            self.dataplot.set_data(signal)
+            # handle chunk
             self.handle_data(signal, noise, gtrth)
         except:
             print 'error'

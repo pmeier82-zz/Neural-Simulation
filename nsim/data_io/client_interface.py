@@ -382,7 +382,7 @@ class NTrodeDataInterface(QtCore.QObject):
 
         # XXX: this is called too often on shutdown! investigate
 
-        if self._io is None or not self._io.is_alive():
+        if self._io is None  or self._io.q_recv is None or not self._io.is_alive():
             return
 
         while not self._io.q_recv.empty():

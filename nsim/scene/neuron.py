@@ -193,6 +193,8 @@ class Neuron(SimObject):
         ]
         if not N.any(rel_pos_valid):
             raise BadNeuronQuery('queried position(s) outside of sphere_radius')
+        if len(self._firing_times) == 0:
+            raise BadNeuronQuery('no events in current frame for the queried neuron')
 
         # inits
         wf = N.zeros((self._neuron_data.time_vec.size, rel_pos.shape[0]))
