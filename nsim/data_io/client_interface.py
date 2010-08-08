@@ -280,13 +280,6 @@ class NTrodeDataInterface(QtCore.QObject):
             parent : QObject
                 Qt parent.
                 Default = None
-# <REFACTOR>
-#            position_tolerance: float
-#                Defines the tolerance with which two positions are thought to be
-#                equal due to noise in the measurement. If two successive
-#                position are unequal, the electrode is moving.
-#                Default=0.1
-# </REFACTOR>
         """
 
         # super
@@ -466,16 +459,6 @@ class NTrodeDataInterface(QtCore.QObject):
         """
 
         pass
-# </REFACTOR>
-
-# <REFACTOR>
-#    def position_equal(self,pos1, pos2):
-#        """Returns true if the two positions are equal with a certain tolerance,
-#        false otherwise
-#        """
-#        if pos1 is None or pos2 is None:
-#            return False
-#        return abs(pos1-pos2) < self.position_tolerance
 # </REFACTOR>
 
 

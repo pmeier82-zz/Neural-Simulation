@@ -35,6 +35,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         addr=('localhost', 31337),
         # gui parameters
         axis_range=1.0,
+        do_plotting=True,
         # keyword arguments
         ** kwargs
     ):
@@ -52,6 +53,10 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             axis_range : float
                 Amplitude axis_range of the displayed data plot[-axis_range,+axis_range].
                 Default=1.0
+            do_plotting : bool
+                if true, plot the raw signal, set this to false and call
+                self.dataplot.set_data() in subclasses. 
+                Default=True
             kwargs : dict
                 Additional keywords.
         """
@@ -76,6 +81,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         # OTHER SETUP
         self.chunk = None
         self._initialized = False
+        self.do_plotting = do_plotting
 
     ## gui methods
 
@@ -149,10 +155,11 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
                             if ident not in gtrth:
                                 gtrth[ident] = []
                             gtrth[ident].append(item[1])
-            # show in the dataplot
-            self.dataplot.set_data(signal)
             # handle chunk
             self.handle_data(signal, noise, gtrth)
+            # update dataplot
+            if self.do_plotting:
+                self.dataplot.set_data(signal)
         except:
             print 'error'
 
