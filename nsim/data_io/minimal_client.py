@@ -160,8 +160,8 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             # update dataplot
             if self.do_plotting:
                 self.dataplot.set_data(signal)
-        except:
-            print 'error'
+        except Exception, ex:
+            print str(ex)
 
     def handle_data(self, signal, noise, gtrth):
         """abstract handler"""

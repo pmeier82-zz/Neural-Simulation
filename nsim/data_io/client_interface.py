@@ -42,6 +42,8 @@ class ChunkContainer(object):
     converted to QString after passing through the signal->slot system.
     """
 
+    ## constructor
+
     def __init__(self, cnklen):
         """
         :Parameters:
@@ -50,10 +52,27 @@ class ChunkContainer(object):
         """
 
         self.cnklen = int(cnklen)
-        self.cnkptr = 0
+        self.cnkptr = None
         self.noise = None
-        self.units = {}
-        self._finalized = False
+        self.units = None
+        self._waveform = None
+        self._finalized = None
+
+        self.clear()
+
+    ## properties
+
+    def get_waveform(self):
+        if self._waveform is None:
+            self._waveform = N.zeros_like(self.noise)
+            for ident in self.units:
+                for item in self.units[ident]['gt_buf']:
+                    self._waveform[item[1]:item[2]] += C1.units[ident]['wf_buf'][item[0]][item[3]:item[4]]
+                    # TODO: assert unit waveform is compatible with noise shape
+        return self._waveform
+    waveform = property(get_waveform)
+
+    ## methods
 
     def append(self, item_list):
         """append to the container the contents of a SimPkg
@@ -98,11 +117,12 @@ class ChunkContainer(object):
             # get data
             ident = item_list.pop(0)
             if isinstance(ident, N.ndarray):
-                ident = ident[0]
+                ident = N.asscalar(ident)
             wform = item_list.pop(0)
             gtrth = item_list.pop(0)
             if len(gtrth) == 0:
                 continue
+                # weird but it happens :/
             # do we know this ident?
             if ident not in self.units:
                 self.units[ident] = {'wf_buf':[], 'gt_buf':[]}
@@ -120,8 +140,12 @@ class ChunkContainer(object):
             for item in gtrth:
                 # interval out of scope
                 if item[0] + self.cnkptr > self.cnklen:
-                    item = [item[0] - thislen, item[1] - thislen, item[2], item[3]]
-                    gtrth_resid.append(item)
+                    gtrth_resid.append([
+                        item[0] - thislen,
+                        item[1] - thislen,
+                        item[2],
+                        item[3]
+                    ])
                 # interval ok, but end out of scope
                 elif item[1] + self.cnkptr > self.cnklen:
                     self.units[ident]['gt_buf'].append([
@@ -134,7 +158,7 @@ class ChunkContainer(object):
                     gtrth_resid.append([
                         0,
                         item[1] - thislen,
-                        item[3] - item[1] + thislen,
+                        thislen - item[0] + item[2],
                         item[3]
                     ])
                 else:
@@ -151,7 +175,20 @@ class ChunkContainer(object):
                 rval.extend([ident, wform, gtrth_resid])
         # return
         self.cnkptr += thislen
+        if self.cnkptr >= self.cnklen:
+            self._finalized = True
+            if self.cnkptr > self.cnklen:
+                print '!! CNKPTR[%s] > CNKLEN[%s] !!' % (self.cnkptr, self.cnklen)
         return rval
+
+    def clear(self):
+        """clear the chunk and reset to the initialized chunk length"""
+
+        #self.cnklen = int(cnklen)
+        self.cnkptr = 0
+        self.noise = None
+        self.units = {}
+        self._finalized = False
 
 
 class InitDlg(QtGui.QDialog, Ui_InitDialog):
@@ -547,7 +584,23 @@ def copy_gt(wf, gt, dst, cap=0, offset=0):
 
 if __name__ == '__main__':
 
-    app = QtGui.QApplication([])
+    C0 = ChunkContainer(1000)
+    C1 = ChunkContainer(1000)
+    base_noise = N.zeros((900, 1))
+    base_wf1 = (N.ones((1, 20)) * N.arange(20)).T
+    base_wf2 = (N.ones((1, 20)) * N.arange(20)[::-1]).T
 
-    io = NTrodeDataInterface()
-    io.initialize()
+    residual = None
+    for i in xrange(2):
+        residual = C0.append([base_noise.copy(), 12345, base_wf1.copy(), [[95, 115, 0, 20]]])
+    C1.append(residual)
+    C1.append([base_noise.copy(), 12345, base_wf2.copy(), [[95, 115, 0, 20]]])
+
+    from pylab import figure, show
+    fig = figure()
+    ax = fig.add_subplot(111)
+    ax.plot(N.atleast_2d(N.arange(C0.cnklen)).T, C0.waveform, 'r')
+    ax.plot(N.atleast_2d(N.arange(C1.cnklen)).T + C0.cnklen, C1.waveform, 'b')
+    ax.axvline(C0.cnklen)
+    ax.axvline(C0.cnklen - 1)
+    show()
