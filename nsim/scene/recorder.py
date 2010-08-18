@@ -162,8 +162,8 @@ class Tetrode(Recorder):
         s3o6 = N.sqrt(3) / 6.0
         points = N.array([
             [  0.0, 0.0, 0.0 ], # tip electrode
-            [ -0.5, -s3o6, -hz ], # south east rear electrode
-            [  0.5, -s3o6, -hz ], # south west rear electrode
+            [ -0.5, -s3o6, -hz ], # south west rear electrode
+            [  0.5, -s3o6, -hz ], # south east rear electrode
             [  0.0, 2 * s3o6, -hz ], # north rear electrode
         ])
         points *= N.array([[40] + 3 * [20]]).T # match to TRec scales

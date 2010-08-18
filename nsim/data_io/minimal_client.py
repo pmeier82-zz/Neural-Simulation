@@ -143,18 +143,19 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
                 signal = N.zeros_like(noise)
             else:
                 signal = noise.copy()
+            # selection waveforms
+            if 1 in self._io._config:
+                signal += chunk.waveform
+            # selection: groundtruth
             gtrth = {}
-            for ident in chunk.units:
-                for item in chunk.units[ident]['gt_buf']:
-                    # selection: waveforms 
-                    if 1 in self._io._config:
-                        signal[item[1]:item[2], :] += chunk.units[ident]['wf_buf'][item[0]][item[3]:item[4], :]
-                    # selection: groundtruth
-                    if 2 in self._io._config:
+            if 2 in self._io._config:
+                for ident in chunk.units:
+                    temp = []
+                    for item in chunk.units[ident]['gt_buf']:
                         if item[3] == 0:
-                            if ident not in gtrth:
-                                gtrth[ident] = []
-                            gtrth[ident].append(item[1])
+                            temp.append(item[1])
+                    if len(temp) > 0:
+                        gtrth[ident] = N.asarray(temp)
             # handle chunk
             self.handle_data(signal, noise, gtrth)
             # update dataplot

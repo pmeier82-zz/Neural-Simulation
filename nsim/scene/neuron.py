@@ -131,8 +131,8 @@ class Neuron(SimObject):
         """
 
         # get kwargs and init/reset
-        self._firing_times = kwargs.get('firing_times', [])
         self._frame_size = kwargs.get('frame_size', 1)
+        self._firing_times = filter(lambda x: x < self._frame_size, kwargs.get('firing_times', []))
         self._interval_waveform = []
 
         # check if we are active
@@ -146,17 +146,28 @@ class Neuron(SimObject):
 
         # waveform intervals for this frame
         for t in self._firing_times:
-            start = [t, 0]
-            end = [t + self._neuron_data.phase_max, self._neuron_data.phase_max]
+            # time vector: [fr_start, fr_end, wf_start, wf_end]
+            timevec = [
+                t,
+                t + self._neuron_data.phase_max,
+                0,
+                self._neuron_data.phase_max
+            ]
 
             # check if waveform overshoots
-            if end[0] >= self._frame_size:
-                residual = end[0] - self._frame_size
-                end = [self._frame_size, self._neuron_data.phase_max - residual]
-                self._interval_overshoot.append([0, end[1], residual, self._neuron_data.phase_max])
+            if timevec[1] >= self._frame_size:
+                residual = timevec[0] - self._frame_size
+                timevec[1] = self._frame_size
+                timevec[3] = self._neuron_data.phase_max - residual
+                self._interval_overshoot.append([
+                    0,
+                    self._neuron_data.phase_max - residual,
+                    residual,
+                    self._neuron_data.phase_max
+                ])
 
             # add interval
-            self._interval_waveform.append([start[0], end[0], start[1], end[1]])
+            self._interval_waveform.append(timevec)
 
             # DEBUG: start
             for interv in self._interval_waveform:

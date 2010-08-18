@@ -67,7 +67,7 @@ class ChunkContainer(object):
             self._waveform = N.zeros_like(self.noise)
             for ident in self.units:
                 for item in self.units[ident]['gt_buf']:
-                    self._waveform[item[1]:item[2]] += C1.units[ident]['wf_buf'][item[0]][item[3]:item[4]]
+                    self._waveform[item[1]:item[2]] += self.units[ident]['wf_buf'][item[0]][item[3]:item[4]]
                     # TODO: assert unit waveform is compatible with noise shape
         return self._waveform
     waveform = property(get_waveform)
