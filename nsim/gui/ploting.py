@@ -29,17 +29,28 @@ GTRUTHCOLOR = QtCore.Qt.blue
 ##---CLASSES
 
 class MatrixData(Qwt5.QwtRasterData):
-    """QWT RasterData implementation for matrix (2d) colormaps"""
+    """QWT RasterData implementation for two-dimensional matrix"""
 
     ## constructor
 
-    def __init__(self):
+    def __init__(self, data=None):
+        """
+        :Parameters:
+            data : ndarray:
+                two-dimensional data to plot
+        """
 
         # super
-        super(MatrixData, self).__init__()
+        super(MatrixData, self).__init__(QtCore.QRectF(0, 0, 0, 0))
 
-        # members
+        # data member
         self.data = None
+
+        # set data
+        if data is None:
+            self.set_data(N.empty((10, 10)))
+        else:
+            self.set_data(data)
 
     ## implementations
 
@@ -47,34 +58,48 @@ class MatrixData(Qwt5.QwtRasterData):
         return self
 
     def range(self):
-        try:
-            return Qwt5.QwtDoubleInterval(self.data.min(), self.data.max())
-        except:
-            return Qwt5.QwtDoubleInterval(0.0, 1.0)
+        return Qwt5.QwtDoubleInterval(self.data.min(), self.data.max())
 
     def value(self, x, y):
         try:
-            return self.data[x, self.data.shape[0] - y]
+            # crazy index starting at 1 for rows, but at 0 for columns :P
+            row_idx = self.data.shape[0] - int(y - 1)
+            col_idx = int(x)
+            return self.data[row_idx, col_idx]
         except:
             return 0.0
 
-    ## set data method
+    def rasterHint(self, rect):
+        # really important, else QT widget will query as much pixels
+        # as the render content has!! bad performance hit
+        return QtCore.QSize(self.data.shape[1], self.data.shape[0])
 
-    @QtCore.pyqtSlot(N.ndarray)
+    ## methods
+
     def set_data(self, data):
-        try:
-            if self.data is None or self.data.shape != data.shape:
-                self.setBoundingRect(
-                    QtCore.QRectF(
-                        0.0,
-                        0.0,
-                        data.shape[0],
-                        data.shape[1]
-                    )
-                )
-            self.data = data
-        except:
-            self.data = None
+        MatrixData.check_input(data)
+        self.data = data
+        self.setBoundingRect(
+            QtCore.QRectF(
+                0.0,
+                0.0,
+                self.data.shape[1],
+                self.data.shape[0]
+            )
+        )
+
+    def __getattr__(self, name):
+        if hasattr(self.data, name):
+            return getattr(self.data, name)
+        else:
+            raise AttributeError('Attribute %s not found on self.data' % name)
+
+    @staticmethod
+    def check_input(inp):
+        if not isinstance(inp, N.ndarray):
+            raise ValueError('MatrixData needs a ndarray as basis!')
+        if inp.ndim != 2:
+            raise ValueError('MatrixData needs a 2-dimensional narray as basis')
 
 
 class MatShow(Qwt5.QwtPlot):
@@ -99,8 +124,7 @@ class MatShow(Qwt5.QwtPlot):
         self.setFrameStyle(QtGui.QFrame.NoFrame)
         self.setLineWidth(0)
         self.setCanvasLineWidth(0)
-        self.setAutoReplot(True)
-#        self.setSizePolicy(SIZE_POL)
+        self.setAutoReplot(False)
 
         # matplot
         colmap = Qwt5.QwtLinearColorMap()
@@ -108,20 +132,16 @@ class MatShow(Qwt5.QwtPlot):
         self._mat.setColorMap(colmap)
         self._mat.attach(self)
 
-        # matrix data
+        # matdata
         self._data = MatrixData()
         self._mat.setData(self._data)
 
         # axis and scales
         self.axisWidget(Qwt5.QwtPlot.yRight).setColorBarEnabled(True)
-        self.axisWidget(Qwt5.QwtPlot.yRight).setColorMap(
-            self._data.range(),
-            self._mat.colorMap()
-        )
         self.enableAxis(Qwt5.QwtPlot.yRight, True)
-        self.enableAxis(Qwt5.QwtPlot.yLeft, False)
+        self.enableAxis(Qwt5.QwtPlot.yLeft, True)
         self.enableAxis(Qwt5.QwtPlot.xTop, False)
-        self.enableAxis(Qwt5.QwtPlot.xBottom, False)
+        self.enableAxis(Qwt5.QwtPlot.xBottom, True)
 
     ## set data method
 
@@ -136,17 +156,16 @@ class MatShow(Qwt5.QwtPlot):
 
         # set data
         self._data.set_data(data)
-
-        # recalculate color bar axis
         self.axisWidget(Qwt5.QwtPlot.yRight).setColorMap(
             self._data.range(),
             self._mat.colorMap()
         )
         self.setAxisScale(
             Qwt5.QwtPlot.yRight,
-            data.min(),
-            data.max()
+            self._data.min(),
+            self._data.max()
         )
+        self.replot()
 
 
 class TimeSeriesPlot(Qwt5.QwtPlot):

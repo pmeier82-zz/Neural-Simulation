@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/phil/SVN/Python/SpikePy/posi/gui/recorder_controll.ui'
+# Form implementation generated from reading ui file 'recorder_controll.ui'
 #
-# Created: Fri May 28 18:05:40 2010
+# Created: Fri Aug 20 19:51:36 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,17 +12,12 @@ from PyQt4 import QtCore, QtGui, Qwt5
 class Ui_RecorderControll(object):
     def setupUi(self, RecorderControll):
         RecorderControll.setObjectName("RecorderControll")
-        RecorderControll.resize(414, 94)
+        RecorderControll.resize(414, 82)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/neural_sim_client.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         RecorderControll.setWindowIcon(icon)
         self.lo_main = QtGui.QVBoxLayout(RecorderControll)
         self.lo_main.setObjectName("lo_main")
-        self.content = QtGui.QWidget(RecorderControll)
-        self.content.setObjectName("content")
-        self.lo_content = QtGui.QVBoxLayout(self.content)
-        self.lo_content.setObjectName("lo_content")
-        self.lo_main.addWidget(self.content)
         self.lo_controls = QtGui.QHBoxLayout()
         self.lo_controls.setObjectName("lo_controls")
         self.ctl_input_position = Qwt5.QwtCounter(RecorderControll)
@@ -35,7 +30,7 @@ class Ui_RecorderControll(object):
         self.ctl_input_position.setEditable(True)
         self.ctl_input_position.setObjectName("ctl_input_position")
         self.lo_controls.addWidget(self.ctl_input_position)
-        spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.lo_controls.addItem(spacerItem)
         self.ctl_btn_move = QtGui.QPushButton(RecorderControll)
         self.ctl_btn_move.setObjectName("ctl_btn_move")
@@ -43,6 +38,8 @@ class Ui_RecorderControll(object):
         self.ctl_btn_request = QtGui.QPushButton(RecorderControll)
         self.ctl_btn_request.setObjectName("ctl_btn_request")
         self.lo_controls.addWidget(self.ctl_btn_request)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.lo_controls.addItem(spacerItem1)
         self.lo_main.addLayout(self.lo_controls)
         self.lo_display = QtGui.QHBoxLayout()
         self.lo_display.setObjectName("lo_display")
@@ -74,7 +71,6 @@ class Ui_RecorderControll(object):
         self.disp_meter.setObjectName("disp_meter")
         self.lo_display.addWidget(self.disp_meter)
         self.lo_main.addLayout(self.lo_display)
-        self.lo_main.setStretch(0, 1000)
 
         self.retranslateUi(RecorderControll)
         QtCore.QMetaObject.connectSlotsByName(RecorderControll)
@@ -84,15 +80,4 @@ class Ui_RecorderControll(object):
         self.ctl_btn_move.setText(QtGui.QApplication.translate("RecorderControll", "move", None, QtGui.QApplication.UnicodeUTF8))
         self.ctl_btn_request.setText(QtGui.QApplication.translate("RecorderControll", "?", None, QtGui.QApplication.UnicodeUTF8))
 
-
 import res_rc
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    RecorderControll = QtGui.QWidget()
-    ui = Ui_RecorderControll()
-    ui.setupUi(RecorderControll)
-    RecorderControll.show()
-    sys.exit(app.exec_())
-

@@ -144,21 +144,19 @@ class Neuron(SimObject):
             self._interval_waveform = self._interval_overshoot
             self._interval_overshoot = []
 
-        # waveform intervals for this frame
+        # waveform intervals are defined as:
+        #     [fr_start, fr_end, wf_start, wf_end]
         for t in self._firing_times:
-            # time vector: [fr_start, fr_end, wf_start, wf_end]
-            timevec = [
-                t,
-                t + self._neuron_data.phase_max,
-                0,
-                self._neuron_data.phase_max
-            ]
 
-            # check if waveform overshoots
-            if timevec[1] >= self._frame_size:
-                residual = timevec[0] - self._frame_size
-                timevec[1] = self._frame_size
-                timevec[3] = self._neuron_data.phase_max - residual
+            # waveform overshoots
+            if t >= self._frame_size:
+                residual = self._frame_size - t
+                self._interval_waveform.append([
+                    t,
+                    self._frame_size,
+                    0,
+                    residual
+                ])
                 self._interval_overshoot.append([
                     0,
                     self._neuron_data.phase_max - residual,
@@ -166,16 +164,22 @@ class Neuron(SimObject):
                     self._neuron_data.phase_max
                 ])
 
-            # add interval
-            self._interval_waveform.append(timevec)
+            # waveform fits in frame
+            else:
+                self._interval_waveform.append([
+                    t,
+                    t + self._neuron_data.phase_max,
+                    0,
+                    self._neuron_data.phase_max
+                ])
 
             # DEBUG: start
             for interv in self._interval_waveform:
                 if interv[1] - interv[0] != interv[3] - interv[2]:
-                    raise ValueError('intervals do not match: %s' % interv)
+                    raise ValueError('waveform: intervals do not match: %s' % interv)
             for interv in self._interval_overshoot:
                 if interv[1] - interv[0] != interv[3] - interv[2]:
-                    raise ValueError('intervals do not match: %s' % interv)
+                    raise ValueError('overshot: intervals do not match: %s' % interv)
             # DEBUG: end
 
     ## methods public
@@ -237,4 +241,5 @@ __all__ = ['BadNeuronQuery', 'Neuron']
 ##---MAIN
 
 if __name__ == '__main__':
+
     pass

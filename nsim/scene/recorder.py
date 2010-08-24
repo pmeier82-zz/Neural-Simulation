@@ -131,7 +131,11 @@ class Recorder(SimObject):
         """
 
         # init
-        rval = [self._noise_gen.query(size=frame_size) / self.snr]
+        rval = None
+        if self._noise_gen is None:
+            rval = [N.zeros((frame_size, self.nchan))]
+        else:
+            rval = [self._noise_gen.query(size=frame_size) / self.snr]
 
         # for each neuron query waveform and firing data
         for nrn in nlist:

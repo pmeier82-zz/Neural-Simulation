@@ -34,10 +34,22 @@ from Ui_add_neuron import Ui_AddNeuronDialog
 from Ui_add_recorder import Ui_AddRecorderDialog
 from Ui_gui_main import Ui_SimGui
 from Ui_init_dialog import Ui_InitDialog
-from Ui_recorder_controll import Ui_RecorderControll
-from ploting import NTrodePlot
+from Ui_multi_electrode_client import Ui_MultiElectrodeClient
+from ploting import NTrodePlot, TimeSeriesPlot, MatrixData, MatShow
 
-__all__ = ['NTrodePlot', 'Ui_AddNeuronDialog', 'Ui_AddRecorderDialog', 'Ui_InitDialog', 'Ui_RecorderControll', 'Ui_SimGui']
+__all__ = [
+    # gui elements
+    'Ui_AddNeuronDialog',
+    'Ui_AddRecorderDialog',
+    'Ui_InitDialog',
+    'Ui_SimGui',
+    'Ui_MultiElectrodeClient',
+    # plotting
+    'NTrodePlot',
+    'TimeSeriesPlot',
+    'MatrixData',
+    'MatShow',
+]
 
 
 ##---MAIN

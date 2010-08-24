@@ -83,9 +83,8 @@ class ChunkContainer(object):
             item_list : list
                 The contents of a T_REC package.
         :Return:
-            None : if append was ok and did not overshoot the chunk length
-            list : residual item_list if the append overshoots the chunk length
-        """
+            list: if append was ok and did not overshoot the chunk length the
+                  list will be empty! Else the residual item_list is returned.        """
 
         # checks
         if len(item_list) == 0:
@@ -96,22 +95,29 @@ class ChunkContainer(object):
         # prepare
         rval = []
         noise = item_list.pop(0)
-        appendlen, nchan = noise.shape
-        if self.noise is None:
-            self.noise = N.empty((self.cnklen, nchan))
-        # normal append case
-        thislen = appendlen
-        if self.cnkptr + thislen >= self.cnklen:
-            thislen = self.cnklen - self.cnkptr
-        # append noise
-        copy_ar(
-            noise,
-            slice(0, thislen),
-            self.noise,
-            slice(self.cnkptr, self.cnkptr + thislen)
-        )
-        if thislen != appendlen:
-            rval.append(noise[thislen:, :].copy())
+        if isinstance(noise, (N.ndarray, None.__class__)):
+            if isinstance(noise, None.__class__):
+                thislen = 0
+            else:
+                appendlen, nchan = noise.shape
+                if self.noise is None:
+                    self.noise = N.empty((self.cnklen, nchan))
+                # normal append case
+                thislen = appendlen
+                if self.cnkptr + thislen >= self.cnklen:
+                    thislen = self.cnklen - self.cnkptr
+                # append noise
+                copy_ar(
+                    noise,
+                    slice(0, thislen),
+                    self.noise,
+                    slice(self.cnkptr, self.cnkptr + thislen)
+                )
+                if thislen != appendlen:
+                    rval.append(noise[thislen:, :].copy())
+        else:
+            thislen = 0
+            item_list.insert(0, noise)
         # append unit data
         while len(item_list) > 0:
             # get data
@@ -173,6 +179,8 @@ class ChunkContainer(object):
             if len(gtrth_resid) > 0:
                 gtrth_resid = N.vstack(gtrth_resid)
                 rval.extend([ident, wform, gtrth_resid])
+                if not isinstance(rval[0], (N.ndarray, None.__class__)):
+                    rval.insert(0, None)
         # return
         self.cnkptr += thislen
         if self.cnkptr >= self.cnklen:

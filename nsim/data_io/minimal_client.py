@@ -16,13 +16,13 @@ __docformat__ = 'restructuredtext'
 
 from PyQt4 import QtCore, QtGui
 from client_interface import ChunkContainer, NTrodeDataInterface, DEFAULT_VELOCITY
-from nsim.gui import NTrodePlot, Ui_RecorderControll
+from nsim.gui import Ui_MultiElectrodeClient, NTrodePlot
 import scipy as N
 
 
 ##---CLASSES
 
-class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
+class MinimalClient(QtGui.QMainWindow, Ui_MultiElectrodeClient):
     """control widget for a recorder (tetrode)"""
 
     ## constructor
@@ -33,7 +33,7 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         # io object parameters
         cnklen=0.25,
         addr=('localhost', 31337),
-        # gui parameters
+        # ntrode plot parameters
         axis_range=1.0,
         do_plotting=True,
         # keyword arguments
@@ -65,12 +65,19 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         super(MinimalClient, self).__init__(parent)
         self.setupUi(self)
 
+        # remove the first toolbox widget
+        wid = self.toolBox.widget(0)
+        self.toolBox.removeItem(0)
+        wid.deleteLater()
+
+        # add ntrode plot widget
         self.dataplot = NTrodePlot(
-            parent=self.content,
             nchan=4,
             axis_range=axis_range,
             replot=True
         )
+        self.toolBox.addItem(self.dataplot, 'MultiElectrode DataPlot')
+
         # IO SETUP
         self.io_params = {
             'cnklen'    : cnklen,
@@ -102,14 +109,12 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
         # initialize members
         self._io = NTrodeDataInterface(**self.io_params)
         self._io.initialize()
-        self.dataplot.show()
 
         # connections
         self._io.sig_new_data.connect(self.on_new_data)
-        self._io.sig_update_pos.connect(self.disp_meter.setValue)
-        self._io.sig_update_pos.connect(self.disp_lcd.display)
-        self.ctl_btn_move.clicked.connect(self.on_move)
-        self.ctl_btn_request.clicked.connect(self._io.request_position)
+        self._io.sig_update_pos.connect(self.posi_slider_position.setValue)
+        self.posi_slider_target.sliderMoved.connect(self.on_move)
+#        self.ctl_btn_request.clicked.connect(self._io.request_position)
 
         # initialize flags
         self._initialized = True
@@ -122,9 +127,6 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             self._io.finalize()
             self._io.deleteLater()
             self._io = None
-        self.dataplot.close()
-        self.dataplot.deleteLater()
-        self.dataplot = None
 
         # reset flags
         self._initialized = False
@@ -165,14 +167,11 @@ class MinimalClient(QtGui.QDialog, Ui_RecorderControll):
             print str(ex)
 
     def handle_data(self, signal, noise, gtrth):
-        """abstract handler"""
-
         pass
 
-    @QtCore.pyqtSlot()
-    def on_move(self):
-
-        self._io.send_to_position(float(self.ctl_input_position.value()), DEFAULT_VELOCITY)
+    @QtCore.pyqtSlot(int)
+    def on_move(self, pos):
+        self._io.send_to_position(float(pos), DEFAULT_VELOCITY)
 
 
 ##--- MAIN
