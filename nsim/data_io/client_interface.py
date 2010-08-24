@@ -292,7 +292,7 @@ class NTrodeDataInterface(QtCore.QObject):
     ## qt-signals
 
     sig_new_data = QtCore.pyqtSignal(ChunkContainer)
-    sig_update_pos = QtCore.pyqtSignal(float)
+    sig_update_pos = QtCore.pyqtSignal(int)
 
     ## constructor
 

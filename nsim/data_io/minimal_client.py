@@ -112,9 +112,10 @@ class MinimalClient(QtGui.QMainWindow, Ui_MultiElectrodeClient):
 
         # connections
         self._io.sig_new_data.connect(self.on_new_data)
-        self._io.sig_update_pos.connect(self.posi_slider_position.setValue)
-        self.posi_slider_target.sliderMoved.connect(self.on_move)
-#        self.ctl_btn_request.clicked.connect(self._io.request_position)
+        self._io.sig_update_pos.connect(self.on_pos)
+        self.posi_btn_go.clicked.connect(self.on_move)
+        self.posi_btn_request.clicked.connect(self.on_request)
+        self.posi_slider_target.valueChanged.connect(self.on_target_slider)
 
         # initialize flags
         self._initialized = True
@@ -170,14 +171,30 @@ class MinimalClient(QtGui.QMainWindow, Ui_MultiElectrodeClient):
         pass
 
     @QtCore.pyqtSlot(int)
-    def on_move(self, pos):
-        self._io.send_to_position(float(pos), DEFAULT_VELOCITY)
+    @QtCore.pyqtSlot(float)
+    def on_pos(self, pos):
+        pos = int(pos)
+        self.posi_slider_position.setValue(pos)
+        self.posi_edit_position.setText(str(pos))
+
+    @QtCore.pyqtSlot()
+    def on_move(self):
+        pos = float(self.posi_edit_target.text())
+        self.posi_slider_target.setValue(int(pos))
+        self._io.send_to_position(pos)
+
+    @QtCore.pyqtSlot()
+    def on_request(self):
+        self._io.request_position()
+
+    @QtCore.pyqtSlot(int)
+    @QtCore.pyqtSlot(float)
+    def on_target_slider(self, pos):
+        self.posi_edit_target.setText(str(pos))
+
 
 
 ##--- MAIN
 
 if __name__ == '__main__':
     pass
-
-
-
