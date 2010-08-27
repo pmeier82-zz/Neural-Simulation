@@ -107,11 +107,14 @@ class MatShow(Qwt5.QwtPlot):
 
     ## constructor
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, **kwargs):
         """
         :Parameters:
             parent : QObject
                 QT parent.
+            cmap : tuple
+                colormap tuples. [0] from (req.), [1] to (req), [2:] color stops
+                as (stop, qt-color)
         """
 
         # super
@@ -127,7 +130,11 @@ class MatShow(Qwt5.QwtPlot):
         self.setAutoReplot(False)
 
         # matplot
-        colmap = Qwt5.QwtLinearColorMap()
+        cmap = kwargs.get('cmap', (QtCore.Qt.white, QtCore.Qt.blue))
+        colmap = Qwt5.QwtLinearColorMap(cmap[0], cmap[1])
+        if len(cmap) > 2:
+            for item in cmap[2:]:
+                colmap.addColorStop(item[0], item[1])
         self._mat = Qwt5.QwtPlotSpectrogram()
         self._mat.setColorMap(colmap)
         self._mat.attach(self)
@@ -489,4 +496,5 @@ class QualityPlot(Qwt5.QwtPlot):
 
 ##---MAIN
 if __name__ == '__main__':
+
     pass
