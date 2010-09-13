@@ -18,46 +18,53 @@
 ##
 ################################################################################
 #
-# sim - scene/data/lerp.py
+# nsim - scene/neuron_data/lerp.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
-# 2010-06-08
+# 2010-09-08
 #
 
-"""linear interpolation routines"""
+"""linear interpolation routines
+
+Implemented for the  1d, 2d, and 3d case. all higher dimensional cases are
+reduced to a concatenation of 1d linear interpolations."""
 __docformat__ = 'restructuredtext'
 
 
 ##--FUNCTIONS
 
-def LERP1(alpha, v0, v1):
-    """linear interpolation"""
+def lerp1(alpha, v0, v1):
+    """linear interpolation - 1-dimensional case"""
 
-    return ((1 - alpha) * v0) + (alpha * v1)
+    return ((1.0 - alpha) * v0) + (alpha * v1)
 
-def LERP2(x, y, v00, v10, v01, v11):
-    """bilinear interpolation"""
+def lerp2(alpha_x, alpha_y,
+          v00, v10,
+          v01, v11):
+    """linear interpolation - 2-dimensional case"""
 
-    return LERP1(
-        y,
-        LERP1(x, v00, v10),
-        LERP1(x, v01, v11)
+    return lerp1(
+        alpha_y,
+        lerp1(alpha_x, v00, v10),
+        lerp1(alpha_x, v01, v11)
     )
 
-def LERP3(x, y, z, v000, v100, v010, v110, v001, v101, v011, v111):
-    """trilinear interpolation"""
+def lerp3(alpha_x, alpha_y, alpha_z,
+          v000, v100, v010, v110,
+          v001, v101, v011, v111):
+    """linear interpolation - 3-dimensional case"""
 
-    return LERP1(
-        z,
-        LERP1(
-            y,
-            LERP1(x, v000, v100),
-            LERP1(x, v010, v110)
+    return lerp1(
+        alpha_z,
+        lerp1(
+            alpha_y,
+            lerp1(alpha_x, v000, v100),
+            lerp1(alpha_x, v010, v110)
         ),
-        LERP1(
-            y,
-            LERP1(x, v001, v101),
-            LERP1(x, v011, v111)
+        lerp1(
+            alpha_y,
+            lerp1(alpha_x, v001, v101),
+            lerp1(alpha_x, v011, v111)
         )
     )
 

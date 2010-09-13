@@ -18,10 +18,10 @@
 ##
 ################################################################################
 #
-# sim - sim_objects/data/__init__.py
+# nsim - scene/neuron_data/ndata_waveform.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
-# 2010-01-21
+# 2010-09-13
 #
 
 """interface for datafiles from Einevoll group"""
