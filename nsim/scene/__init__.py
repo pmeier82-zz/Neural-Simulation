@@ -33,7 +33,7 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-from data import NeuronData, NeuronDataContainer
+from neuron_data import NeuronData, NeuronDataContainer
 from sim_object import SimObject
 from neuron import Neuron
 from recorder import Recorder, Tetrode
