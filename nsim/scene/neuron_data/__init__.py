@@ -30,8 +30,8 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-from lerp import lerp1, lerp2, lerp3
 from neuron_data import NeuronData, NeuronDataContainer
+from ndata_sampled import SampledND, get_eap_range
 
 ##---PACKAGE
 
@@ -43,7 +43,9 @@ __all__ = [
     # neuron data interface
     'NeuronData',
     'NeuronDataContainer',
-    # neuron data implementations
+    # sampled neuron data
+    'SampledND',
+    'get_eap_range'
 ]
 
 

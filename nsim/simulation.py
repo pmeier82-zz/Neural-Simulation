@@ -305,7 +305,7 @@ class BaseSimulation(dict):
         return [idx for idx in self if isinstance(self[idx], Recorder)]
     recorder_keys = property(get_recorder_keys)
 
-    ## simulation controll methods
+    ## simulation control methods
 
     def simulate(self):
         """advance the simulation by one frame"""

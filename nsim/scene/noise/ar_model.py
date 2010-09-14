@@ -19,10 +19,10 @@
 ################################################################################
 # -*- coding: utf-8 -*-
 #
-# sim - noise_gen.py
+# nsim - scene/noise/noise_gen.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
-# 2010-01-18
+# 2010-09-14
 #
 
 """noise generation with multivariate autoregressive models"""
@@ -34,6 +34,8 @@ __docformat__ = "restructuredtext"
 # packages
 import scipy as N
 from scipy import linalg as NL, random as NR
+from collections import deque
+from noise_gen import NoiseGen
 
 
 ##---CONSTANTS
@@ -298,7 +300,88 @@ def get_noise_sample(idx=None, size=None, filename=None):
     return data[idx:idx + size].copy()
 
 
+##---CLASSES
+
+class ArNoiseGen(NoiseGen):
+    """multivariate noise process from an autoregressive model
+
+    The process will produce samples from a zero mean, multivariate Gaussian.
+    Samples have correlations across the multivariate components, temporal
+    correlations within the components and also temporal correlations between
+    the components.
+    """
+
+    # constructor
+    def __init__(self, noise_params):
+        """
+        :Parameters:
+            noise_params : tuple
+                A tuple of length 1 or 2:
+                len 1: A strip of data to estimate the model parameters from.
+                len 2: A and C, the matching AR coefficient and channel covariance matrices.
+        """
+
+        # check parameters
+        if len(noise_params) == 1:
+            if not issubclass(noise_params[0].__class__, N.ndarray):
+                raise ValueError('noise strip should be ndarray')
+            A, C = ar_fit(noise_params[0])[:2]
+        elif len(noise_params) == 2:
+            if not issubclass(noise_params[0].__class__, N.ndarray) or \
+            not issubclass(noise_params[1].__class__, N.ndarray):
+                raise ValueError('A and C matrix should be ndarrays')
+            A, C = noise_params
+        else:
+            raise ValueError('noise_params not tuple/list of len 1 or 2')
+
+        # check model
+        if A.shape[0] != C.shape[0] != C.shape[1]:
+            raise ValueError('A and C matrix dont fit each other. %s and %s' %
+                (str(A.shape), str(C.shape)))
+        if ar_model_check_stable(A) is False:
+            raise ValueError('estimated model is not stable')
+
+        # super [zeros mean, multichannel white noise with covariance C]
+        super(ArNoiseGen, self).__init__(mu=N.zeros(C.shape[0]), sigma=C)
+
+        # members
+        self.coeffs = A.T
+        self.norder = self.coeffs.shape[0] / float(self.nvar)
+        if self.norder != round(self.norder):
+            raise ValueError('invalid model order (not integer?)')
+        self.norder = int(self.norder)
+        mem_size = self.norder * self.nvar
+        self.coeffs_mem = deque([0] * mem_size, maxlen=mem_size)
+
+        # run simulation for 5k samples to overcome initial oscillations
+        self.query(5000)
+
+    def query(self, size=1):
+        """return noise samples
+
+        :Parameters:
+            size : int
+                Number of samples to produce.
+                Default=1
+        """
+
+        # super
+        rval = super(ArNoiseGen, self).query(size=size)
+
+        # generate noise
+        for k in xrange(size):
+            rval[k] += N.dot(self.coeffs_mem, self.coeffs)
+            self.coeffs_mem.extendleft(rval[k, ::-1])
+        return rval
+
+
 ##---MAIN
+
+__all__ = [
+    'arfit',
+    'ar_model_check_stable',
+    'ArNoiseGen',
+]
 
 if __name__ == '__main__':
 
