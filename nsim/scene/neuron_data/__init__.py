@@ -36,10 +36,6 @@ from ndata_sampled import SampledND, get_eap_range
 ##---PACKAGE
 
 __all__ = [
-    # lerp
-    'lerp1',
-    'lerp2',
-    'lerp3',
     # neuron data interface
     'NeuronData',
     'NeuronDataContainer',

@@ -378,7 +378,7 @@ class ArNoiseGen(NoiseGen):
 ##---MAIN
 
 __all__ = [
-    'arfit',
+    'ar_fit',
     'ar_model_check_stable',
     'ArNoiseGen',
 ]

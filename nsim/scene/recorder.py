@@ -36,7 +36,7 @@ import scipy as N
 from sim_object import SimObject
 from neuron import BadNeuronQuery, Neuron
 from noise import NoiseGen, ArNoiseGen
-from math3d import unit_vector
+from nsim.math import unit_vector
 
 
 ##---CLASSES

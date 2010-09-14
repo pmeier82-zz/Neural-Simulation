@@ -31,7 +31,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 import scipy as N
-from scene.math3d import vector_norm
+from nsim.math import vector_norm
 
 
 ##---CLASSES

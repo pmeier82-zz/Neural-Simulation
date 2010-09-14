@@ -1798,7 +1798,7 @@ def is_same_transform(matrix0, matrix1):
 
 __all__ = [
     'identity_matrix',
-    'tranlsation_matrix',
+    'translation_matrix',
     'translation_from_matrix',
     'reflection_matrix',
     'reflection_from_matrix',
@@ -1839,7 +1839,7 @@ __all__ = [
     'random_vector',
     'inverse_matrix',
     'concatenate_matrices',
-    'is_same_transformation'
+    'is_same_transform'
 ]
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ __doctype__ = 'restructuredtext'
 import scipy as N
 # own packages
 from sim_object import SimObject
-from math3d import quaternion_matrix, vector_norm
+from nsim.math import quaternion_matrix, vector_norm
 from neuron_data import NeuronData
 
 

@@ -30,13 +30,12 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-import os
 import os.path as osp
-from tables import openFile, NoSuchNodeError
+from tables import openFile
 import scipy as N
 from scipy.special import cbrt
 from neuron_data import NeuronData
-from lerp import lerp3
+from nsim.math import lerp3
 
 
 ##---CLASSES

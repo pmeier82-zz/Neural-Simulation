@@ -83,6 +83,7 @@ setup(
     packages=['nsim',
               'nsim.data_io',
               'nsim.gui',
+              'nsim.math',
               'nsim.scene',
               'nsim.scene.neuron_data',
               'nsim.scene.noise'],
