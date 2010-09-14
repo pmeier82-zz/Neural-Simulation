@@ -71,7 +71,7 @@ spike sorter is possible.
 
 setup(
     name='Neural Simulation',
-    version='0.1.54',
+    version='0.1.55',
     author='Philipp Meier',
     author_email='pmeier82@googlemail.com',
     maintainer='Philipp Meier',
@@ -80,7 +80,12 @@ setup(
     download_url='http://github.com/pmeier82/Neural-Simulation/zipball/master',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    packages=['nsim', 'nsim.data_io', 'nsim.gui', 'nsim.scene', 'nsim.scene.data', 'nsim.scene.noise'],
+    packages=['nsim',
+              'nsim.data_io',
+              'nsim.gui',
+              'nsim.scene',
+              'nsim.scene.neuron_data',
+              'nsim.scene.noise'],
     package_data={'res':['*.*'],
                   'nsim.gui':['*.ui', '*.qrc', '*.png']},
     zip_safe=False,

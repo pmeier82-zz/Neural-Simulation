@@ -71,5 +71,7 @@ def lerp3(alpha_x, alpha_y, alpha_z,
 
 ##---MAIN
 
+__all__ = ['lerp1', 'lerp2', 'lerp3']
+
 if __name__ == '__main__':
     pass
