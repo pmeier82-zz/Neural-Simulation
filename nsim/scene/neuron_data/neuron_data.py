@@ -31,7 +31,11 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 import scipy as N
+from tables import openFile
 from nsim.math import vector_norm
+
+# import all known NeuronData subclasses
+
 
 
 ##---CLASSES
@@ -60,7 +64,7 @@ class NeuronData(object):
 
     ## constructor
 
-    def __init__(self, desciption=None, **kwargs):
+    def __init__(self, description=None, **kwargs):
         """
         :Parameters:
             description : str
@@ -73,7 +77,7 @@ class NeuronData(object):
         """
 
         # description
-        self.description = desciption or 'Undefined'
+        self.description = description or 'Undefined'
 
         # interface members, these have to be set from the subclass constructor
 
@@ -112,6 +116,12 @@ class NeuronData(object):
             phase = xrange(phase, phase + 1)
 
         return self._get_data(pos, phase)
+
+    @staticmethod
+    def from_file(path):
+        """abstract factory method to create an instance from an archive"""
+
+        raise NotImplementedError
 
     ## interface methods - private
 
@@ -170,21 +180,26 @@ class NeuronDataContainer(dict):
 
         # try to add the items in the list
         for item in ndata_list:
+            ndata = None
             if isinstance(item, NeuronData):
-                rval += self._insert(item)
+                ndata = item
+            elif isinstance(item, str):
+                ndata = self._ndata_from_file(item)
             else:
                 continue
+            if ndata is not None:
+                rval += self._insert(ndata)
 
-        # return the count of inserted NeuronData objecs
+        # return the count of inserted NeuronData objects
         return rval
 
     ## private methods
 
-    def _insert(self, item):
+    def _insert(self, ndata_item):
         """inserts a single NeuronData object into the container
 
         :Parameters:
-            item : NeuronData
+            ndata_item : NeuronData
                 The NeuronData object to insert.
         :Return:
             bool : True on success, False, if either item is not a NeuronData
@@ -192,20 +207,67 @@ class NeuronDataContainer(dict):
                 already present in the container.
         """
 
-        if isinstance(item, NeuronData):
-            if item.desciption in self:
+        if isinstance(ndata_item, NeuronData):
+            if ndata_item.description in self:
                 return False
             else:
-                self.__setitem__(item.desciption, item)
+                self.__setitem__(ndata_item.description, ndata_item)
                 return True
         else:
             return False
 
+    def _ndata_from_file(self, path):
+        """try to load a NeuronData subclass from a file
+        
+        All saveable neuron_data datasets are saved as HDF5 archives. The
+        archive must provide the nodes '/__TYPE__' and '/__CLASS__', where
+        '/__TYPE__' must match 'NeuronData' and '/__CLASS__' must hold the class
+        name to load the dataset with as a string. The class name must reference
+        a subclass of NeuronData and must equal that classes __name__ attribute.
+        Else loading of the archive will fail! 
+        
+        :Parameters:
+            path : str
+                The path to the file.
+        :Return:
+            NeuronData : NeuronData subclass instance loaded from the archive.
+                This instance is read to be added to the container.
+            None : If the archive is not recognised as a dataset that can be
+                loaded as a subclass of NeuronData.  
+        """
 
-__all__ = ['NeuronData', 'NeuronDataContainer']
+        # get class function
+        def get_class(kls):
+            parts = kls.split('.')
+            module = ".".join(parts[:-1])
+            m = __import__(module)
+            for comp in parts[1:]:
+                m = getattr(m, comp)
+            return m
+
+        try:
+            arc = openFile(path, 'r')
+            TYPE = str(arc.getNode('/__TYPE__').read())
+            assert TYPE == 'NeuronData'
+            CLASS = str(arc.getNode('/__CLASS__').read())
+            cls = get_class('nsim.scene.neuron_data.%s' % CLASS)
+            ndata = cls.from_file(path)
+            return ndata
+        except:
+            return None
+        finally:
+            try:
+                arc.close()
+                del arc
+            except:
+                pass
 
 
 ##---MAIN
 
+__all__ = ['NeuronData', 'NeuronDataContainer']
+
 if __name__ == '__main__':
-    pass
+
+    CONTI = NeuronDataContainer()
+    print CONTI.insert('/home/phil/Data/Einevoll/LFP-20100516_225124.h5')

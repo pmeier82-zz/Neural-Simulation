@@ -330,7 +330,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             # chose files
             rval = QtGui.QFileDialog.getOpenFileNames(
                 self,
-                'Select files to open'
+                'Select one or more archives to open'
             )
             if len(rval) == 0:
                 return
@@ -343,9 +343,10 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.progress.setVisible(True)
 
             # load neuron datas
-            ndatas = 0
+            nfiles = 0
             for path in rval:
-                ndatas += self._sim.neuron_data.insert(path)
+                ndata = NeuronDataLoader(path)
+                nfiles += self._sim.neuron_data.insert(ndata)
                 self.progress.setValue(self.progress.value() + 1)
             self.progress.reset()
             self.progress.setVisible(False)

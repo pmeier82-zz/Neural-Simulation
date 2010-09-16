@@ -39,7 +39,7 @@ __doctype__ = 'restructuredtext'
 # packages
 import scipy as N
 # own packages
-from math3d import (
+from nsim.math import (
     quaternion_about_axis,
     unit_vector,
     random_quaternion,

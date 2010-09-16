@@ -31,7 +31,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from neuron_data import NeuronData, NeuronDataContainer
-from ndata_sampled import SampledND, get_eap_range
+from nd_sampled import SampledND, get_eap_range
 
 ##---PACKAGE
 

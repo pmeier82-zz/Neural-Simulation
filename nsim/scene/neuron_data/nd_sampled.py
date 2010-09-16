@@ -41,7 +41,7 @@ from nsim.math import lerp3
 ##---CLASSES
 
 class SampledND(NeuronData):
-    """data container to access the neuron data provided by Einevoll group
+    """data container to access neuron data provided by Einevoll group
 
     The archives contain a sampling of voltage data simulated on a voxel grid
     around a pyramidal cell. The data has an isotrope spatial and temporal
@@ -143,7 +143,7 @@ class SampledND(NeuronData):
         # interpolation values
         v = N.zeros((8, len(phase)))
         for i in xrange(8):
-            v[i, :] = self.data[
+            v[i, :] = self.extra_v[
                 SampledND.pos_kernel(interp_cube[i], self.grid_size),
                 phase
             ]
@@ -157,7 +157,25 @@ class SampledND(NeuronData):
             v[4], v[5], v[6], v[7]
         )
 
-    ## position kernel
+    ## static methods
+
+    @staticmethod
+    def from_file(path):
+        """factory to create an SampledND from an archive
+        
+        :Parameters:
+            path : str
+                Path to the archive to load from
+        :Return:
+            SampledNd : if successfully loaded from the file
+            None : on any error
+        """
+
+        try:
+            return SampledND(path)
+        except:
+            return None
+
 
     @staticmethod
     def pos_kernel(pos, grid_size):
