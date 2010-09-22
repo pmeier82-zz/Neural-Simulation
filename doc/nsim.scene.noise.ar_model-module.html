@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>nsim.scene.noise.ar_model</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="nsim-module.html">Package&nbsp;nsim</a> ::
+        <a href="nsim.scene-module.html">Package&nbsp;scene</a> ::
+        <a href="nsim.scene.noise-module.html" onclick="show_private();">Package&nbsp;noise</a> ::
+        Module&nbsp;ar_model
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="nsim.scene.noise.ar_model-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module ar_model</h1><p class="nomargin-top"><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html">source&nbsp;code</a></span></p>
+noise generation with multivariate autoregressive models
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="nsim.scene.noise.ar_model.ArNoiseGen-class.html" class="summary-name">ArNoiseGen</a><br />
+      multivariate noise process from an autoregressive model
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="nsim.scene.noise.ar_model-module.html#ar_fit" class="summary-sig-name">ar_fit</a>(<span class="summary-sig-arg">p_data</span>,
+        <span class="summary-sig-arg">p_or_plist</span>=<span class="summary-sig-default"><code class="variable-group">[</code>0<code class="variable-op">, </code>1<code class="variable-op">, </code>2<code class="variable-op">, </code>3<code class="variable-op">, </code>4<code class="variable-op">, </code>5<code class="variable-op">, </code>6<code class="variable-op">, </code>7<code class="variable-op">, </code>8<code class="variable-op">, </code>9<code class="variable-op">, </code>10<code class="variable-op">, </code>11<code class="variable-op">, </code>12<code class="variable-op">, </code>13<code class="variable-op">, </code>14<code class="variable-op">, </code>15<code class="variable-op">, </code>16<code class="variable-op">, </code>17<code class="variable-op">,</code><code class="variable-ellipsis">...</code></span>,
+        <span class="summary-sig-arg">selector</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">sbc</code><code class="variable-quote">'</code></span>)</span><br />
+      fits a (multivariate) AR (_A_uto_R_egrssive) model to data</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#ar_fit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="nsim.scene.noise.ar_model-module.html#_ar_model_select" class="summary-sig-name" onclick="show_private();">_ar_model_select</a>(<span class="summary-sig-arg">R</span>,
+        <span class="summary-sig-arg">m</span>,
+        <span class="summary-sig-arg">ne</span>,
+        <span class="summary-sig-arg">p_range</span>)</span><br />
+      model order selection</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_select">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="nsim.scene.noise.ar_model-module.html#_ar_model_qr" class="summary-sig-name" onclick="show_private();">_ar_model_qr</a>(<span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">p</span>=<span class="summary-sig-default">1</span>)</span><br />
+      QR factorization for a (multivariate) zero-mean AR model</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_qr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="nsim.scene.noise.ar_model-module.html#_ar_model_sim" class="summary-sig-name" onclick="show_private();">_ar_model_sim</a>(<span class="summary-sig-arg">A</span>,
+        <span class="summary-sig-arg">C</span>,
+        <span class="summary-sig-arg">n</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">n_discard</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">mean</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">check</span>=<span class="summary-sig-default">False</span>)</span><br />
+      simulates data for a VARMA model</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_sim">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="nsim.scene.noise.ar_model-module.html#ar_model_check_stable" class="summary-sig-name">ar_model_check_stable</a>(<span class="summary-sig-arg">A</span>)</span><br />
+      check if this AR model is stable</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#ar_model_check_stable">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_noise_sample"></a><span class="summary-sig-name">get_noise_sample</span>(<span class="summary-sig-arg">idx</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">size</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">filename</span>=<span class="summary-sig-default">None</span>)</span><br />
+      get some noise from a recording of maquaque prefrontal cortex</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#get_noise_sample">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="EPS"></a><span class="summary-name">EPS</span> = <code title="2.2204460492503131e-16">2.2204460492503131e-16</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'nsim.scene.noise'"><code class="variable-quote">'</code><code class="variable-string">nsim.scene.noise</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<p class="indent-wrapped-lines"><b>Imports:</b>
+  <span title="scipy">N</span>,
+  <span title="scipy.linalg">NL</span>,
+  <span title="scipy.random">NR</span>,
+  <span title="collections.deque">deque</span>,
+  <a href="nsim.scene.noise.noise_gen.NoiseGen-class.html" title="nsim.scene.noise.noise_gen.NoiseGen">NoiseGen</a>
+</p><br />
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="ar_fit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ar_fit</span>(<span class="sig-arg">p_data</span>,
+        <span class="sig-arg">p_or_plist</span>=<span class="sig-default"><code class="variable-group">[</code>0<code class="variable-op">, </code>1<code class="variable-op">, </code>2<code class="variable-op">, </code>3<code class="variable-op">, </code>4<code class="variable-op">, </code>5<code class="variable-op">, </code>6<code class="variable-op">, </code>7<code class="variable-op">, </code>8<code class="variable-op">, </code>9<code class="variable-op">, </code>10<code class="variable-op">, </code>11<code class="variable-op">, </code>12<code class="variable-op">, </code>13<code class="variable-op">, </code>14<code class="variable-op">, </code>15<code class="variable-op">, </code>16<code class="variable-op">, </code>17<code class="variable-op">,</code><code class="variable-ellipsis">...</code></span>,
+        <span class="sig-arg">selector</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">sbc</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#ar_fit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  fits a (multivariate) AR (_A_uto_R_egrssive) model to data
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>p_data</code></strong> (ndarray) - Data with observations on the rows and variables on the columns</li>
+        <li><strong class="pname"><code>p_or_plist</code></strong> (list) - List of model orders to select from. This list has to be continuous
+with a step size of 1, e.g. [10,11,12,13,14]</li>
+        <li><strong class="pname"><code>selector</code></strong> (str) - One of 'sbc' for the Schwarz Bayesian Criterion or 'fpe' for the
+log of Akaike's Final Prediction Error. This determines what metric
+is used to evaluate the best model order.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ar_model_select"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ar_model_select</span>(<span class="sig-arg">R</span>,
+        <span class="sig-arg">m</span>,
+        <span class="sig-arg">ne</span>,
+        <span class="sig-arg">p_range</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_select">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  model order selection
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>R</code></strong> (ndarray) - upper triangular mx from QR</li>
+        <li><strong class="pname"><code>m</code></strong> (int) - state vector dimension</li>
+        <li><strong class="pname"><code>ne</code></strong> (int) - number of bock equations of size m used in the estimation</li>
+        <li><strong class="pname"><code>p_range</code></strong> (list) - list of model order to select from</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ar_model_qr"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ar_model_qr</span>(<span class="sig-arg">data</span>,
+        <span class="sig-arg">p</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_qr">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  QR factorization for a (multivariate) zero-mean AR model
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>data</code></strong> (ndarray) - data with observations on the rows and variables on the columns</li>
+        <li><strong class="pname"><code>p</code></strong> (int or list) - the model order, how many samples to regress over</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ar_model_sim"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ar_model_sim</span>(<span class="sig-arg">A</span>,
+        <span class="sig-arg">C</span>,
+        <span class="sig-arg">n</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">n_discard</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">mean</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">check</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#_ar_model_sim">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  simulates data for a VARMA model
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>A</code></strong> (ndarray) - AR Coeffitient matrix</li>
+        <li><strong class="pname"><code>C</code></strong> (ndarray) - Noise covariance matrix</li>
+        <li><strong class="pname"><code>n</code></strong> (int) - Number od datapoints to simulate with the process</li>
+        <li><strong class="pname"><code>n_discard</code></strong> (int) - Number od datapoints to discard befor taking datapoints for the
+simulation.</li>
+        <li><strong class="pname"><code>mean</code></strong> (ndarray) - Mean vector for the process</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ar_model_check_stable"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ar_model_check_stable</span>(<span class="sig-arg">A</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="nsim.scene.noise.ar_model-pysrc.html#ar_model_check_stable">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  check if this AR model is stable
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>A</code></strong> (ndarray) - The coefficient matrix of the model</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Sep 22 13:36:49 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

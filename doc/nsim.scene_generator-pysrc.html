@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>nsim.scene_generator</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="nsim-module.html">Package&nbsp;nsim</a> ::
+        Module&nbsp;scene_generator
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="nsim.scene_generator-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="nsim.scene_generator-module.html">Module nsim.scene_generator</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">## -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">##  Copyright 2010 Philipp Meier &lt;pmeier82@googlemail.com&gt;</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">##  Licensed under the EUPL, Version 1.1 or &#8211; as soon they will be approved by</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">##  the European Commission - subsequent versions of the EUPL (the "Licence");</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">##  You may not use this work except in compliance with the Licence.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">##  You may obtain a copy of the Licence at:</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">##  http://ec.europa.eu/idabc/eupl</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">##  Unless required by applicable law or agreed to in writing, software</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">##  distributed under the Licence is distributed on an "AS IS" basis,</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment">##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">##  See the Licence for the specific language governing permissions and</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">##  limitations under the Licence.</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment"># nsim - scene_generator.py</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># Philipp Meier - &lt;pmeier82 at googlemail dot com&gt;</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment"># 2010-09-17</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">__future__</tt> <tt class="py-keyword">import</tt> <tt class="py-name">division</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-string">"""tool to generate a scene archive for the Neural Simulation</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-string">This module provides a GUI based approach to scene building. A initial scene can</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-string">be configured and saved as a loadable archive. The loadable archives are HDF5</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-string">containers with a predefined structure, as explained here:</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-string">SCENE ARCHIVE (.sca) - HDF5 container</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-string">    __TYPE__ : string node</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-string">        all groups must contain a '__TYPE__' node identifying its purpose as a </tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-string">        string. available identifiers are:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-string">            SCENE_ARCHIVE : for the root node</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-string">            CONFIG        : for the NS config group</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-string">            NEURON_DATA   : for the neuron data group</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-string">            +NeuronData   : for NeuronData nodes</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-string">            SCENE         : for the scene group</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-string">            +SimObject    : for SimObject nodes</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-string">    __CLASS__ : string node</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-string">        various groups define the parameters set to instantiate a class. this</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-string">        string holds th name of the class. meaning varies for context.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-string">    </tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-string">    The basic structure for a scene archive is:</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-string">        </tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-string">        ROOT</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-string">         |- __TYPE__ = 'SCENE_ARCHIVE'</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-string">         |- CONFIG</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-string">         |   |- __TYPE__ = 'CONFIG'</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-string">         |   |- frame_size = 1024</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-string">         |   |- sample_rate = 16000.0</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-string">         |   |- [...]</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-string">         |- NEURON_DATA</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-string">         |   |- __TYPE__ = 'NEURON_DATA'</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-string">         |   |- NDATA00</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- __TYPE__ = 'NeuronData'</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- __CLASS__ = '&lt;neurondata subclass name&gt;'</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- [...]</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-string">         |   |- NDATA01</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- __TYPE__ = 'NeuronData'</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- __CLASS__ = '&lt;neurondata subclass name&gt;'</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-string">         |   |   |- [...]</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-string">         |   |- [...]</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-string">         |- SCENE</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-string">             |- __TYPE__ = 'SCENE'</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-string">             |- SIMOBJ00</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-string">             |   |- __TYPE__ = 'SimObject'</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-string">             |   |- __CLASS__ = '&lt;simobject subclass name&gt;'</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-string">             |   |- [...]</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-string">             |- SIMOBJ01</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-string">             |   |- __TYPE__ = 'SimObject'</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-string">             |   |- __CLASS__ = '&lt;simobject subclass name&gt;'</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-string">             |   |- [...]</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-string">             |- [...]</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-string">    </tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-string">    All nodes are taged with at __TYPE__ tag and when a node specifies an</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-string">    instanciateable class, a __CLASS__ tag is additionall given.</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-string">    </tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-string">    [t.b.c]  </tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"><tt class="py-name">__docformat__</tt> <tt class="py-op">=</tt> <tt class="py-string">'restructuredtext'</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-comment">##---IMPORTS</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">scipy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">N</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package nsim.gui=nsim.gui-module.html"><a title="nsim.gui" class="py-name" href="#" onclick="return doclink('link-0', 'gui', 'link-0');">gui</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module nsim.gui.Ui_scene_gen=nsim.gui.Ui_scene_gen-module.html"><a title="nsim.gui.Ui_scene_gen" class="py-name" href="#" onclick="return doclink('link-1', 'Ui_scene_gen', 'link-1');">Ui_scene_gen</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class nsim.gui.Ui_scene_gen.Ui_SceneGenerator=nsim.gui.Ui_scene_gen.Ui_SceneGenerator-class.html"><a title="nsim.gui.Ui_scene_gen.Ui_SceneGenerator" class="py-name" href="#" onclick="return doclink('link-2', 'Ui_SceneGenerator', 'link-2');">Ui_SceneGenerator</a></tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">PyQt4</tt> <tt class="py-keyword">import</tt> <tt class="py-name">QtCore</tt><tt class="py-op">,</tt> <tt class="py-name">QtGui</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tables</tt> <tt class="py-keyword">import</tt> <tt class="py-name">openFile</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-comment">##---CONSTANTS</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt id="link-3" class="py-name" targets="Variable nsim.scene_generator.WF=nsim.scene_generator-module.html#WF"><a title="nsim.scene_generator.WF" class="py-name" href="#" onclick="return doclink('link-3', 'WF', 'link-3');">WF</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.0014034089</tt><tt class="py-op">,</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.002245145</tt><tt class="py-op">,</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.003079994</tt><tt class="py-op">,</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.004163863</tt><tt class="py-op">,</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.0070844376</tt><tt class="py-op">,</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.020370215</tt><tt class="py-op">,</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.027436305</tt><tt class="py-op">,</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.02857418</tt><tt class="py-op">,</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.026155144</tt><tt class="py-op">,</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.022309005</tt><tt class="py-op">,</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.01807256</tt><tt class="py-op">,</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.013534825</tt><tt class="py-op">,</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.008330006</tt><tt class="py-op">,</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">    <tt class="py-op">-</tt> <tt class="py-number">0.0034387822</tt><tt class="py-op">,</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-number">2.2056947E-5</tt><tt class="py-op">,</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">    <tt class="py-number">0.0023328324</tt><tt class="py-op">,</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-number">0.003821157</tt><tt class="py-op">,</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">    <tt class="py-number">0.004755203</tt><tt class="py-op">,</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">    <tt class="py-number">0.0053204517</tt><tt class="py-op">,</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">    <tt class="py-number">0.005637154</tt><tt class="py-op">,</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">    <tt class="py-number">0.005784857</tt><tt class="py-op">,</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">    <tt class="py-number">0.005816808</tt><tt class="py-op">,</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">    <tt class="py-number">0.005769473</tt><tt class="py-op">,</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">    <tt class="py-number">0.005667955</tt><tt class="py-op">,</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">    <tt class="py-number">0.0055297515</tt><tt class="py-op">,</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">    <tt class="py-number">0.0053672874</tt><tt class="py-op">,</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">    <tt class="py-number">0.005189528</tt><tt class="py-op">,</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">    <tt class="py-number">0.0050029815</tt><tt class="py-op">,</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">    <tt class="py-number">0.0048123444</tt><tt class="py-op">,</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">    <tt class="py-number">0.004620978</tt><tt class="py-op">,</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">    <tt class="py-number">0.0044312533</tt><tt class="py-op">,</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">    <tt class="py-number">0.0042448267</tt><tt class="py-op">,</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">    <tt class="py-number">0.0040628263</tt><tt class="py-op">,</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">    <tt class="py-number">0.0038860017</tt><tt class="py-op">,</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">    <tt class="py-number">0.003714828</tt><tt class="py-op">,</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">    <tt class="py-number">0.003549579</tt><tt class="py-op">,</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">    <tt class="py-number">0.003390394</tt><tt class="py-op">,</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">    <tt class="py-number">0.0032373113</tt><tt class="py-op">,</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">    <tt class="py-number">0.0030903</tt><tt class="py-op">,</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">    <tt class="py-number">0.0029492783</tt><tt class="py-op">,</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">    <tt class="py-number">0.0028141278</tt><tt class="py-op">,</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">    <tt class="py-number">0.002684705</tt><tt class="py-op">,</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">    <tt class="py-number">0.0025608384</tt><tt class="py-op">,</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">    <tt class="py-number">0.0024423588</tt><tt class="py-op">,</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">    <tt class="py-number">0.0023290904</tt><tt class="py-op">,</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">    <tt class="py-number">0.0022208546</tt><tt class="py-op">,</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">    <tt class="py-number">0.0021174715</tt><tt class="py-op">,</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">    <tt class="py-number">0.002018759</tt><tt class="py-op">,</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">    <tt class="py-number">0.0019245415</tt><tt class="py-op">,</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">    <tt class="py-number">0.0018346395</tt><tt class="py-op">,</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">    <tt class="py-number">0.001748883</tt><tt class="py-op">,</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">    <tt class="py-number">0.0016670927</tt><tt class="py-op">,</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">    <tt class="py-number">0.0015891049</tt><tt class="py-op">,</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">    <tt class="py-number">0.0015147646</tt><tt class="py-op">,</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">    <tt class="py-number">0.0014439181</tt><tt class="py-op">,</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">    <tt class="py-number">0.0013764189</tt><tt class="py-op">,</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">    <tt class="py-number">0.0013121216</tt><tt class="py-op">,</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">    <tt class="py-number">0.0012508878</tt><tt class="py-op">,</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">    <tt class="py-number">0.0011925797</tt><tt class="py-op">,</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">    <tt class="py-number">0.0011370727</tt><tt class="py-op">,</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">    <tt class="py-number">0.0010842364</tt><tt class="py-op">,</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">    <tt class="py-number">0.0010339515</tt><tt class="py-op">,</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">    <tt class="py-number">9.861033E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">    <tt class="py-number">9.4057573E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">    <tt class="py-number">8.97265E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">    <tt class="py-number">8.5606385E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">    <tt class="py-number">8.168654E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">    <tt class="py-number">7.795761E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">    <tt class="py-number">7.4411003E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">    <tt class="py-number">7.1037916E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">    <tt class="py-number">6.783019E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">    <tt class="py-number">6.4780086E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">    <tt class="py-number">6.1880064E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">    <tt class="py-number">5.912264E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">    <tt class="py-number">5.6501065E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">    <tt class="py-number">5.4008764E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">    <tt class="py-number">5.163933E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">    <tt class="py-number">4.9386563E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">    <tt class="py-number">4.7244882E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">    <tt class="py-number">4.5208808E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">    <tt class="py-number">4.3272844E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">    <tt class="py-number">4.1432166E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">    <tt class="py-number">3.9682208E-4</tt><tt class="py-op">,</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"><tt class="py-op">]</tt> </tt>
+<a name="SceneGenerator"></a><div id="SceneGenerator-def"><a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line"><tt class="py-comment">##---CLASSES</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line"> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt> <a class="py-toggle" href="#" id="SceneGenerator-toggle" onclick="return toggle('SceneGenerator');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.scene_generator.SceneGenerator-class.html">SceneGenerator</a><tt class="py-op">(</tt><tt class="py-base-class">QtGui</tt><tt class="py-op">.</tt><tt class="py-base-class">QMainWindow</tt><tt class="py-op">,</tt> <tt class="py-base-class">Ui_SceneGenerator</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneGenerator-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="SceneGenerator-expanded"><a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">    <tt class="py-docstring">"""scene generator gui form"""</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"> </tt>
+<a name="SceneGenerator.__init__"></a><div id="SceneGenerator.__init__-def"><a name="L191"></a><tt class="py-lineno">191</tt> <a class="py-toggle" href="#" id="SceneGenerator.__init__-toggle" onclick="return toggle('SceneGenerator.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.SceneGenerator-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">parent</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneGenerator.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="SceneGenerator.__init__-expanded"><a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line"><tt class="py-docstring">            parent : QWidget</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"><tt class="py-docstring">                qt parent</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">        <tt class="py-comment"># super and gui init</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-4" class="py-name" targets="Class nsim.scene_generator.SceneGenerator=nsim.scene_generator.SceneGenerator-class.html"><a title="nsim.scene_generator.SceneGenerator" class="py-name" href="#" onclick="return doclink('link-4', 'SceneGenerator', 'link-4');">SceneGenerator</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method nsim.cluster_dynamics.ClusterDynamics.__init__()=nsim.cluster_dynamics.ClusterDynamics-class.html#__init__,Method nsim.data_io.client.SimIOClientNotifier.__init__()=nsim.data_io.client.SimIOClientNotifier-class.html#__init__,Method nsim.data_io.client.SimIOConnection.__init__()=nsim.data_io.client.SimIOConnection-class.html#__init__,Method nsim.data_io.client_interface.ChunkContainer.__init__()=nsim.data_io.client_interface.ChunkContainer-class.html#__init__,Method nsim.data_io.client_interface.InitDlg.__init__()=nsim.data_io.client_interface.InitDlg-class.html#__init__,Method nsim.data_io.client_interface.NTrodeDataInterface.__init__()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#__init__,Method nsim.data_io.client_interface.QNotifier.__init__()=nsim.data_io.client_interface.QNotifier-class.html#__init__,Method nsim.data_io.minimal_client.MinimalClient.__init__()=nsim.data_io.minimal_client.MinimalClient-class.html#__init__,Method nsim.data_io.package.ContentItem.__init__()=nsim.data_io.package.ContentItem-class.html#__init__,Method nsim.data_io.package.SimPkg.__init__()=nsim.data_io.package.SimPkg-class.html#__init__,Method nsim.data_io.server.SimIOManager.__init__()=nsim.data_io.server.SimIOManager-class.html#__init__,Method nsim.data_io.server.SimIOServer.__init__()=nsim.data_io.server.SimIOServer-class.html#__init__,Method nsim.gui.plotting.MatShow.__init__()=nsim.gui.plotting.MatShow-class.html#__init__,Method nsim.gui.plotting.MatrixData.__init__()=nsim.gui.plotting.MatrixData-class.html#__init__,Method nsim.gui.plotting.NTrodePlot.__init__()=nsim.gui.plotting.NTrodePlot-class.html#__init__,Method nsim.gui.plotting.QualityPlot.__init__()=nsim.gui.plotting.QualityPlot-class.html#__init__,Method nsim.gui.plotting.TimeSeriesPlot.__init__()=nsim.gui.plotting.TimeSeriesPlot-class.html#__init__,Method nsim.math.math3d.Arcball.__init__()=nsim.math.math3d.Arcball-class.html#__init__,Method nsim.scene.neuron_data.nd_sampled.SampledND.__init__()=nsim.scene.neuron_data.nd_sampled.SampledND-class.html#__init__,Method nsim.scene.neuron_data.nd_waveform.WaveformND.__init__()=nsim.scene.neuron_data.nd_waveform.WaveformND-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronData.__init__()=nsim.scene.neuron_data.neuron_data.NeuronData-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__()=nsim.scene.neuron_data.neuron_data.NeuronDataContainer-class.html#__init__,Method nsim.scene.noise.ar_model.ArNoiseGen.__init__()=nsim.scene.noise.ar_model.ArNoiseGen-class.html#__init__,Method nsim.scene.noise.noise_gen.NoiseGen.__init__()=nsim.scene.noise.noise_gen.NoiseGen-class.html#__init__,Method nsim.scene.recorder.Recorder.__init__()=nsim.scene.recorder.Recorder-class.html#__init__,Method nsim.scene.recorder.Tetrode.__init__()=nsim.scene.recorder.Tetrode-class.html#__init__,Method nsim.scene.sim_object.SimObject.__init__()=nsim.scene.sim_object.SimObject-class.html#__init__,Method nsim.scene_generator.SceneGenerator.__init__()=nsim.scene_generator.SceneGenerator-class.html#__init__,Method nsim.scene_generator.WFWidget.__init__()=nsim.scene_generator.WFWidget-class.html#__init__,Method nsim.simulation.BaseSimulation.__init__()=nsim.simulation.BaseSimulation-class.html#__init__,Method nsim.simulation.SimExternalDelegate.__init__()=nsim.simulation.SimExternalDelegate-class.html#__init__,Method start_server.AddNeuronDialog.__init__()=start_server.AddNeuronDialog-class.html#__init__,Method start_server.AddRecorderDialog.__init__()=start_server.AddRecorderDialog-class.html#__init__,Method start_server.SimQt4Delegate.__init__()=start_server.SimQt4Delegate-class.html#__init__,Method start_server.SimulationGui.__init__()=start_server.SimulationGui-class.html#__init__"><a title="nsim.cluster_dynamics.ClusterDynamics.__init__
+nsim.data_io.client.SimIOClientNotifier.__init__
+nsim.data_io.client.SimIOConnection.__init__
+nsim.data_io.client_interface.ChunkContainer.__init__
+nsim.data_io.client_interface.InitDlg.__init__
+nsim.data_io.client_interface.NTrodeDataInterface.__init__
+nsim.data_io.client_interface.QNotifier.__init__
+nsim.data_io.minimal_client.MinimalClient.__init__
+nsim.data_io.package.ContentItem.__init__
+nsim.data_io.package.SimPkg.__init__
+nsim.data_io.server.SimIOManager.__init__
+nsim.data_io.server.SimIOServer.__init__
+nsim.gui.plotting.MatShow.__init__
+nsim.gui.plotting.MatrixData.__init__
+nsim.gui.plotting.NTrodePlot.__init__
+nsim.gui.plotting.QualityPlot.__init__
+nsim.gui.plotting.TimeSeriesPlot.__init__
+nsim.math.math3d.Arcball.__init__
+nsim.scene.neuron_data.nd_sampled.SampledND.__init__
+nsim.scene.neuron_data.nd_waveform.WaveformND.__init__
+nsim.scene.neuron_data.neuron_data.NeuronData.__init__
+nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__
+nsim.scene.noise.ar_model.ArNoiseGen.__init__
+nsim.scene.noise.noise_gen.NoiseGen.__init__
+nsim.scene.recorder.Recorder.__init__
+nsim.scene.recorder.Tetrode.__init__
+nsim.scene.sim_object.SimObject.__init__
+nsim.scene_generator.SceneGenerator.__init__
+nsim.scene_generator.WFWidget.__init__
+nsim.simulation.BaseSimulation.__init__
+nsim.simulation.SimExternalDelegate.__init__
+start_server.AddNeuronDialog.__init__
+start_server.AddRecorderDialog.__init__
+start_server.SimQt4Delegate.__init__
+start_server.SimulationGui.__init__" class="py-name" href="#" onclick="return doclink('link-5', '__init__', 'link-5');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Method nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog.setupUi()=nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog-class.html#setupUi,Method nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog.setupUi()=nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog-class.html#setupUi,Method nsim.gui.Ui_gui_main.Ui_SimGui.setupUi()=nsim.gui.Ui_gui_main.Ui_SimGui-class.html#setupUi,Method nsim.gui.Ui_init_dialog.Ui_InitDialog.setupUi()=nsim.gui.Ui_init_dialog.Ui_InitDialog-class.html#setupUi,Method nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient.setupUi()=nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient-class.html#setupUi,Method nsim.gui.Ui_recorder_controll.Ui_RecorderControll.setupUi()=nsim.gui.Ui_recorder_controll.Ui_RecorderControll-class.html#setupUi,Method nsim.gui.Ui_scene_gen.Ui_SceneGenerator.setupUi()=nsim.gui.Ui_scene_gen.Ui_SceneGenerator-class.html#setupUi"><a title="nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog.setupUi
+nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog.setupUi
+nsim.gui.Ui_gui_main.Ui_SimGui.setupUi
+nsim.gui.Ui_init_dialog.Ui_InitDialog.setupUi
+nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient.setupUi
+nsim.gui.Ui_recorder_controll.Ui_RecorderControll.setupUi
+nsim.gui.Ui_scene_gen.Ui_SceneGenerator.setupUi" class="py-name" href="#" onclick="return doclink('link-6', 'setupUi', 'link-6');">setupUi</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">        <tt class="py-comment"># connections</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_widget</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name" targets="Class nsim.scene_generator.WFWidget=nsim.scene_generator.WFWidget-class.html"><a title="nsim.scene_generator.WFWidget" class="py-name" href="#" onclick="return doclink('link-7', 'WFWidget', 'link-7');">WFWidget</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Variable nsim.simulation.BaseSimulation.frame=nsim.simulation.BaseSimulation-class.html#frame,Method nsim.simulation.SimExternalDelegate.frame()=nsim.simulation.SimExternalDelegate-class.html#frame,Method start_server.SimQt4Delegate.frame()=start_server.SimQt4Delegate-class.html#frame"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-8', 'frame', 'link-8');">frame</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">verticalLayout_2</tt><tt class="py-op">.</tt><tt class="py-name">addWidget</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_widget</tt><tt class="py-op">)</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pushButton</tt><tt class="py-op">.</tt><tt class="py-name">clicked</tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Method nsim.scene_generator.SceneGenerator.on_pb()=nsim.scene_generator.SceneGenerator-class.html#on_pb"><a title="nsim.scene_generator.SceneGenerator.on_pb" class="py-name" href="#" onclick="return doclink('link-9', 'on_pb', 'link-9');">on_pb</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="SceneGenerator.on_pb"></a><div id="SceneGenerator.on_pb-def"><a name="L209"></a><tt class="py-lineno">209</tt> <a class="py-toggle" href="#" id="SceneGenerator.on_pb-toggle" onclick="return toggle('SceneGenerator.on_pb');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.SceneGenerator-class.html#on_pb">on_pb</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneGenerator.on_pb-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="SceneGenerator.on_pb-expanded"><a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">        <tt class="py-docstring">"""bushButton clicked slot"""</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line"> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_widget</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method nsim.scene_generator.WFWidget.set_waveform()=nsim.scene_generator.WFWidget-class.html#set_waveform"><a title="nsim.scene_generator.WFWidget.set_waveform" class="py-name" href="#" onclick="return doclink('link-10', 'set_waveform', 'link-10');">set_waveform</a></tt><tt class="py-op">(</tt><tt id="link-11" class="py-name"><a title="nsim.scene_generator.WF" class="py-name" href="#" onclick="return doclink('link-11', 'WF', 'link-3');">WF</a></tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget"></a><div id="WFWidget-def"><a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line"> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt> <a class="py-toggle" href="#" id="WFWidget-toggle" onclick="return toggle('WFWidget');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html">WFWidget</a><tt class="py-op">(</tt><tt class="py-base-class">QtGui</tt><tt class="py-op">.</tt><tt class="py-base-class">QWidget</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="WFWidget-expanded"><a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">    <tt class="py-docstring">"""waveform slider widget"""</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget.__init__"></a><div id="WFWidget.__init__-def"><a name="L218"></a><tt class="py-lineno">218</tt> <a class="py-toggle" href="#" id="WFWidget.__init__-toggle" onclick="return toggle('WFWidget.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">parent</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">nsample</tt><tt class="py-op">=</tt><tt class="py-number">15</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.__init__-expanded"><a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line"><tt class="py-docstring">            parent : QWidget</tt> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line"><tt class="py-docstring">                qt parent</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"><tt class="py-docstring">            nsample : int</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"><tt class="py-docstring">                initial sample length.</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"><tt class="py-docstring">                Default=15</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">        <tt class="py-comment">#super</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-12" class="py-name"><a title="nsim.scene_generator.WFWidget" class="py-name" href="#" onclick="return doclink('link-12', 'WFWidget', 'link-7');">WFWidget</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="nsim.cluster_dynamics.ClusterDynamics.__init__
+nsim.data_io.client.SimIOClientNotifier.__init__
+nsim.data_io.client.SimIOConnection.__init__
+nsim.data_io.client_interface.ChunkContainer.__init__
+nsim.data_io.client_interface.InitDlg.__init__
+nsim.data_io.client_interface.NTrodeDataInterface.__init__
+nsim.data_io.client_interface.QNotifier.__init__
+nsim.data_io.minimal_client.MinimalClient.__init__
+nsim.data_io.package.ContentItem.__init__
+nsim.data_io.package.SimPkg.__init__
+nsim.data_io.server.SimIOManager.__init__
+nsim.data_io.server.SimIOServer.__init__
+nsim.gui.plotting.MatShow.__init__
+nsim.gui.plotting.MatrixData.__init__
+nsim.gui.plotting.NTrodePlot.__init__
+nsim.gui.plotting.QualityPlot.__init__
+nsim.gui.plotting.TimeSeriesPlot.__init__
+nsim.math.math3d.Arcball.__init__
+nsim.scene.neuron_data.nd_sampled.SampledND.__init__
+nsim.scene.neuron_data.nd_waveform.WaveformND.__init__
+nsim.scene.neuron_data.neuron_data.NeuronData.__init__
+nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__
+nsim.scene.noise.ar_model.ArNoiseGen.__init__
+nsim.scene.noise.noise_gen.NoiseGen.__init__
+nsim.scene.recorder.Recorder.__init__
+nsim.scene.recorder.Tetrode.__init__
+nsim.scene.sim_object.SimObject.__init__
+nsim.scene_generator.SceneGenerator.__init__
+nsim.scene_generator.WFWidget.__init__
+nsim.simulation.BaseSimulation.__init__
+nsim.simulation.SimExternalDelegate.__init__
+start_server.AddNeuronDialog.__init__
+start_server.AddRecorderDialog.__init__
+start_server.SimQt4Delegate.__init__
+start_server.SimulationGui.__init__" class="py-name" href="#" onclick="return doclink('link-13', '__init__', 'link-5');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line"> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">        <tt class="py-comment">#members</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nsample</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_poly</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> <tt class="py-op">=</tt> <tt class="py-number">25</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line"> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">        <tt class="py-comment"># inits</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">setPalette</tt><tt class="py-op">(</tt><tt class="py-name">QtGui</tt><tt class="py-op">.</tt><tt class="py-name">QPalette</tt><tt class="py-op">(</tt><tt class="py-name">QtGui</tt><tt class="py-op">.</tt><tt class="py-name">QColor</tt><tt class="py-op">(</tt><tt class="py-number">250</tt><tt class="py-op">,</tt> <tt class="py-number">250</tt><tt class="py-op">,</tt> <tt class="py-number">250</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">setAutoFillBackground</tt><tt class="py-op">(</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="nsim.scene_generator.WFWidget.set_waveform" class="py-name" href="#" onclick="return doclink('link-14', 'set_waveform', 'link-10');">set_waveform</a></tt><tt class="py-op">(</tt><tt id="link-15" class="py-name"><a title="nsim.scene_generator.WF" class="py-name" href="#" onclick="return doclink('link-15', 'WF', 'link-3');">WF</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget.set_waveform"></a><div id="WFWidget.set_waveform-def"><a name="L243"></a><tt class="py-lineno">243</tt> <a class="py-toggle" href="#" id="WFWidget.set_waveform-toggle" onclick="return toggle('WFWidget.set_waveform');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#set_waveform">set_waveform</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">wf</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.set_waveform-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.set_waveform-expanded"><a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">        <tt class="py-docstring">"""set a new waveform"""</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line"> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">        <tt class="py-comment"># asserts</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">        <tt class="py-keyword">assert</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt class="py-name">wf</tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-name">list</tt><tt class="py-op">,</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">ndarray</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt> <tt class="py-op">=</tt> <tt id="link-16" class="py-name"><a title="nsim.scene_generator.WFWidget" class="py-name" href="#" onclick="return doclink('link-16', 'WFWidget', 'link-7');">WFWidget</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Static Method nsim.scene_generator.WFWidget.normalise_wf()=nsim.scene_generator.WFWidget-class.html#normalise_wf"><a title="nsim.scene_generator.WFWidget.normalise_wf" class="py-name" href="#" onclick="return doclink('link-17', 'normalise_wf', 'link-17');">normalise_wf</a></tt><tt class="py-op">(</tt><tt class="py-name">wf</tt><tt class="py-op">)</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nsample</tt> <tt class="py-op">=</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt><tt class="py-op">)</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line"> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line">    <tt class="py-comment">## QT events</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget.mousePressEvent"></a><div id="WFWidget.mousePressEvent-def"><a name="L254"></a><tt class="py-lineno">254</tt> <a class="py-toggle" href="#" id="WFWidget.mousePressEvent-toggle" onclick="return toggle('WFWidget.mousePressEvent');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#mousePressEvent">mousePressEvent</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">evt</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.mousePressEvent-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.mousePressEvent-expanded"><a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line"> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">evt</tt><tt class="py-op">.</tt><tt class="py-name">button</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">Qt</tt><tt class="py-op">.</tt><tt class="py-name">LeftButton</tt><tt class="py-op">:</tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line"> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line">            <tt class="py-comment"># get x if its inside the margins</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">            <tt class="py-name">x</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">evt</tt><tt class="py-op">.</tt><tt class="py-name">pos</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">x</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">x</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> <tt class="py-keyword">or</tt> <tt class="py-name">x</tt> <tt class="py-op">&gt;</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">:</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line">                <tt class="py-keyword">print</tt> <tt class="py-string">'offboard'</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line"> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line">            <tt class="py-comment"># get sample</tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">            <tt class="py-name">dx</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nsample</tt> <tt class="py-op">-</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-name">x</tt> <tt class="py-op">-</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> <tt class="py-op">+</tt> <tt class="py-number">0.5</tt> <tt class="py-op">*</tt> <tt class="py-name">dx</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">dx</tt><tt class="py-op">)</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">'sample:'</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt> </tt>
+</div><a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget.mouseReleaseEvent"></a><div id="WFWidget.mouseReleaseEvent-def"><a name="L269"></a><tt class="py-lineno">269</tt> <a class="py-toggle" href="#" id="WFWidget.mouseReleaseEvent-toggle" onclick="return toggle('WFWidget.mouseReleaseEvent');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#mouseReleaseEvent">mouseReleaseEvent</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">evt</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.mouseReleaseEvent-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.mouseReleaseEvent-expanded"><a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">evt</tt><tt class="py-op">.</tt><tt class="py-name">button</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">Qt</tt><tt class="py-op">.</tt><tt class="py-name">LeftButton</tt><tt class="py-op">:</tt> </tt>
+<a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">                <tt class="py-comment"># get y if its inside the margins</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">                <tt class="py-name">y</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">evt</tt><tt class="py-op">.</tt><tt class="py-name">pos</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">y</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">y</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> <tt class="py-keyword">or</tt> <tt class="py-name">y</tt> <tt class="py-op">&gt;</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">:</tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">                    <tt class="py-keyword">print</tt> <tt class="py-string">'offboard'</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">                    <tt class="py-keyword">return</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line"> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">                <tt class="py-comment"># get new sample position</tt> </tt>
+<a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line">                <tt class="py-name">yrh</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-number">2.0</tt> </tt>
+<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">                <tt class="py-name">y</tt> <tt class="py-op">-=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">                <tt class="py-name">y</tt> <tt class="py-op">-=</tt> <tt class="py-name">yrh</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line">                <tt class="py-name">y</tt> <tt class="py-op">/=</tt> <tt class="py-name">yrh</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">-</tt><tt class="py-name">y</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line">                <tt class="py-keyword">print</tt> <tt class="py-string">'sample_y:'</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt><tt class="py-op">]</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mouse_drawing</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line"> </tt>
+<a name="WFWidget.paintEvent"></a><div id="WFWidget.paintEvent-def"><a name="L289"></a><tt class="py-lineno">289</tt> <a class="py-toggle" href="#" id="WFWidget.paintEvent-toggle" onclick="return toggle('WFWidget.paintEvent');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#paintEvent">paintEvent</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">evt</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.paintEvent-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.paintEvent-expanded"><a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line"> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line">        <tt class="py-comment"># get painter</tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line">        <tt class="py-name">painter</tt> <tt class="py-op">=</tt> <tt class="py-name">QtGui</tt><tt class="py-op">.</tt><tt class="py-name">QPainter</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line">        <tt class="py-comment"># write zero line</tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line">        <tt class="py-name">yzero</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-number">2.0</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line">        <tt class="py-name">painter</tt><tt class="py-op">.</tt><tt class="py-name">setPen</tt><tt class="py-op">(</tt><tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">Qt</tt><tt class="py-op">.</tt><tt class="py-name">red</tt><tt class="py-op">)</tt> </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line">        <tt class="py-name">painter</tt><tt class="py-op">.</tt><tt class="py-name">drawLine</tt><tt class="py-op">(</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">            <tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">QLineF</tt><tt class="py-op">(</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> <tt class="py-name">yzero</tt><tt class="py-op">,</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> <tt class="py-name">yzero</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line">            <tt class="py-op">)</tt> </tt>
+<a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line">        <tt class="py-op">)</tt> </tt>
+<a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line">        <tt class="py-name">painter</tt><tt class="py-op">.</tt><tt class="py-name">drawRect</tt><tt class="py-op">(</tt> </tt>
+<a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line">            <tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">QRect</tt><tt class="py-op">(</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line">            <tt class="py-op">)</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line">        <tt class="py-op">)</tt> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">        <tt class="py-comment"># write waveform</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line">                <tt class="py-name">painter</tt><tt class="py-op">.</tt><tt class="py-name">setPen</tt><tt class="py-op">(</tt><tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">Qt</tt><tt class="py-op">.</tt><tt class="py-name">blue</tt><tt class="py-op">)</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_poly</tt> <tt class="py-op">=</tt> <tt id="link-18" class="py-name"><a title="nsim.scene_generator.WFWidget" class="py-name" href="#" onclick="return doclink('link-18', 'WFWidget', 'link-7');">WFWidget</a></tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Static Method nsim.scene_generator.WFWidget.wf_to_poly()=nsim.scene_generator.WFWidget-class.html#wf_to_poly"><a title="nsim.scene_generator.WFWidget.wf_to_poly" class="py-name" href="#" onclick="return doclink('link-19', 'wf_to_poly', 'link-19');">wf_to_poly</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_base</tt><tt class="py-op">,</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">margin</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">                <tt class="py-op">)</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">                <tt class="py-name">painter</tt><tt class="py-op">.</tt><tt class="py-name">drawPolyline</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">wf_poly</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line"> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line">    <tt class="py-comment">## static methods</tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line"> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="WFWidget.wf_to_poly"></a><div id="WFWidget.wf_to_poly-def"><a name="L324"></a><tt class="py-lineno">324</tt> <a class="py-toggle" href="#" id="WFWidget.wf_to_poly-toggle" onclick="return toggle('WFWidget.wf_to_poly');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#wf_to_poly">wf_to_poly</a><tt class="py-op">(</tt><tt class="py-param">wf</tt><tt class="py-op">,</tt> <tt class="py-param">xr</tt><tt class="py-op">,</tt> <tt class="py-param">xm</tt><tt class="py-op">,</tt> <tt class="py-param">xo</tt><tt class="py-op">,</tt> <tt class="py-param">yr</tt><tt class="py-op">,</tt> <tt class="py-param">ym</tt><tt class="py-op">,</tt> <tt class="py-param">yo</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.wf_to_poly-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.wf_to_poly-expanded"><a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line">        <tt class="py-docstring">"""yield a list of QPolygon instance representing the waveform</tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line"><tt class="py-docstring">            wf : list</tt> </tt>
+<a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line"><tt class="py-docstring">                list of the waveform samples</tt> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-docstring">            xstuff : tuple</tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-docstring">                tuple defining the x axis. 0) range, 1) offset, 2) margin </tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"><tt class="py-docstring">            ystuff : tuple</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"><tt class="py-docstring">                tuple defining the y axis. 0) range, 1) offset, 2) margin</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line">        <tt class="py-comment"># inits</tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line">        <tt class="py-name">yrh</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">yr</tt> <tt class="py-op">-</tt> <tt class="py-number">2.0</tt> <tt class="py-op">*</tt> <tt class="py-name">ym</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-number">2.0</tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line">        <tt class="py-name">dx</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">xr</tt> <tt class="py-op">-</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">xm</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">wf</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line">        <tt class="py-comment"># generate</tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line">        <tt class="py-name">plist</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">xrange</tt><tt class="py-op">(</tt><tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">wf</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line">            <tt class="py-name">plist</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Method nsim.data_io.client_interface.ChunkContainer.append()=nsim.data_io.client_interface.ChunkContainer-class.html#append"><a title="nsim.data_io.client_interface.ChunkContainer.append" class="py-name" href="#" onclick="return doclink('link-20', 'append', 'link-20');">append</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line">                <tt class="py-name">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">QPoint</tt><tt class="py-op">(</tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line">                    <tt class="py-name">xo</tt> <tt class="py-op">+</tt> <tt class="py-name">xm</tt> <tt class="py-op">+</tt> <tt class="py-name">i</tt> <tt class="py-op">*</tt> <tt class="py-name">dx</tt><tt class="py-op">,</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line">                    <tt class="py-op">-</tt> <tt class="py-number">1.0</tt> <tt class="py-op">*</tt> <tt class="py-name">wf</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-name">yrh</tt> <tt class="py-op">+</tt> <tt class="py-name">yrh</tt> <tt class="py-op">+</tt> <tt class="py-name">yo</tt> <tt class="py-op">+</tt> <tt class="py-name">ym</tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line">                <tt class="py-op">)</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line">            <tt class="py-op">)</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line"> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">        <tt class="py-comment"># return</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">QtGui</tt><tt class="py-op">.</tt><tt class="py-name">QPolygon</tt><tt class="py-op">(</tt><tt class="py-name">plist</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line"> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="WFWidget.normalise_wf"></a><div id="WFWidget.normalise_wf-def"><a name="L354"></a><tt class="py-lineno">354</tt> <a class="py-toggle" href="#" id="WFWidget.normalise_wf-toggle" onclick="return toggle('WFWidget.normalise_wf');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.WFWidget-class.html#normalise_wf">normalise_wf</a><tt class="py-op">(</tt><tt class="py-param">wf</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="WFWidget.normalise_wf-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="WFWidget.normalise_wf-expanded"><a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line">        <tt class="py-docstring">"""normalise wf to values on the interval [-1.0,+1.0]"""</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line">        <tt class="py-name">mywf</tt> <tt class="py-op">=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">asarray</tt><tt class="py-op">(</tt><tt class="py-name">wf</tt><tt class="py-op">)</tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line">        <tt class="py-name">factor</tt> <tt class="py-op">=</tt> <tt class="py-number">1.0</tt> <tt class="py-op">/</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">absolute</tt><tt class="py-op">(</tt><tt class="py-name">mywf</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">max</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">factor</tt> <tt class="py-op">*</tt> <tt class="py-name">mywf</tt> </tt>
+</div></div><a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"> </tt>
+<a name="SceneArchiveContainer"></a><div id="SceneArchiveContainer-def"><a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt> <a class="py-toggle" href="#" id="SceneArchiveContainer-toggle" onclick="return toggle('SceneArchiveContainer');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.scene_generator.SceneArchiveContainer-class.html">SceneArchiveContainer</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneArchiveContainer-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="SceneArchiveContainer-expanded"><a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line">    <tt class="py-docstring">"""scene archive container (.sca) class</tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">    defining the structure inside an hdf5 container to hold the entire scene</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line"> </tt>
+<a name="SceneArchiveContainer._init__"></a><div id="SceneArchiveContainer._init__-def"><a name="L368"></a><tt class="py-lineno">368</tt> <a class="py-toggle" href="#" id="SceneArchiveContainer._init__-toggle" onclick="return toggle('SceneArchiveContainer._init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.SceneArchiveContainer-class.html#_init__">_init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">path_to_arc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneArchiveContainer._init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="SceneArchiveContainer._init__-expanded"><a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line"><tt class="py-docstring">            path_to_arc : str</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line"><tt class="py-docstring">                Path to the hdf5 archive in the local file system.</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line"> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line">        <tt class="py-comment"># get handle to archive</tt> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt> <tt class="py-op">=</tt> <tt class="py-name">openFile</tt><tt class="py-op">(</tt><tt class="py-name">path_to_arc</tt><tt class="py-op">,</tt> <tt class="py-string">'r'</tt><tt class="py-op">)</tt> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt> <tt class="py-op">=</tt> <tt class="py-name">openFile</tt><tt class="py-op">(</tt><tt class="py-name">path_to_arc</tt><tt class="py-op">,</tt> <tt class="py-string">'w'</tt><tt class="py-op">)</tt> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_config</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_ndata</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_scene</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line">        <tt class="py-comment"># establish main structure</tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">'/__TYPE__'</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">:</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createArray</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt class="py-string">'__TYPE__'</tt><tt class="py-op">,</tt> <tt class="py-string">'SCENE_ARCHIVE'</tt><tt class="py-op">)</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Method nsim.scene_generator.SceneArchiveContainer._has_main_grp()=nsim.scene_generator.SceneArchiveContainer-class.html#_has_main_grp"><a title="nsim.scene_generator.SceneArchiveContainer._has_main_grp" class="py-name" href="#" onclick="return doclink('link-21', '_has_main_grp', 'link-21');">_has_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'CONFIG'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_config</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Method nsim.scene_generator.SceneArchiveContainer._get_main_grp()=nsim.scene_generator.SceneArchiveContainer-class.html#_get_main_grp"><a title="nsim.scene_generator.SceneArchiveContainer._get_main_grp" class="py-name" href="#" onclick="return doclink('link-22', '_get_main_grp', 'link-22');">_get_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'CONFIG'</tt><tt class="py-op">)</tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_config</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createGroup</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt class="py-string">'CONFIG'</tt><tt class="py-op">)</tt> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createArray</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_config</tt><tt class="py-op">,</tt> <tt class="py-string">'__TYPE__'</tt><tt class="py-op">,</tt> <tt class="py-string">'CONFIG'</tt><tt class="py-op">)</tt> </tt>
+<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name"><a title="nsim.scene_generator.SceneArchiveContainer._has_main_grp" class="py-name" href="#" onclick="return doclink('link-23', '_has_main_grp', 'link-21');">_has_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'NEURON_DATA'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_ndata</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="nsim.scene_generator.SceneArchiveContainer._get_main_grp" class="py-name" href="#" onclick="return doclink('link-24', '_get_main_grp', 'link-22');">_get_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'NEURON_DATA'</tt><tt class="py-op">)</tt> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_ndata</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createGroup</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt class="py-string">'NEURON_DATA'</tt><tt class="py-op">)</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createArray</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_ndata</tt><tt class="py-op">,</tt> <tt class="py-string">'__TYPE__'</tt><tt class="py-op">,</tt> <tt class="py-string">'NEURON_DATA'</tt><tt class="py-op">)</tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name"><a title="nsim.scene_generator.SceneArchiveContainer._has_main_grp" class="py-name" href="#" onclick="return doclink('link-25', '_has_main_grp', 'link-21');">_has_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'SCENE'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_scene</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="nsim.scene_generator.SceneArchiveContainer._get_main_grp" class="py-name" href="#" onclick="return doclink('link-26', '_get_main_grp', 'link-22');">_get_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-string">'SCENE'</tt><tt class="py-op">)</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_scene</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createGroup</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt class="py-string">'SCENE'</tt><tt class="py-op">)</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">createArray</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_grp_scene</tt><tt class="py-op">,</tt> <tt class="py-string">'__TYPE__'</tt><tt class="py-op">,</tt> <tt class="py-string">'SCENE'</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line"> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">    <tt class="py-comment">## load from archive</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line"> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">    <tt class="py-comment">## internal helper functions</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line"> </tt>
+<a name="SceneArchiveContainer._has_main_grp"></a><div id="SceneArchiveContainer._has_main_grp-def"><a name="L407"></a><tt class="py-lineno">407</tt> <a class="py-toggle" href="#" id="SceneArchiveContainer._has_main_grp-toggle" onclick="return toggle('SceneArchiveContainer._has_main_grp');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.SceneArchiveContainer-class.html#_has_main_grp">_has_main_grp</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">grp_type</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneArchiveContainer._has_main_grp-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="SceneArchiveContainer._has_main_grp-expanded"><a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">        <tt class="py-docstring">"""return True if the main group of grp_type is present, False else"""</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line"> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="nsim.scene_generator.SceneArchiveContainer._get_main_grp" class="py-name" href="#" onclick="return doclink('link-27', '_get_main_grp', 'link-22');">_get_main_grp</a></tt><tt class="py-op">(</tt><tt class="py-name">grp_type</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt> </tt>
+</div><a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line"> </tt>
+<a name="SceneArchiveContainer._get_main_grp"></a><div id="SceneArchiveContainer._get_main_grp-def"><a name="L412"></a><tt class="py-lineno">412</tt> <a class="py-toggle" href="#" id="SceneArchiveContainer._get_main_grp-toggle" onclick="return toggle('SceneArchiveContainer._get_main_grp');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator.SceneArchiveContainer-class.html#_get_main_grp">_get_main_grp</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">grp_type</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SceneArchiveContainer._get_main_grp-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="SceneArchiveContainer._get_main_grp-expanded"><a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">        <tt class="py-docstring">"""returns the main group of grp_type if present, None else"""</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line"> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line">        <tt class="py-name">rval</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">grp</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_arc</tt><tt class="py-op">.</tt><tt class="py-name">walkGroups</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-string">'__TYPE__'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">grp</tt><tt class="py-op">:</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">grp</tt><tt class="py-op">.</tt><tt class="py-name">__TYPE__</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">grp_type</tt><tt class="py-op">:</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">                    <tt class="py-name">rval</tt> <tt class="py-op">=</tt> <tt class="py-name">grp</tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">                    <tt class="py-keyword">break</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">rval</tt> </tt>
+</div></div><a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line"> </tt>
+<a name="main"></a><div id="main-def"><a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line"> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line"><tt class="py-comment">##---MAIN</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line"> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt> <a class="py-toggle" href="#" id="main-toggle" onclick="return toggle('main');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene_generator-module.html#main">main</a><tt class="py-op">(</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="main-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="main-expanded"><a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line"> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line">    <tt class="py-name">app</tt> <tt class="py-op">=</tt> <tt class="py-name">QtGui</tt><tt class="py-op">.</tt><tt class="py-name">QApplication</tt><tt class="py-op">(</tt><tt class="py-name">args</tt><tt class="py-op">)</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line"><tt class="py-comment">#    app.lastWindowClosed.connect(app.quit)</tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line"> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line">    <tt class="py-name">win</tt> <tt class="py-op">=</tt> <tt id="link-28" class="py-name"><a title="nsim.scene_generator.SceneGenerator" class="py-name" href="#" onclick="return doclink('link-28', 'SceneGenerator', 'link-4');">SceneGenerator</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line">    <tt class="py-name">win</tt><tt class="py-op">.</tt><tt class="py-name">show</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line"> </tt>
+<a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">app</tt><tt class="py-op">.</tt><tt class="py-name">exec_</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line"> </tt>
+<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt class="py-name">__name__</tt> <tt class="py-op">==</tt> <tt class="py-string">'__main__'</tt><tt class="py-op">:</tt> </tt>
+<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line"> </tt>
+<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line">    <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">exit</tt><tt class="py-op">(</tt><tt id="link-29" class="py-name" targets="Function nsim.scene_generator.main()=nsim.scene_generator-module.html#main,Function start_client.main()=start_client-module.html#main,Function start_server.main()=start_server-module.html#main"><a title="nsim.scene_generator.main
+start_client.main
+start_server.main" class="py-name" href="#" onclick="return doclink('link-29', 'main', 'link-29');">main</a></tt><tt class="py-op">(</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">argv</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Sep 22 13:36:51 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

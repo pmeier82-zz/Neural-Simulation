@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>nsim.scene.recorder</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="nsim-module.html">Package&nbsp;nsim</a> ::
+        <a href="nsim.scene-module.html">Package&nbsp;scene</a> ::
+        Module&nbsp;recorder
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="nsim.scene.recorder-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="nsim.scene.recorder-module.html" onclick="show_private();">Module nsim.scene.recorder</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">## -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">##  Copyright 2010 Philipp Meier &lt;pmeier82@googlemail.com&gt;</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">##  Licensed under the EUPL, Version 1.1 or &#8211; as soon they will be approved by</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">##  the European Commission - subsequent versions of the EUPL (the "Licence");</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">##  You may not use this work except in compliance with the Licence.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">##  You may obtain a copy of the Licence at:</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">##  http://ec.europa.eu/idabc/eupl</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">##  Unless required by applicable law or agreed to in writing, software</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">##  distributed under the Licence is distributed on an "AS IS" basis,</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment">##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">##  See the Licence for the specific language governing permissions and</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">##  limitations under the Licence.</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment"># nsim - scene/recorder.py</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># Philipp Meier - &lt;pmeier82 at googlemail dot com&gt;</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment"># 2010-01-21</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-docstring">"""simulation object - recorder class"""</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt id="link-0" class="py-name" targets="Variable debug_helpers.__doctype__=debug_helpers-module.html#__doctype__,Variable nsim.cluster_dynamics.__doctype__=nsim.cluster_dynamics-module.html#__doctype__,Variable nsim.scene.recorder.__doctype__=nsim.scene.recorder-module.html#__doctype__,Variable nsim.scene.sim_object.__doctype__=nsim.scene.sim_object-module.html#__doctype__,Variable start_server.__doctype__=start_server-module.html#__doctype__"><a title="debug_helpers.__doctype__
+nsim.cluster_dynamics.__doctype__
+nsim.scene.recorder.__doctype__
+nsim.scene.sim_object.__doctype__
+start_server.__doctype__" class="py-name" href="#" onclick="return doclink('link-0', '__doctype__', 'link-0');">__doctype__</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'restructuredtext'</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">##---IMPORTS</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-comment"># packages</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">scipy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">N</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># own packages</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-1" class="py-name" targets="Module nsim.scene.sim_object=nsim.scene.sim_object-module.html"><a title="nsim.scene.sim_object" class="py-name" href="#" onclick="return doclink('link-1', 'sim_object', 'link-1');">sim_object</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class nsim.scene.sim_object.SimObject=nsim.scene.sim_object.SimObject-class.html"><a title="nsim.scene.sim_object.SimObject" class="py-name" href="#" onclick="return doclink('link-2', 'SimObject', 'link-2');">SimObject</a></tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">neuron</tt> <tt class="py-keyword">import</tt> <tt class="py-name">BadNeuronQuery</tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Class nsim.scene.neuron.Neuron=nsim.scene.neuron.Neuron-class.html"><a title="nsim.scene.neuron.Neuron" class="py-name" href="#" onclick="return doclink('link-3', 'Neuron', 'link-3');">Neuron</a></tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-4" class="py-name" targets="Package nsim.scene.noise=nsim.scene.noise-module.html"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-4', 'noise', 'link-4');">noise</a></tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Class nsim.scene.noise.noise_gen.NoiseGen=nsim.scene.noise.noise_gen.NoiseGen-class.html"><a title="nsim.scene.noise.noise_gen.NoiseGen" class="py-name" href="#" onclick="return doclink('link-5', 'NoiseGen', 'link-5');">NoiseGen</a></tt><tt class="py-op">,</tt> <tt id="link-6" class="py-name" targets="Class nsim.scene.noise.ar_model.ArNoiseGen=nsim.scene.noise.ar_model.ArNoiseGen-class.html"><a title="nsim.scene.noise.ar_model.ArNoiseGen" class="py-name" href="#" onclick="return doclink('link-6', 'ArNoiseGen', 'link-6');">ArNoiseGen</a></tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-7" class="py-name" targets="Package nsim=nsim-module.html"><a title="nsim" class="py-name" href="#" onclick="return doclink('link-7', 'nsim', 'link-7');">nsim</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Package nsim.math=nsim.math-module.html"><a title="nsim.math" class="py-name" href="#" onclick="return doclink('link-8', 'math', 'link-8');">math</a></tt> <tt class="py-keyword">import</tt> <tt id="link-9" class="py-name" targets="Function nsim.math.math3d.unit_vector()=nsim.math.math3d-module.html#unit_vector"><a title="nsim.math.math3d.unit_vector" class="py-name" href="#" onclick="return doclink('link-9', 'unit_vector', 'link-9');">unit_vector</a></tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-comment">##---CLASSES</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="Recorder"></a><div id="Recorder-def"><a name="L44"></a><tt class="py-lineno"> 44</tt> <a class="py-toggle" href="#" id="Recorder-toggle" onclick="return toggle('Recorder');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html">Recorder</a><tt class="py-op">(</tt><tt class="py-base-class">SimObject</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Recorder-expanded"><a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">    <tt class="py-docstring">"""multichanneled recorder object with an intrinsic noise process</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">    If the Recorder has self._points, these correspond to the recorder channels.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring">    Else there will be only one channel at self.position.</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">    <tt class="py-comment">## constructor</tt> </tt>
+<a name="Recorder.__init__"></a><div id="Recorder.__init__-def"><a name="L52"></a><tt class="py-lineno"> 52</tt> <a class="py-toggle" href="#" id="Recorder.__init__-toggle" onclick="return toggle('Recorder.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.__init__-expanded"><a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring">        :Keywords:</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">            snr : float</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">                Signal to Noise Ratio (SNR) for the noise process.</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">                Default=1.0</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">            noise : bool</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">                If False, do not setup noise generator. For setup in subclass</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring">                Default=True</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-comment"># super</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-10" class="py-name" targets="Class nsim.scene.recorder.Recorder=nsim.scene.recorder.Recorder-class.html"><a title="nsim.scene.recorder.Recorder" class="py-name" href="#" onclick="return doclink('link-10', 'Recorder', 'link-10');">Recorder</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method nsim.cluster_dynamics.ClusterDynamics.__init__()=nsim.cluster_dynamics.ClusterDynamics-class.html#__init__,Method nsim.data_io.client.SimIOClientNotifier.__init__()=nsim.data_io.client.SimIOClientNotifier-class.html#__init__,Method nsim.data_io.client.SimIOConnection.__init__()=nsim.data_io.client.SimIOConnection-class.html#__init__,Method nsim.data_io.client_interface.ChunkContainer.__init__()=nsim.data_io.client_interface.ChunkContainer-class.html#__init__,Method nsim.data_io.client_interface.InitDlg.__init__()=nsim.data_io.client_interface.InitDlg-class.html#__init__,Method nsim.data_io.client_interface.NTrodeDataInterface.__init__()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#__init__,Method nsim.data_io.client_interface.QNotifier.__init__()=nsim.data_io.client_interface.QNotifier-class.html#__init__,Method nsim.data_io.minimal_client.MinimalClient.__init__()=nsim.data_io.minimal_client.MinimalClient-class.html#__init__,Method nsim.data_io.package.ContentItem.__init__()=nsim.data_io.package.ContentItem-class.html#__init__,Method nsim.data_io.package.SimPkg.__init__()=nsim.data_io.package.SimPkg-class.html#__init__,Method nsim.data_io.server.SimIOManager.__init__()=nsim.data_io.server.SimIOManager-class.html#__init__,Method nsim.data_io.server.SimIOServer.__init__()=nsim.data_io.server.SimIOServer-class.html#__init__,Method nsim.gui.plotting.MatShow.__init__()=nsim.gui.plotting.MatShow-class.html#__init__,Method nsim.gui.plotting.MatrixData.__init__()=nsim.gui.plotting.MatrixData-class.html#__init__,Method nsim.gui.plotting.NTrodePlot.__init__()=nsim.gui.plotting.NTrodePlot-class.html#__init__,Method nsim.gui.plotting.QualityPlot.__init__()=nsim.gui.plotting.QualityPlot-class.html#__init__,Method nsim.gui.plotting.TimeSeriesPlot.__init__()=nsim.gui.plotting.TimeSeriesPlot-class.html#__init__,Method nsim.math.math3d.Arcball.__init__()=nsim.math.math3d.Arcball-class.html#__init__,Method nsim.scene.neuron_data.nd_sampled.SampledND.__init__()=nsim.scene.neuron_data.nd_sampled.SampledND-class.html#__init__,Method nsim.scene.neuron_data.nd_waveform.WaveformND.__init__()=nsim.scene.neuron_data.nd_waveform.WaveformND-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronData.__init__()=nsim.scene.neuron_data.neuron_data.NeuronData-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__()=nsim.scene.neuron_data.neuron_data.NeuronDataContainer-class.html#__init__,Method nsim.scene.noise.ar_model.ArNoiseGen.__init__()=nsim.scene.noise.ar_model.ArNoiseGen-class.html#__init__,Method nsim.scene.noise.noise_gen.NoiseGen.__init__()=nsim.scene.noise.noise_gen.NoiseGen-class.html#__init__,Method nsim.scene.recorder.Recorder.__init__()=nsim.scene.recorder.Recorder-class.html#__init__,Method nsim.scene.recorder.Tetrode.__init__()=nsim.scene.recorder.Tetrode-class.html#__init__,Method nsim.scene.sim_object.SimObject.__init__()=nsim.scene.sim_object.SimObject-class.html#__init__,Method nsim.scene_generator.SceneGenerator.__init__()=nsim.scene_generator.SceneGenerator-class.html#__init__,Method nsim.scene_generator.WFWidget.__init__()=nsim.scene_generator.WFWidget-class.html#__init__,Method nsim.simulation.BaseSimulation.__init__()=nsim.simulation.BaseSimulation-class.html#__init__,Method nsim.simulation.SimExternalDelegate.__init__()=nsim.simulation.SimExternalDelegate-class.html#__init__,Method start_server.AddNeuronDialog.__init__()=start_server.AddNeuronDialog-class.html#__init__,Method start_server.AddRecorderDialog.__init__()=start_server.AddRecorderDialog-class.html#__init__,Method start_server.SimQt4Delegate.__init__()=start_server.SimQt4Delegate-class.html#__init__,Method start_server.SimulationGui.__init__()=start_server.SimulationGui-class.html#__init__"><a title="nsim.cluster_dynamics.ClusterDynamics.__init__
+nsim.data_io.client.SimIOClientNotifier.__init__
+nsim.data_io.client.SimIOConnection.__init__
+nsim.data_io.client_interface.ChunkContainer.__init__
+nsim.data_io.client_interface.InitDlg.__init__
+nsim.data_io.client_interface.NTrodeDataInterface.__init__
+nsim.data_io.client_interface.QNotifier.__init__
+nsim.data_io.minimal_client.MinimalClient.__init__
+nsim.data_io.package.ContentItem.__init__
+nsim.data_io.package.SimPkg.__init__
+nsim.data_io.server.SimIOManager.__init__
+nsim.data_io.server.SimIOServer.__init__
+nsim.gui.plotting.MatShow.__init__
+nsim.gui.plotting.MatrixData.__init__
+nsim.gui.plotting.NTrodePlot.__init__
+nsim.gui.plotting.QualityPlot.__init__
+nsim.gui.plotting.TimeSeriesPlot.__init__
+nsim.math.math3d.Arcball.__init__
+nsim.scene.neuron_data.nd_sampled.SampledND.__init__
+nsim.scene.neuron_data.nd_waveform.WaveformND.__init__
+nsim.scene.neuron_data.neuron_data.NeuronData.__init__
+nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__
+nsim.scene.noise.ar_model.ArNoiseGen.__init__
+nsim.scene.noise.noise_gen.NoiseGen.__init__
+nsim.scene.recorder.Recorder.__init__
+nsim.scene.recorder.Tetrode.__init__
+nsim.scene.sim_object.SimObject.__init__
+nsim.scene_generator.SceneGenerator.__init__
+nsim.scene_generator.WFWidget.__init__
+nsim.simulation.BaseSimulation.__init__
+nsim.simulation.SimExternalDelegate.__init__
+start_server.AddNeuronDialog.__init__
+start_server.AddRecorderDialog.__init__
+start_server.SimQt4Delegate.__init__
+start_server.SimulationGui.__init__" class="py-name" href="#" onclick="return doclink('link-11', '__init__', 'link-11');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-op">**</tt><tt class="py-name">kwargs</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-comment"># members</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_origin</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Variable nsim.data_io.client_interface.NTrodeDataInterface.position=nsim.data_io.client_interface.NTrodeDataInterface-class.html#position,Variable nsim.scene.sim_object.SimObject.position=nsim.scene.sim_object.SimObject-class.html#position"><a title="nsim.data_io.client_interface.NTrodeDataInterface.position
+nsim.scene.sim_object.SimObject.position" class="py-name" href="#" onclick="return doclink('link-12', 'position', 'link-12');">position</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method nsim.gui.plotting.MatrixData.copy()=nsim.gui.plotting.MatrixData-class.html#copy"><a title="nsim.gui.plotting.MatrixData.copy" class="py-name" href="#" onclick="return doclink('link-13', 'copy', 'link-13');">copy</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Variable nsim.scene.sim_object.SimObject.points=nsim.scene.sim_object.SimObject-class.html#points"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-14', 'points', 'link-14');">points</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt> <tt class="py-op">=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-15', 'points', 'link-14');">points</a></tt><tt class="py-op">.</tt><tt class="py-name">shape</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_noise_gen</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_snr</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">        <tt class="py-name">traj</tt> <tt class="py-op">=</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'orientation'</tt><tt class="py-op">,</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">asarray</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">1.0</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">traj</tt> <tt class="py-keyword">is</tt> <tt class="py-name">True</tt> <tt class="py-keyword">or</tt> <tt class="py-name">traj</tt> <tt class="py-keyword">is</tt> <tt class="py-name">False</tt><tt class="py-op">:</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">            <tt class="py-name">traj</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">1.0</tt><tt class="py-op">]</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory</tt> <tt class="py-op">=</tt> <tt id="link-16" class="py-name"><a title="nsim.math.math3d.unit_vector" class="py-name" href="#" onclick="return doclink('link-16', 'unit_vector', 'link-9');">unit_vector</a></tt><tt class="py-op">(</tt><tt class="py-name">traj</tt><tt class="py-op">)</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory_pos</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-comment"># set from kwargs</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Variable nsim.scene.recorder.Recorder.snr=nsim.scene.recorder.Recorder-class.html#snr"><a title="nsim.scene.recorder.Recorder.snr" class="py-name" href="#" onclick="return doclink('link-17', 'snr', 'link-17');">snr</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'snr'</tt><tt class="py-op">,</tt> <tt class="py-number">1.0</tt><tt class="py-op">)</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Variable nsim.scene.recorder.Recorder.trajectory_pos=nsim.scene.recorder.Recorder-class.html#trajectory_pos"><a title="nsim.scene.recorder.Recorder.trajectory_pos" class="py-name" href="#" onclick="return doclink('link-18', 'trajectory_pos', 'link-18');">trajectory_pos</a></tt> <tt class="py-op">=</tt> <tt class="py-number">0.0</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt id="link-19" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-19', 'noise', 'link-4');">noise</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'noise'</tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-20" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-20', 'noise', 'link-4');">noise</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_noise_gen</tt> <tt class="py-op">=</tt> <tt id="link-21" class="py-name"><a title="nsim.scene.noise.noise_gen.NoiseGen" class="py-name" href="#" onclick="return doclink('link-21', 'NoiseGen', 'link-5');">NoiseGen</a></tt><tt class="py-op">(</tt><tt class="py-name">mu</tt><tt class="py-op">=</tt><tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">zeros</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-comment">## properties</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"> </tt>
+<a name="Recorder.get_origin"></a><div id="Recorder.get_origin-def"><a name="L89"></a><tt class="py-lineno"> 89</tt> <a class="py-toggle" href="#" id="Recorder.get_origin-toggle" onclick="return toggle('Recorder.get_origin');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#get_origin">get_origin</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.get_origin-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.get_origin-expanded"><a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_origin</tt> </tt>
+</div><a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">    <tt id="link-22" class="py-name" targets="Variable nsim.scene.recorder.Recorder.origin=nsim.scene.recorder.Recorder-class.html#origin"><a title="nsim.scene.recorder.Recorder.origin" class="py-name" href="#" onclick="return doclink('link-22', 'origin', 'link-22');">origin</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-23" class="py-name" targets="Method nsim.scene.recorder.Recorder.get_origin()=nsim.scene.recorder.Recorder-class.html#get_origin"><a title="nsim.scene.recorder.Recorder.get_origin" class="py-name" href="#" onclick="return doclink('link-23', 'get_origin', 'link-23');">get_origin</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"> </tt>
+<a name="Recorder.get_snr"></a><div id="Recorder.get_snr-def"><a name="L93"></a><tt class="py-lineno"> 93</tt> <a class="py-toggle" href="#" id="Recorder.get_snr-toggle" onclick="return toggle('Recorder.get_snr');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#get_snr">get_snr</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.get_snr-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.get_snr-expanded"><a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_snr</tt> </tt>
+</div><a name="Recorder.set_snr"></a><div id="Recorder.set_snr-def"><a name="L95"></a><tt class="py-lineno"> 95</tt> <a class="py-toggle" href="#" id="Recorder.set_snr-toggle" onclick="return toggle('Recorder.set_snr');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#set_snr">set_snr</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.set_snr-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.set_snr-expanded"><a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-24" class="py-name" targets="Method nsim.gui.plotting.MatrixData.value()=nsim.gui.plotting.MatrixData-class.html#value"><a title="nsim.gui.plotting.MatrixData.value" class="py-name" href="#" onclick="return doclink('link-24', 'value', 'link-24');">value</a></tt> <tt class="py-op">&lt;=</tt> <tt class="py-number">0.0</tt><tt class="py-op">:</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">'cannot set SNR &lt;= 0.0'</tt><tt class="py-op">)</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_snr</tt> <tt class="py-op">=</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="nsim.gui.plotting.MatrixData.value" class="py-name" href="#" onclick="return doclink('link-25', 'value', 'link-24');">value</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">    <tt id="link-26" class="py-name"><a title="nsim.scene.recorder.Recorder.snr" class="py-name" href="#" onclick="return doclink('link-26', 'snr', 'link-17');">snr</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-27" class="py-name" targets="Method nsim.scene.recorder.Recorder.get_snr()=nsim.scene.recorder.Recorder-class.html#get_snr"><a title="nsim.scene.recorder.Recorder.get_snr" class="py-name" href="#" onclick="return doclink('link-27', 'get_snr', 'link-27');">get_snr</a></tt><tt class="py-op">,</tt> <tt id="link-28" class="py-name" targets="Method nsim.scene.recorder.Recorder.set_snr()=nsim.scene.recorder.Recorder-class.html#set_snr"><a title="nsim.scene.recorder.Recorder.set_snr" class="py-name" href="#" onclick="return doclink('link-28', 'set_snr', 'link-28');">set_snr</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"> </tt>
+<a name="Recorder.get_trajectory"></a><div id="Recorder.get_trajectory-def"><a name="L101"></a><tt class="py-lineno">101</tt> <a class="py-toggle" href="#" id="Recorder.get_trajectory-toggle" onclick="return toggle('Recorder.get_trajectory');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#get_trajectory">get_trajectory</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.get_trajectory-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.get_trajectory-expanded"><a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory</tt> </tt>
+</div><a name="Recorder.set_trajectory"></a><div id="Recorder.set_trajectory-def"><a name="L103"></a><tt class="py-lineno">103</tt> <a class="py-toggle" href="#" id="Recorder.set_trajectory-toggle" onclick="return toggle('Recorder.set_trajectory');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#set_trajectory">set_trajectory</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.set_trajectory-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.set_trajectory-expanded"><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory</tt> <tt class="py-op">=</tt> <tt id="link-29" class="py-name"><a title="nsim.gui.plotting.MatrixData.value" class="py-name" href="#" onclick="return doclink('link-29', 'value', 'link-24');">value</a></tt> </tt>
+</div><a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">    <tt id="link-30" class="py-name" targets="Variable nsim.scene.recorder.Recorder.trajectory=nsim.scene.recorder.Recorder-class.html#trajectory"><a title="nsim.scene.recorder.Recorder.trajectory" class="py-name" href="#" onclick="return doclink('link-30', 'trajectory', 'link-30');">trajectory</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-31" class="py-name" targets="Method nsim.scene.recorder.Recorder.get_trajectory()=nsim.scene.recorder.Recorder-class.html#get_trajectory"><a title="nsim.scene.recorder.Recorder.get_trajectory" class="py-name" href="#" onclick="return doclink('link-31', 'get_trajectory', 'link-31');">get_trajectory</a></tt><tt class="py-op">,</tt> <tt id="link-32" class="py-name" targets="Method nsim.scene.recorder.Recorder.set_trajectory()=nsim.scene.recorder.Recorder-class.html#set_trajectory"><a title="nsim.scene.recorder.Recorder.set_trajectory" class="py-name" href="#" onclick="return doclink('link-32', 'set_trajectory', 'link-32');">set_trajectory</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"> </tt>
+<a name="Recorder.get_trajectory_pos"></a><div id="Recorder.get_trajectory_pos-def"><a name="L107"></a><tt class="py-lineno">107</tt> <a class="py-toggle" href="#" id="Recorder.get_trajectory_pos-toggle" onclick="return toggle('Recorder.get_trajectory_pos');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#get_trajectory_pos">get_trajectory_pos</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.get_trajectory_pos-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.get_trajectory_pos-expanded"><a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory_pos</tt> </tt>
+</div><a name="Recorder.set_trajectory_pos"></a><div id="Recorder.set_trajectory_pos-def"><a name="L109"></a><tt class="py-lineno">109</tt> <a class="py-toggle" href="#" id="Recorder.set_trajectory_pos-toggle" onclick="return toggle('Recorder.set_trajectory_pos');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#set_trajectory_pos">set_trajectory_pos</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.set_trajectory_pos-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.set_trajectory_pos-expanded"><a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory_pos</tt> <tt class="py-op">=</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt id="link-33" class="py-name"><a title="nsim.gui.plotting.MatrixData.value" class="py-name" href="#" onclick="return doclink('link-33', 'value', 'link-24');">value</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name"><a title="nsim.data_io.client_interface.NTrodeDataInterface.position
+nsim.scene.sim_object.SimObject.position" class="py-name" href="#" onclick="return doclink('link-34', 'position', 'link-12');">position</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="nsim.scene.recorder.Recorder.origin" class="py-name" href="#" onclick="return doclink('link-35', 'origin', 'link-22');">origin</a></tt> <tt class="py-op">+</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_trajectory_pos</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name"><a title="nsim.scene.recorder.Recorder.trajectory" class="py-name" href="#" onclick="return doclink('link-36', 'trajectory', 'link-30');">trajectory</a></tt> </tt>
+</div><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">    <tt id="link-37" class="py-name"><a title="nsim.scene.recorder.Recorder.trajectory_pos" class="py-name" href="#" onclick="return doclink('link-37', 'trajectory_pos', 'link-18');">trajectory_pos</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-38" class="py-name" targets="Method nsim.scene.recorder.Recorder.get_trajectory_pos()=nsim.scene.recorder.Recorder-class.html#get_trajectory_pos"><a title="nsim.scene.recorder.Recorder.get_trajectory_pos" class="py-name" href="#" onclick="return doclink('link-38', 'get_trajectory_pos', 'link-38');">get_trajectory_pos</a></tt><tt class="py-op">,</tt> <tt id="link-39" class="py-name" targets="Method nsim.scene.recorder.Recorder.set_trajectory_pos()=nsim.scene.recorder.Recorder-class.html#set_trajectory_pos"><a title="nsim.scene.recorder.Recorder.set_trajectory_pos" class="py-name" href="#" onclick="return doclink('link-39', 'set_trajectory_pos', 'link-39');">set_trajectory_pos</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-comment">## methods public</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"> </tt>
+<a name="Recorder.simulate"></a><div id="Recorder.simulate-def"><a name="L116"></a><tt class="py-lineno">116</tt> <a class="py-toggle" href="#" id="Recorder.simulate-toggle" onclick="return toggle('Recorder.simulate');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Recorder-class.html#simulate">simulate</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">nlist</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-param">frame_size</tt><tt class="py-op">=</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Recorder.simulate-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Recorder.simulate-expanded"><a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt class="py-docstring">"""record a multichanneled frame from neurons in range</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"><tt class="py-docstring">            nlist : list</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"><tt class="py-docstring">                List of Neuron instances to record from.</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring">                Default=[]</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-docstring">            frame_size : int</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">                Size of the frame in samples.</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">                Default=1</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">        :Returns:</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">            list : A list of items for this frame. The first item is the noise</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-docstring">            for this frame. Subsequent items are tuples of waveform and interval</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">            data for the neurons that have significant (not all zero) waveforms</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring">            in this frame for this recorder.</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-comment"># init</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">        <tt class="py-name">rval</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_noise_gen</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">            <tt class="py-name">rval</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">zeros</tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt id="link-40" class="py-name" targets="Variable nsim.simulation.BaseSimulation.frame_size=nsim.simulation.BaseSimulation-class.html#frame_size,Method nsim.simulation.SimExternalDelegate.frame_size()=nsim.simulation.SimExternalDelegate-class.html#frame_size,Method start_server.SimQt4Delegate.frame_size()=start_server.SimQt4Delegate-class.html#frame_size"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-40', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">            <tt class="py-name">rval</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_noise_gen</tt><tt class="py-op">.</tt><tt id="link-41" class="py-name" targets="Method nsim.scene.noise.ar_model.ArNoiseGen.query()=nsim.scene.noise.ar_model.ArNoiseGen-class.html#query,Method nsim.scene.noise.noise_gen.NoiseGen.query()=nsim.scene.noise.noise_gen.NoiseGen-class.html#query"><a title="nsim.scene.noise.ar_model.ArNoiseGen.query
+nsim.scene.noise.noise_gen.NoiseGen.query" class="py-name" href="#" onclick="return doclink('link-41', 'query', 'link-41');">query</a></tt><tt class="py-op">(</tt><tt class="py-name">size</tt><tt class="py-op">=</tt><tt id="link-42" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-42', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-43" class="py-name"><a title="nsim.scene.recorder.Recorder.snr" class="py-name" href="#" onclick="return doclink('link-43', 'snr', 'link-17');">snr</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">        <tt class="py-comment"># for each neuron query waveform and firing data</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">nrn</tt> <tt class="py-keyword">in</tt> <tt class="py-name">nlist</tt><tt class="py-op">:</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">                <tt class="py-name">rval</tt><tt class="py-op">.</tt><tt class="py-name">extend</tt><tt class="py-op">(</tt><tt class="py-name">nrn</tt><tt class="py-op">.</tt><tt class="py-name">query_for_recorder</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-44" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-44', 'points', 'link-14');">points</a></tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">BadNeuronQuery</tt><tt class="py-op">:</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">        <tt class="py-comment"># return</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">tuple</tt><tt class="py-op">(</tt><tt class="py-name">rval</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"> </tt>
+<a name="Tetrode"></a><div id="Tetrode-def"><a name="L151"></a><tt class="py-lineno">151</tt> <a class="py-toggle" href="#" id="Tetrode-toggle" onclick="return toggle('Tetrode');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.scene.recorder.Tetrode-class.html">Tetrode</a><tt class="py-op">(</tt><tt class="py-base-class">Recorder</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tetrode-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Tetrode-expanded"><a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">    <tt class="py-docstring">"""tetrode object, resembling a tetrode as build by Thomas Recording GmbH"""</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line"> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">    <tt class="py-comment"># constructor</tt> </tt>
+<a name="Tetrode.__init__"></a><div id="Tetrode.__init__-def"><a name="L155"></a><tt class="py-lineno">155</tt> <a class="py-toggle" href="#" id="Tetrode.__init__-toggle" onclick="return toggle('Tetrode.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.scene.recorder.Tetrode-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tetrode.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Tetrode.__init__-expanded"><a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line"><tt class="py-docstring">        :Keywords:</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"><tt class="py-docstring">            noise_params : list</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"><tt class="py-docstring">                List with 2 matricies, [ar parameters, channel covariance] with</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"><tt class="py-docstring">                consistant shapes.</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"><tt class="py-docstring">                Default=None</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">        <tt class="py-comment"># tetrode points</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">        <tt class="py-name">hz</tt> <tt class="py-op">=</tt> <tt class="py-number">0.5</tt> <tt class="py-op">*</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">sqrt</tt><tt class="py-op">(</tt><tt class="py-number">3</tt><tt class="py-op">)</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">        <tt class="py-name">s3o6</tt> <tt class="py-op">=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">sqrt</tt><tt class="py-op">(</tt><tt class="py-number">3</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-number">6.0</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">        <tt id="link-45" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-45', 'points', 'link-14');">points</a></tt> <tt class="py-op">=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">            <tt class="py-op">[</tt>  <tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">0.0</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-comment"># tip electrode</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">            <tt class="py-op">[</tt> <tt class="py-op">-</tt><tt class="py-number">0.5</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-name">s3o6</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-name">hz</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-comment"># south west rear electrode</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">            <tt class="py-op">[</tt>  <tt class="py-number">0.5</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-name">s3o6</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-name">hz</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-comment"># south east rear electrode</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">            <tt class="py-op">[</tt>  <tt class="py-number">0.0</tt><tt class="py-op">,</tt> <tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-name">s3o6</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-name">hz</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-comment"># north rear electrode</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">        <tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">        <tt id="link-46" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-46', 'points', 'link-14');">points</a></tt> <tt class="py-op">*=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-op">[</tt><tt class="py-number">40</tt><tt class="py-op">]</tt> <tt class="py-op">+</tt> <tt class="py-number">3</tt> <tt class="py-op">*</tt> <tt class="py-op">[</tt><tt class="py-number">20</tt><tt class="py-op">]</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">T</tt> <tt class="py-comment"># match to TRec scales</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">        <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt id="link-47" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-47', 'points', 'link-14');">points</a></tt><tt class="py-op">=</tt><tt id="link-48" class="py-name"><a title="nsim.scene.sim_object.SimObject.points" class="py-name" href="#" onclick="return doclink('link-48', 'points', 'link-14');">points</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line"> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">        <tt class="py-comment"># super</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-49" class="py-name" targets="Class nsim.scene.recorder.Tetrode=nsim.scene.recorder.Tetrode-class.html"><a title="nsim.scene.recorder.Tetrode" class="py-name" href="#" onclick="return doclink('link-49', 'Tetrode', 'link-49');">Tetrode</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-50" class="py-name"><a title="nsim.cluster_dynamics.ClusterDynamics.__init__
+nsim.data_io.client.SimIOClientNotifier.__init__
+nsim.data_io.client.SimIOConnection.__init__
+nsim.data_io.client_interface.ChunkContainer.__init__
+nsim.data_io.client_interface.InitDlg.__init__
+nsim.data_io.client_interface.NTrodeDataInterface.__init__
+nsim.data_io.client_interface.QNotifier.__init__
+nsim.data_io.minimal_client.MinimalClient.__init__
+nsim.data_io.package.ContentItem.__init__
+nsim.data_io.package.SimPkg.__init__
+nsim.data_io.server.SimIOManager.__init__
+nsim.data_io.server.SimIOServer.__init__
+nsim.gui.plotting.MatShow.__init__
+nsim.gui.plotting.MatrixData.__init__
+nsim.gui.plotting.NTrodePlot.__init__
+nsim.gui.plotting.QualityPlot.__init__
+nsim.gui.plotting.TimeSeriesPlot.__init__
+nsim.math.math3d.Arcball.__init__
+nsim.scene.neuron_data.nd_sampled.SampledND.__init__
+nsim.scene.neuron_data.nd_waveform.WaveformND.__init__
+nsim.scene.neuron_data.neuron_data.NeuronData.__init__
+nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__
+nsim.scene.noise.ar_model.ArNoiseGen.__init__
+nsim.scene.noise.noise_gen.NoiseGen.__init__
+nsim.scene.recorder.Recorder.__init__
+nsim.scene.recorder.Tetrode.__init__
+nsim.scene.sim_object.SimObject.__init__
+nsim.scene_generator.SceneGenerator.__init__
+nsim.scene_generator.WFWidget.__init__
+nsim.simulation.BaseSimulation.__init__
+nsim.simulation.SimExternalDelegate.__init__
+start_server.AddNeuronDialog.__init__
+start_server.AddRecorderDialog.__init__
+start_server.SimQt4Delegate.__init__
+start_server.SimulationGui.__init__" class="py-name" href="#" onclick="return doclink('link-50', '__init__', 'link-11');">__init__</a></tt><tt class="py-op">(</tt><tt id="link-51" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-51', 'noise', 'link-4');">noise</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-name">kwargs</tt><tt class="py-op">)</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">        <tt class="py-comment"># noise AR model from munk data</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">        <tt class="py-name">noise_params</tt> <tt class="py-op">=</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'noise_params'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">noise_params</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">                <tt class="py-comment"># list of len 2</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">                <tt class="py-keyword">assert</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">noise_params</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">2</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line">                <tt class="py-comment"># ar parameters consistent with points</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">                <tt class="py-keyword">assert</tt> <tt class="py-name">noise_params</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">                <tt class="py-comment"># channel covariance</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">                <tt class="py-keyword">assert</tt> <tt class="py-name">noise_params</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-name">noise_params</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nchan</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">                <tt class="py-name">noise_params</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">noise_params</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">            <tt class="py-name">noise_params</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">                <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">                    <tt class="py-op">[</tt> <tt class="py-number">0.71442494</tt><tt class="py-op">,</tt> <tt class="py-number">0.20257086</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.00850916</tt><tt class="py-op">,</tt> <tt class="py-number">0.2368369</tt> <tt class="py-op">,</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">                     <tt class="py-op">-</tt> <tt class="py-number">0.24215925</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.17167059</tt><tt class="py-op">,</tt> <tt class="py-number">0.0125938</tt> <tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.23022224</tt><tt class="py-op">,</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">                      <tt class="py-number">0.12538984</tt><tt class="py-op">,</tt> <tt class="py-number">0.04433236</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.00631453</tt><tt class="py-op">,</tt> <tt class="py-number">0.1004515</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line">                    <tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">0.03496567</tt><tt class="py-op">,</tt> <tt class="py-number">0.87848262</tt><tt class="py-op">,</tt> <tt class="py-number">0.00826437</tt><tt class="py-op">,</tt> <tt class="py-number">0.07128014</tt><tt class="py-op">,</tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">                      <tt class="py-number">0.03575446</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.33148169</tt><tt class="py-op">,</tt> <tt class="py-number">0.03356261</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.03429215</tt><tt class="py-op">,</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">                     <tt class="py-op">-</tt> <tt class="py-number">0.02584761</tt><tt class="py-op">,</tt> <tt class="py-number">0.15418811</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.00396265</tt><tt class="py-op">,</tt> <tt class="py-number">0.01696292</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">                    <tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">0.00501744</tt><tt class="py-op">,</tt> <tt class="py-number">0.15455094</tt><tt class="py-op">,</tt> <tt class="py-number">0.74612578</tt><tt class="py-op">,</tt> <tt class="py-number">0.15237156</tt><tt class="py-op">,</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line">                      <tt class="py-number">0.02853695</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.10804699</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.2478788</tt> <tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.12939667</tt><tt class="py-op">,</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">                     <tt class="py-op">-</tt> <tt class="py-number">0.03661882</tt><tt class="py-op">,</tt> <tt class="py-number">0.04972772</tt><tt class="py-op">,</tt> <tt class="py-number">0.14696973</tt><tt class="py-op">,</tt> <tt class="py-number">0.04525116</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">                    <tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">0.02562255</tt><tt class="py-op">,</tt> <tt class="py-number">0.08109374</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.01441578</tt><tt class="py-op">,</tt> <tt class="py-number">0.81397469</tt><tt class="py-op">,</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">                      <tt class="py-number">0.03561313</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.04552583</tt><tt class="py-op">,</tt> <tt class="py-number">0.03256103</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.31543032</tt><tt class="py-op">,</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">                     <tt class="py-op">-</tt> <tt class="py-number">0.01135552</tt><tt class="py-op">,</tt> <tt class="py-number">0.01822465</tt><tt class="py-op">,</tt> <tt class="py-op">-</tt><tt class="py-number">0.01507197</tt><tt class="py-op">,</tt> <tt class="py-number">0.13653283</tt><tt class="py-op">]</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">                <tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">                <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">                    <tt class="py-op">[</tt> <tt class="py-number">0.02120132</tt><tt class="py-op">,</tt> <tt class="py-number">0.0046539</tt> <tt class="py-op">,</tt> <tt class="py-number">0.00629694</tt><tt class="py-op">,</tt> <tt class="py-number">0.00614801</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">                    <tt class="py-op">[</tt> <tt class="py-number">0.0046539</tt> <tt class="py-op">,</tt> <tt class="py-number">0.02226795</tt><tt class="py-op">,</tt> <tt class="py-number">0.00402148</tt><tt class="py-op">,</tt> <tt class="py-number">0.00663766</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">                    <tt class="py-op">[</tt> <tt class="py-number">0.00629694</tt><tt class="py-op">,</tt> <tt class="py-number">0.00402148</tt><tt class="py-op">,</tt> <tt class="py-number">0.01920582</tt><tt class="py-op">,</tt> <tt class="py-number">0.00401457</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">                    <tt class="py-op">[</tt> <tt class="py-number">0.00614801</tt><tt class="py-op">,</tt> <tt class="py-number">0.00663766</tt><tt class="py-op">,</tt> <tt class="py-number">0.00401457</tt><tt class="py-op">,</tt> <tt class="py-number">0.02340445</tt><tt class="py-op">]</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">                <tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">            <tt class="py-op">]</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_noise_gen</tt> <tt class="py-op">=</tt> <tt id="link-52" class="py-name"><a title="nsim.scene.noise.ar_model.ArNoiseGen" class="py-name" href="#" onclick="return doclink('link-52', 'ArNoiseGen', 'link-6');">ArNoiseGen</a></tt><tt class="py-op">(</tt><tt class="py-name">noise_params</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"><tt class="py-comment">##---PACKAGE</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line"> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line"><tt class="py-name">__all__</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">'Recorder'</tt><tt class="py-op">,</tt> <tt class="py-string">'Tetrode'</tt><tt class="py-op">]</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line"> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line"><tt class="py-comment">##---MAIN</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt class="py-name">__name__</tt> <tt class="py-op">==</tt> <tt class="py-string">'__main__'</tt><tt class="py-op">:</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">    <tt class="py-comment"># inits</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-name">neuron</tt> <tt class="py-keyword">import</tt> <tt id="link-53" class="py-name" targets="Class nsim.scene.neuron_data.neuron_data.NeuronData=nsim.scene.neuron_data.neuron_data.NeuronData-class.html"><a title="nsim.scene.neuron_data.neuron_data.NeuronData" class="py-name" href="#" onclick="return doclink('link-53', 'NeuronData', 'link-53');">NeuronData</a></tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt class="py-name">pylab</tt> <tt class="py-keyword">as</tt> <tt class="py-name">P</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">    <tt id="link-54" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-54', 'frame_size', 'link-40');">frame_size</a></tt> <tt class="py-op">=</tt> <tt class="py-number">500</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">    <tt class="py-name">ndpath</tt> <tt class="py-op">=</tt> <tt class="py-string">'/home/phil/SVN/Data/Einevoll/LFP-20100516_225124.h5'</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">    <tt class="py-name">ftimes</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line">    <tt class="py-comment"># neuron</tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">'build neuron'</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">    <tt class="py-name">nd</tt> <tt class="py-op">=</tt> <tt id="link-55" class="py-name"><a title="nsim.scene.neuron_data.neuron_data.NeuronData" class="py-name" href="#" onclick="return doclink('link-55', 'NeuronData', 'link-53');">NeuronData</a></tt><tt class="py-op">(</tt><tt class="py-name">ndpath</tt><tt class="py-op">)</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">    <tt class="py-name">n</tt> <tt class="py-op">=</tt> <tt id="link-56" class="py-name"><a title="nsim.scene.neuron.Neuron" class="py-name" href="#" onclick="return doclink('link-56', 'Neuron', 'link-3');">Neuron</a></tt><tt class="py-op">(</tt><tt id="link-57" class="py-name" targets="Package nsim.scene.neuron_data=nsim.scene.neuron_data-module.html,Module nsim.scene.neuron_data.neuron_data=nsim.scene.neuron_data.neuron_data-module.html"><a title="nsim.scene.neuron_data
+nsim.scene.neuron_data.neuron_data" class="py-name" href="#" onclick="return doclink('link-57', 'neuron_data', 'link-57');">neuron_data</a></tt><tt class="py-op">=</tt><tt class="py-name">nd</tt><tt class="py-op">)</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line"> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">    <tt class="py-comment"># tetrode</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">'Building Tetrode'</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">    <tt class="py-name">t</tt> <tt class="py-op">=</tt> <tt id="link-58" class="py-name"><a title="nsim.scene.recorder.Tetrode" class="py-name" href="#" onclick="return doclink('link-58', 'Tetrode', 'link-49');">Tetrode</a></tt><tt class="py-op">(</tt><tt id="link-59" class="py-name"><a title="nsim.scene.recorder.Recorder.snr" class="py-name" href="#" onclick="return doclink('link-59', 'snr', 'link-17');">snr</a></tt><tt class="py-op">=</tt><tt class="py-number">3.0</tt><tt class="py-op">)</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-name">t</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">'snr:'</tt><tt class="py-op">,</tt> <tt class="py-name">t</tt><tt class="py-op">.</tt><tt id="link-60" class="py-name"><a title="nsim.scene.recorder.Recorder.snr" class="py-name" href="#" onclick="return doclink('link-60', 'snr', 'link-17');">snr</a></tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line"> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">    <tt class="py-comment"># noise frame</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">'noise frame'</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">    <tt id="link-61" class="py-name" targets="Variable nsim.simulation.BaseSimulation.frame=nsim.simulation.BaseSimulation-class.html#frame,Method nsim.simulation.SimExternalDelegate.frame()=nsim.simulation.SimExternalDelegate-class.html#frame,Method start_server.SimQt4Delegate.frame()=start_server.SimQt4Delegate-class.html#frame"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-61', 'frame', 'link-61');">frame</a></tt> <tt class="py-op">=</tt> <tt class="py-name">t</tt><tt class="py-op">.</tt><tt id="link-62" class="py-name" targets="Method nsim.scene.recorder.Recorder.simulate()=nsim.scene.recorder.Recorder-class.html#simulate,Method nsim.simulation.BaseSimulation.simulate()=nsim.simulation.BaseSimulation-class.html#simulate"><a title="nsim.scene.recorder.Recorder.simulate
+nsim.simulation.BaseSimulation.simulate" class="py-name" href="#" onclick="return doclink('link-62', 'simulate', 'link-62');">simulate</a></tt><tt class="py-op">(</tt><tt class="py-name">nlist</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt id="link-63" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-63', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">=</tt><tt id="link-64" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-64', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt id="link-65" class="py-name"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-65', 'frame', 'link-61');">frame</a></tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line">    <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-name">P</tt><tt class="py-op">.</tt><tt class="py-name">figure</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line">    <tt class="py-name">P</tt><tt class="py-op">.</tt><tt class="py-name">plot</tt><tt class="py-op">(</tt><tt id="link-66" class="py-name"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-66', 'frame', 'link-61');">frame</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line"> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">'spike frame'</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line">    <tt class="py-name">n</tt><tt class="py-op">.</tt><tt id="link-67" class="py-name"><a title="nsim.scene.recorder.Recorder.simulate
+nsim.simulation.BaseSimulation.simulate" class="py-name" href="#" onclick="return doclink('link-67', 'simulate', 'link-62');">simulate</a></tt><tt class="py-op">(</tt><tt id="link-68" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-68', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">=</tt><tt id="link-69" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-69', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">,</tt> <tt class="py-name">firing_times</tt><tt class="py-op">=</tt><tt class="py-name">ftimes</tt><tt class="py-op">)</tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">    <tt id="link-70" class="py-name"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-70', 'frame', 'link-61');">frame</a></tt> <tt class="py-op">=</tt> <tt class="py-name">t</tt><tt class="py-op">.</tt><tt id="link-71" class="py-name"><a title="nsim.scene.recorder.Recorder.simulate
+nsim.simulation.BaseSimulation.simulate" class="py-name" href="#" onclick="return doclink('link-71', 'simulate', 'link-62');">simulate</a></tt><tt class="py-op">(</tt><tt class="py-name">nlist</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-name">n</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt id="link-72" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-72', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">=</tt><tt id="link-73" class="py-name"><a title="nsim.simulation.BaseSimulation.frame_size
+nsim.simulation.SimExternalDelegate.frame_size
+start_server.SimQt4Delegate.frame_size" class="py-name" href="#" onclick="return doclink('link-73', 'frame_size', 'link-40');">frame_size</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt id="link-74" class="py-name"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-74', 'frame', 'link-61');">frame</a></tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">    <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-name">P</tt><tt class="py-op">.</tt><tt class="py-name">figure</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line">    <tt class="py-name">P</tt><tt class="py-op">.</tt><tt class="py-name">plot</tt><tt class="py-op">(</tt><tt id="link-75" class="py-name"><a title="nsim.simulation.BaseSimulation.frame
+nsim.simulation.SimExternalDelegate.frame
+start_server.SimQt4Delegate.frame" class="py-name" href="#" onclick="return doclink('link-75', 'frame', 'link-61');">frame</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line"> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">    <tt class="py-comment"># finalize</tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">    <tt class="py-name">P</tt><tt class="py-op">.</tt><tt class="py-name">show</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Sep 22 13:36:50 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

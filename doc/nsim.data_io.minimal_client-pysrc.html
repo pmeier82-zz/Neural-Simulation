@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>nsim.data_io.minimal_client</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="nsim-module.html">Package&nbsp;nsim</a> ::
+        <a href="nsim.data_io-module.html">Package&nbsp;data_io</a> ::
+        Module&nbsp;minimal_client
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="nsim.data_io.minimal_client-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="nsim.data_io.minimal_client-module.html" onclick="show_private();">Module nsim.data_io.minimal_client</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#&#65279;# -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">##  Copyright 2010 Philipp Meier &lt;pmeier82@googlemail.com&gt;</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">##  Licensed under the EUPL, Version 1.1 or &#8211; as soon they will be approved by</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">##  the European Commission - subsequent versions of the EUPL (the "Licence");</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">##  You may not use this work except in compliance with the Licence.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">##  You may obtain a copy of the Licence at:</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">##  http://ec.europa.eu/idabc/eupl</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">##  Unless required by applicable law or agreed to in writing, software</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">##  distributed under the Licence is distributed on an "AS IS" basis,</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment">##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">##  See the Licence for the specific language governing permissions and</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">##  limitations under the Licence.</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment">################################################################################</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment"># nsim - data_io/minimal_client.py</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># Philipp Meier - &lt;pmeier82 at gmail dot com&gt;</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment"># 2010-03-18</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-docstring">"""implementation of a minimal client fot the nsim package"""</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-name">__docformat__</tt> <tt class="py-op">=</tt> <tt class="py-string">'restructuredtext'</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">##---IMPORTS</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">PyQt4</tt> <tt class="py-keyword">import</tt> <tt class="py-name">QtCore</tt><tt class="py-op">,</tt> <tt class="py-name">QtGui</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module nsim.data_io.client_interface=nsim.data_io.client_interface-module.html"><a title="nsim.data_io.client_interface" class="py-name" href="#" onclick="return doclink('link-0', 'client_interface', 'link-0');">client_interface</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class nsim.data_io.client_interface.ChunkContainer=nsim.data_io.client_interface.ChunkContainer-class.html"><a title="nsim.data_io.client_interface.ChunkContainer" class="py-name" href="#" onclick="return doclink('link-1', 'ChunkContainer', 'link-1');">ChunkContainer</a></tt><tt class="py-op">,</tt> <tt id="link-2" class="py-name" targets="Class nsim.data_io.client_interface.NTrodeDataInterface=nsim.data_io.client_interface.NTrodeDataInterface-class.html"><a title="nsim.data_io.client_interface.NTrodeDataInterface" class="py-name" href="#" onclick="return doclink('link-2', 'NTrodeDataInterface', 'link-2');">NTrodeDataInterface</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Variable nsim.data_io.client_interface.DEFAULT_VELOCITY=nsim.data_io.client_interface-module.html#DEFAULT_VELOCITY"><a title="nsim.data_io.client_interface.DEFAULT_VELOCITY" class="py-name" href="#" onclick="return doclink('link-3', 'DEFAULT_VELOCITY', 'link-3');">DEFAULT_VELOCITY</a></tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-4" class="py-name" targets="Package nsim=nsim-module.html"><a title="nsim" class="py-name" href="#" onclick="return doclink('link-4', 'nsim', 'link-4');">nsim</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Package nsim.gui=nsim.gui-module.html"><a title="nsim.gui" class="py-name" href="#" onclick="return doclink('link-5', 'gui', 'link-5');">gui</a></tt> <tt class="py-keyword">import</tt> <tt id="link-6" class="py-name" targets="Class nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient=nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient-class.html"><a title="nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient" class="py-name" href="#" onclick="return doclink('link-6', 'Ui_MultiElectrodeClient', 'link-6');">Ui_MultiElectrodeClient</a></tt><tt class="py-op">,</tt> <tt id="link-7" class="py-name" targets="Class nsim.gui.plotting.NTrodePlot=nsim.gui.plotting.NTrodePlot-class.html"><a title="nsim.gui.plotting.NTrodePlot" class="py-name" href="#" onclick="return doclink('link-7', 'NTrodePlot', 'link-7');">NTrodePlot</a></tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">scipy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">N</tt> </tt>
+<a name="MinimalClient"></a><div id="MinimalClient-def"><a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-comment">##---CLASSES</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt> <a class="py-toggle" href="#" id="MinimalClient-toggle" onclick="return toggle('MinimalClient');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html">MinimalClient</a><tt class="py-op">(</tt><tt class="py-base-class">QtGui</tt><tt class="py-op">.</tt><tt class="py-base-class">QMainWindow</tt><tt class="py-op">,</tt> <tt class="py-base-class">Ui_MultiElectrodeClient</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="MinimalClient-expanded"><a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">    <tt class="py-docstring">"""control widget for a recorder (tetrode)"""</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">    <tt class="py-comment">## constructor</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"> </tt>
+<a name="MinimalClient.__init__"></a><div id="MinimalClient.__init__-def"><a name="L46"></a><tt class="py-lineno"> 46</tt> <a class="py-toggle" href="#" id="MinimalClient.__init__-toggle" onclick="return toggle('MinimalClient.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#__init__">__init__</a><tt class="py-op">(</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-param">self</tt><tt class="py-op">,</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">        <tt class="py-param">parent</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-comment"># io object parameters</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">        <tt class="py-param">cnklen</tt><tt class="py-op">=</tt><tt class="py-number">0.25</tt><tt class="py-op">,</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">        <tt class="py-param">addr</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-string">'localhost'</tt><tt class="py-op">,</tt> <tt class="py-number">31337</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">        <tt class="py-comment"># ntrode plot parameters</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-param">axis_range</tt><tt class="py-op">=</tt><tt class="py-number">1.0</tt><tt class="py-op">,</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">        <tt class="py-param">do_plotting</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-comment"># keyword arguments</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-op">**</tt> <tt class="py-param">kwargs</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">    <tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.__init__-expanded"><a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">        :Parameters:</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring">            parent : QWidget</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">                The QT parent of the GUI elements.</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring">            cnklen : float</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring">                The internal buffer size. Defines the amount/size of data that</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">                is buffered, analyzed and displayed to the screen in one cycle.</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">                Default=0.25</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-docstring">            addr : tuple</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-docstring">                A tuple of (host,port) defining where to reach the server.</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-docstring">                Default=('localhost',31337)</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-docstring">            axis_range : float</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-docstring">                Amplitude axis_range of the displayed data plot[-axis_range,+axis_range].</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">                Default=1.0</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">            do_plotting : bool</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring">                if true, plot the raw signal, set this to false and call</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">                self.dataplot.set_data() in subclasses. </tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">                Default=True</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">            kwargs : dict</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">                Additional keywords.</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-comment"># GUI SETUP</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-8" class="py-name" targets="Class nsim.data_io.minimal_client.MinimalClient=nsim.data_io.minimal_client.MinimalClient-class.html"><a title="nsim.data_io.minimal_client.MinimalClient" class="py-name" href="#" onclick="return doclink('link-8', 'MinimalClient', 'link-8');">MinimalClient</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Method nsim.cluster_dynamics.ClusterDynamics.__init__()=nsim.cluster_dynamics.ClusterDynamics-class.html#__init__,Method nsim.data_io.client.SimIOClientNotifier.__init__()=nsim.data_io.client.SimIOClientNotifier-class.html#__init__,Method nsim.data_io.client.SimIOConnection.__init__()=nsim.data_io.client.SimIOConnection-class.html#__init__,Method nsim.data_io.client_interface.ChunkContainer.__init__()=nsim.data_io.client_interface.ChunkContainer-class.html#__init__,Method nsim.data_io.client_interface.InitDlg.__init__()=nsim.data_io.client_interface.InitDlg-class.html#__init__,Method nsim.data_io.client_interface.NTrodeDataInterface.__init__()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#__init__,Method nsim.data_io.client_interface.QNotifier.__init__()=nsim.data_io.client_interface.QNotifier-class.html#__init__,Method nsim.data_io.minimal_client.MinimalClient.__init__()=nsim.data_io.minimal_client.MinimalClient-class.html#__init__,Method nsim.data_io.package.ContentItem.__init__()=nsim.data_io.package.ContentItem-class.html#__init__,Method nsim.data_io.package.SimPkg.__init__()=nsim.data_io.package.SimPkg-class.html#__init__,Method nsim.data_io.server.SimIOManager.__init__()=nsim.data_io.server.SimIOManager-class.html#__init__,Method nsim.data_io.server.SimIOServer.__init__()=nsim.data_io.server.SimIOServer-class.html#__init__,Method nsim.gui.plotting.MatShow.__init__()=nsim.gui.plotting.MatShow-class.html#__init__,Method nsim.gui.plotting.MatrixData.__init__()=nsim.gui.plotting.MatrixData-class.html#__init__,Method nsim.gui.plotting.NTrodePlot.__init__()=nsim.gui.plotting.NTrodePlot-class.html#__init__,Method nsim.gui.plotting.QualityPlot.__init__()=nsim.gui.plotting.QualityPlot-class.html#__init__,Method nsim.gui.plotting.TimeSeriesPlot.__init__()=nsim.gui.plotting.TimeSeriesPlot-class.html#__init__,Method nsim.math.math3d.Arcball.__init__()=nsim.math.math3d.Arcball-class.html#__init__,Method nsim.scene.neuron_data.nd_sampled.SampledND.__init__()=nsim.scene.neuron_data.nd_sampled.SampledND-class.html#__init__,Method nsim.scene.neuron_data.nd_waveform.WaveformND.__init__()=nsim.scene.neuron_data.nd_waveform.WaveformND-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronData.__init__()=nsim.scene.neuron_data.neuron_data.NeuronData-class.html#__init__,Method nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__()=nsim.scene.neuron_data.neuron_data.NeuronDataContainer-class.html#__init__,Method nsim.scene.noise.ar_model.ArNoiseGen.__init__()=nsim.scene.noise.ar_model.ArNoiseGen-class.html#__init__,Method nsim.scene.noise.noise_gen.NoiseGen.__init__()=nsim.scene.noise.noise_gen.NoiseGen-class.html#__init__,Method nsim.scene.recorder.Recorder.__init__()=nsim.scene.recorder.Recorder-class.html#__init__,Method nsim.scene.recorder.Tetrode.__init__()=nsim.scene.recorder.Tetrode-class.html#__init__,Method nsim.scene.sim_object.SimObject.__init__()=nsim.scene.sim_object.SimObject-class.html#__init__,Method nsim.scene_generator.SceneGenerator.__init__()=nsim.scene_generator.SceneGenerator-class.html#__init__,Method nsim.scene_generator.WFWidget.__init__()=nsim.scene_generator.WFWidget-class.html#__init__,Method nsim.simulation.BaseSimulation.__init__()=nsim.simulation.BaseSimulation-class.html#__init__,Method nsim.simulation.SimExternalDelegate.__init__()=nsim.simulation.SimExternalDelegate-class.html#__init__,Method start_server.AddNeuronDialog.__init__()=start_server.AddNeuronDialog-class.html#__init__,Method start_server.AddRecorderDialog.__init__()=start_server.AddRecorderDialog-class.html#__init__,Method start_server.SimQt4Delegate.__init__()=start_server.SimQt4Delegate-class.html#__init__,Method start_server.SimulationGui.__init__()=start_server.SimulationGui-class.html#__init__"><a title="nsim.cluster_dynamics.ClusterDynamics.__init__
+nsim.data_io.client.SimIOClientNotifier.__init__
+nsim.data_io.client.SimIOConnection.__init__
+nsim.data_io.client_interface.ChunkContainer.__init__
+nsim.data_io.client_interface.InitDlg.__init__
+nsim.data_io.client_interface.NTrodeDataInterface.__init__
+nsim.data_io.client_interface.QNotifier.__init__
+nsim.data_io.minimal_client.MinimalClient.__init__
+nsim.data_io.package.ContentItem.__init__
+nsim.data_io.package.SimPkg.__init__
+nsim.data_io.server.SimIOManager.__init__
+nsim.data_io.server.SimIOServer.__init__
+nsim.gui.plotting.MatShow.__init__
+nsim.gui.plotting.MatrixData.__init__
+nsim.gui.plotting.NTrodePlot.__init__
+nsim.gui.plotting.QualityPlot.__init__
+nsim.gui.plotting.TimeSeriesPlot.__init__
+nsim.math.math3d.Arcball.__init__
+nsim.scene.neuron_data.nd_sampled.SampledND.__init__
+nsim.scene.neuron_data.nd_waveform.WaveformND.__init__
+nsim.scene.neuron_data.neuron_data.NeuronData.__init__
+nsim.scene.neuron_data.neuron_data.NeuronDataContainer.__init__
+nsim.scene.noise.ar_model.ArNoiseGen.__init__
+nsim.scene.noise.noise_gen.NoiseGen.__init__
+nsim.scene.recorder.Recorder.__init__
+nsim.scene.recorder.Tetrode.__init__
+nsim.scene.sim_object.SimObject.__init__
+nsim.scene_generator.SceneGenerator.__init__
+nsim.scene_generator.WFWidget.__init__
+nsim.simulation.BaseSimulation.__init__
+nsim.simulation.SimExternalDelegate.__init__
+start_server.AddNeuronDialog.__init__
+start_server.AddRecorderDialog.__init__
+start_server.SimQt4Delegate.__init__
+start_server.SimulationGui.__init__" class="py-name" href="#" onclick="return doclink('link-9', '__init__', 'link-9');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog.setupUi()=nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog-class.html#setupUi,Method nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog.setupUi()=nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog-class.html#setupUi,Method nsim.gui.Ui_gui_main.Ui_SimGui.setupUi()=nsim.gui.Ui_gui_main.Ui_SimGui-class.html#setupUi,Method nsim.gui.Ui_init_dialog.Ui_InitDialog.setupUi()=nsim.gui.Ui_init_dialog.Ui_InitDialog-class.html#setupUi,Method nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient.setupUi()=nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient-class.html#setupUi,Method nsim.gui.Ui_recorder_controll.Ui_RecorderControll.setupUi()=nsim.gui.Ui_recorder_controll.Ui_RecorderControll-class.html#setupUi,Method nsim.gui.Ui_scene_gen.Ui_SceneGenerator.setupUi()=nsim.gui.Ui_scene_gen.Ui_SceneGenerator-class.html#setupUi"><a title="nsim.gui.Ui_add_neuron.Ui_AddNeuronDialog.setupUi
+nsim.gui.Ui_add_recorder.Ui_AddRecorderDialog.setupUi
+nsim.gui.Ui_gui_main.Ui_SimGui.setupUi
+nsim.gui.Ui_init_dialog.Ui_InitDialog.setupUi
+nsim.gui.Ui_multi_electrode_client.Ui_MultiElectrodeClient.setupUi
+nsim.gui.Ui_recorder_controll.Ui_RecorderControll.setupUi
+nsim.gui.Ui_scene_gen.Ui_SceneGenerator.setupUi" class="py-name" href="#" onclick="return doclink('link-10', 'setupUi', 'link-10');">setupUi</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-comment"># remove the first toolbox widget</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-name">wid</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">toolBox</tt><tt class="py-op">.</tt><tt class="py-name">widget</tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">toolBox</tt><tt class="py-op">.</tt><tt class="py-name">removeItem</tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">        <tt class="py-name">wid</tt><tt class="py-op">.</tt><tt class="py-name">deleteLater</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-comment"># add ntrode plot widget</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dataplot</tt> <tt class="py-op">=</tt> <tt id="link-11" class="py-name"><a title="nsim.gui.plotting.NTrodePlot" class="py-name" href="#" onclick="return doclink('link-11', 'NTrodePlot', 'link-7');">NTrodePlot</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">            <tt class="py-name">nchan</tt><tt class="py-op">=</tt><tt class="py-number">4</tt><tt class="py-op">,</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">            <tt class="py-name">axis_range</tt><tt class="py-op">=</tt><tt class="py-name">axis_range</tt><tt class="py-op">,</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">            <tt class="py-name">replot</tt><tt class="py-op">=</tt><tt class="py-name">True</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-op">)</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">toolBox</tt><tt class="py-op">.</tt><tt class="py-name">addItem</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dataplot</tt><tt class="py-op">,</tt> <tt class="py-string">'MultiElectrode DataPlot'</tt><tt class="py-op">)</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-comment"># IO SETUP</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">io_params</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">            <tt class="py-string">'cnklen'</tt>    <tt class="py-op">:</tt> <tt id="link-12" class="py-name" targets="Variable nsim.data_io.client_interface.NTrodeDataInterface.cnklen=nsim.data_io.client_interface.NTrodeDataInterface-class.html#cnklen"><a title="nsim.data_io.client_interface.NTrodeDataInterface.cnklen" class="py-name" href="#" onclick="return doclink('link-12', 'cnklen', 'link-12');">cnklen</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">            <tt class="py-string">'addr'</tt>      <tt class="py-op">:</tt> <tt class="py-name">addr</tt><tt class="py-op">,</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-op">}</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">        <tt class="py-comment"># OTHER SETUP</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">chunk</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_initialized</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">do_plotting</tt> <tt class="py-op">=</tt> <tt class="py-name">do_plotting</tt> </tt>
+</div><a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-comment">## gui methods</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"> </tt>
+<a name="MinimalClient.closeEvent"></a><div id="MinimalClient.closeEvent-def"><a name="L111"></a><tt class="py-lineno">111</tt> <a class="py-toggle" href="#" id="MinimalClient.closeEvent-toggle" onclick="return toggle('MinimalClient.closeEvent');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#closeEvent">closeEvent</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">ev</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.closeEvent-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.closeEvent-expanded"><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">        <tt class="py-docstring">"""close event"""</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.finalize()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#finalize,Method nsim.data_io.minimal_client.MinimalClient.finalize()=nsim.data_io.minimal_client.MinimalClient-class.html#finalize,Method nsim.data_io.server.SimIOManager.finalize()=nsim.data_io.server.SimIOManager-class.html#finalize,Method nsim.simulation.BaseSimulation.finalize()=nsim.simulation.BaseSimulation-class.html#finalize"><a title="nsim.data_io.client_interface.NTrodeDataInterface.finalize
+nsim.data_io.minimal_client.MinimalClient.finalize
+nsim.data_io.server.SimIOManager.finalize
+nsim.simulation.BaseSimulation.finalize" class="py-name" href="#" onclick="return doclink('link-13', 'finalize', 'link-13');">finalize</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-comment">## methods internal</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"> </tt>
+<a name="MinimalClient.initialize"></a><div id="MinimalClient.initialize-def"><a name="L118"></a><tt class="py-lineno">118</tt> <a class="py-toggle" href="#" id="MinimalClient.initialize-toggle" onclick="return toggle('MinimalClient.initialize');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#initialize">initialize</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.initialize-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.initialize-expanded"><a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-docstring">"""initialize the data handling stuff"""</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-comment"># check for status</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_initialized</tt><tt class="py-op">:</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="nsim.data_io.client_interface.NTrodeDataInterface.finalize
+nsim.data_io.minimal_client.MinimalClient.finalize
+nsim.data_io.server.SimIOManager.finalize
+nsim.simulation.BaseSimulation.finalize" class="py-name" href="#" onclick="return doclink('link-14', 'finalize', 'link-13');">finalize</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">        <tt class="py-comment"># initialize members</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt> <tt class="py-op">=</tt> <tt id="link-15" class="py-name"><a title="nsim.data_io.client_interface.NTrodeDataInterface" class="py-name" href="#" onclick="return doclink('link-15', 'NTrodeDataInterface', 'link-2');">NTrodeDataInterface</a></tt><tt class="py-op">(</tt><tt class="py-op">**</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">io_params</tt><tt class="py-op">)</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.initialize()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#initialize,Method nsim.data_io.minimal_client.MinimalClient.initialize()=nsim.data_io.minimal_client.MinimalClient-class.html#initialize,Method nsim.data_io.server.SimIOManager.initialize()=nsim.data_io.server.SimIOManager-class.html#initialize,Method nsim.simulation.BaseSimulation.initialize()=nsim.simulation.BaseSimulation-class.html#initialize"><a title="nsim.data_io.client_interface.NTrodeDataInterface.initialize
+nsim.data_io.minimal_client.MinimalClient.initialize
+nsim.data_io.server.SimIOManager.initialize
+nsim.simulation.BaseSimulation.initialize" class="py-name" href="#" onclick="return doclink('link-16', 'initialize', 'link-16');">initialize</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">        <tt class="py-comment"># connections</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.sig_new_data()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#sig_new_data"><a title="nsim.data_io.client_interface.NTrodeDataInterface.sig_new_data" class="py-name" href="#" onclick="return doclink('link-17', 'sig_new_data', 'link-17');">sig_new_data</a></tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.on_new_data()=nsim.data_io.minimal_client.MinimalClient-class.html#on_new_data"><a title="nsim.data_io.minimal_client.MinimalClient.on_new_data" class="py-name" href="#" onclick="return doclink('link-18', 'on_new_data', 'link-18');">on_new_data</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.sig_update_pos()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#sig_update_pos"><a title="nsim.data_io.client_interface.NTrodeDataInterface.sig_update_pos" class="py-name" href="#" onclick="return doclink('link-19', 'sig_update_pos', 'link-19');">sig_update_pos</a></tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.on_pos()=nsim.data_io.minimal_client.MinimalClient-class.html#on_pos"><a title="nsim.data_io.minimal_client.MinimalClient.on_pos" class="py-name" href="#" onclick="return doclink('link-20', 'on_pos', 'link-20');">on_pos</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_btn_go</tt><tt class="py-op">.</tt><tt class="py-name">clicked</tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.on_move()=nsim.data_io.minimal_client.MinimalClient-class.html#on_move"><a title="nsim.data_io.minimal_client.MinimalClient.on_move" class="py-name" href="#" onclick="return doclink('link-21', 'on_move', 'link-21');">on_move</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_btn_request</tt><tt class="py-op">.</tt><tt class="py-name">clicked</tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.on_request()=nsim.data_io.minimal_client.MinimalClient-class.html#on_request"><a title="nsim.data_io.minimal_client.MinimalClient.on_request" class="py-name" href="#" onclick="return doclink('link-22', 'on_request', 'link-22');">on_request</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_slider_target</tt><tt class="py-op">.</tt><tt class="py-name">valueChanged</tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.on_target_slider()=nsim.data_io.minimal_client.MinimalClient-class.html#on_target_slider"><a title="nsim.data_io.minimal_client.MinimalClient.on_target_slider" class="py-name" href="#" onclick="return doclink('link-23', 'on_target_slider', 'link-23');">on_target_slider</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">        <tt class="py-comment"># initialize flags</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_initialized</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+</div><a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"> </tt>
+<a name="MinimalClient.finalize"></a><div id="MinimalClient.finalize-def"><a name="L139"></a><tt class="py-lineno">139</tt> <a class="py-toggle" href="#" id="MinimalClient.finalize-toggle" onclick="return toggle('MinimalClient.finalize');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#finalize">finalize</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.finalize-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.finalize-expanded"><a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">        <tt class="py-docstring">"""clean up the positioning algo"""</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">        <tt class="py-comment"># shutdown members</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="nsim.data_io.client_interface.NTrodeDataInterface.finalize
+nsim.data_io.minimal_client.MinimalClient.finalize
+nsim.data_io.server.SimIOManager.finalize
+nsim.simulation.BaseSimulation.finalize" class="py-name" href="#" onclick="return doclink('link-24', 'finalize', 'link-13');">finalize</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt class="py-name">deleteLater</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">        <tt class="py-comment"># reset flags</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_initialized</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+</div><a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">    <tt class="py-comment">## slots</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="nsim.data_io.client_interface.ChunkContainer" class="py-name" href="#" onclick="return doclink('link-25', 'ChunkContainer', 'link-1');">ChunkContainer</a></tt><tt class="py-op">)</tt> </tt>
+<a name="MinimalClient.on_new_data"></a><div id="MinimalClient.on_new_data-def"><a name="L154"></a><tt class="py-lineno">154</tt> <a class="py-toggle" href="#" id="MinimalClient.on_new_data-toggle" onclick="return toggle('MinimalClient.on_new_data');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#on_new_data">on_new_data</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">chunk</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.on_new_data-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.on_new_data-expanded"><a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">        <tt class="py-docstring">"""slot to fetch newly available chunk"""</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">            <tt class="py-comment"># save chunk</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">chunk</tt> <tt class="py-op">=</tt> <tt class="py-name">chunk</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">            <tt id="link-26" class="py-name" targets="Package nsim.scene.noise=nsim.scene.noise-module.html"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-26', 'noise', 'link-26');">noise</a></tt> <tt class="py-op">=</tt> <tt class="py-name">chunk</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-27', 'noise', 'link-26');">noise</a></tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">            <tt class="py-comment"># selection: noise</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-number">0</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt class="py-name">_config</tt><tt class="py-op">:</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">                <tt class="py-name">signal</tt> <tt class="py-op">=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">zeros_like</tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-28', 'noise', 'link-26');">noise</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">                <tt class="py-name">signal</tt> <tt class="py-op">=</tt> <tt id="link-29" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-29', 'noise', 'link-26');">noise</a></tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Method nsim.gui.plotting.MatrixData.copy()=nsim.gui.plotting.MatrixData-class.html#copy"><a title="nsim.gui.plotting.MatrixData.copy" class="py-name" href="#" onclick="return doclink('link-30', 'copy', 'link-30');">copy</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">            <tt class="py-comment"># selection waveforms</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-number">1</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt class="py-name">_config</tt><tt class="py-op">:</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">                <tt class="py-name">signal</tt> <tt class="py-op">+=</tt> <tt class="py-name">chunk</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name" targets="Variable nsim.data_io.client_interface.ChunkContainer.waveform=nsim.data_io.client_interface.ChunkContainer-class.html#waveform"><a title="nsim.data_io.client_interface.ChunkContainer.waveform" class="py-name" href="#" onclick="return doclink('link-31', 'waveform', 'link-31');">waveform</a></tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">            <tt class="py-comment"># selection: groundtruth</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">            <tt class="py-name">gtrth</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-number">2</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt class="py-name">_config</tt><tt class="py-op">:</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">ident</tt> <tt class="py-keyword">in</tt> <tt class="py-name">chunk</tt><tt class="py-op">.</tt><tt class="py-name">units</tt><tt class="py-op">:</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">                    <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">                    <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">chunk</tt><tt class="py-op">.</tt><tt class="py-name">units</tt><tt class="py-op">[</tt><tt class="py-name">ident</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">'gt_buf'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">3</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">                            <tt class="py-name">temp</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name" targets="Method nsim.data_io.client_interface.ChunkContainer.append()=nsim.data_io.client_interface.ChunkContainer-class.html#append"><a title="nsim.data_io.client_interface.ChunkContainer.append" class="py-name" href="#" onclick="return doclink('link-32', 'append', 'link-32');">append</a></tt><tt class="py-op">(</tt><tt class="py-name">item</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">                    <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">                        <tt class="py-name">gtrth</tt><tt class="py-op">[</tt><tt class="py-name">ident</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">N</tt><tt class="py-op">.</tt><tt class="py-name">asarray</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">            <tt class="py-comment"># handle chunk</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name" targets="Method nsim.data_io.minimal_client.MinimalClient.handle_data()=nsim.data_io.minimal_client.MinimalClient-class.html#handle_data,Method start_client.TestClient.handle_data()=start_client.TestClient-class.html#handle_data"><a title="nsim.data_io.minimal_client.MinimalClient.handle_data
+start_client.TestClient.handle_data" class="py-name" href="#" onclick="return doclink('link-33', 'handle_data', 'link-33');">handle_data</a></tt><tt class="py-op">(</tt><tt class="py-name">signal</tt><tt class="py-op">,</tt> <tt id="link-34" class="py-name"><a title="nsim.scene.noise" class="py-name" href="#" onclick="return doclink('link-34', 'noise', 'link-26');">noise</a></tt><tt class="py-op">,</tt> <tt class="py-name">gtrth</tt><tt class="py-op">)</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">            <tt class="py-comment"># update dataplot</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">do_plotting</tt><tt class="py-op">:</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dataplot</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name" targets="Method nsim.gui.plotting.MatShow.set_data()=nsim.gui.plotting.MatShow-class.html#set_data,Method nsim.gui.plotting.MatrixData.set_data()=nsim.gui.plotting.MatrixData-class.html#set_data,Method nsim.gui.plotting.NTrodePlot.set_data()=nsim.gui.plotting.NTrodePlot-class.html#set_data,Method nsim.gui.plotting.QualityPlot.set_data()=nsim.gui.plotting.QualityPlot-class.html#set_data,Method nsim.gui.plotting.TimeSeriesPlot.set_data()=nsim.gui.plotting.TimeSeriesPlot-class.html#set_data"><a title="nsim.gui.plotting.MatShow.set_data
+nsim.gui.plotting.MatrixData.set_data
+nsim.gui.plotting.NTrodePlot.set_data
+nsim.gui.plotting.QualityPlot.set_data
+nsim.gui.plotting.TimeSeriesPlot.set_data" class="py-name" href="#" onclick="return doclink('link-35', 'set_data', 'link-35');">set_data</a></tt><tt class="py-op">(</tt><tt class="py-name">signal</tt><tt class="py-op">)</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt><tt class="py-op">,</tt> <tt class="py-name">ex</tt><tt class="py-op">:</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">ex</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"> </tt>
+<a name="MinimalClient.handle_data"></a><div id="MinimalClient.handle_data-def"><a name="L186"></a><tt class="py-lineno">186</tt> <a class="py-toggle" href="#" id="MinimalClient.handle_data-toggle" onclick="return toggle('MinimalClient.handle_data');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#handle_data">handle_data</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">signal</tt><tt class="py-op">,</tt> <tt class="py-param">noise</tt><tt class="py-op">,</tt> <tt class="py-param">gtrth</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.handle_data-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.handle_data-expanded"><a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line"> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">)</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-name">float</tt><tt class="py-op">)</tt> </tt>
+<a name="MinimalClient.on_pos"></a><div id="MinimalClient.on_pos-def"><a name="L191"></a><tt class="py-lineno">191</tt> <a class="py-toggle" href="#" id="MinimalClient.on_pos-toggle" onclick="return toggle('MinimalClient.on_pos');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#on_pos">on_pos</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">pos</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.on_pos-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.on_pos-expanded"><a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">        <tt class="py-name">pos</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_slider_position</tt><tt class="py-op">.</tt><tt class="py-name">setValue</tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_edit_position</tt><tt class="py-op">.</tt><tt class="py-name">setText</tt><tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="MinimalClient.on_move"></a><div id="MinimalClient.on_move-def"><a name="L197"></a><tt class="py-lineno">197</tt> <a class="py-toggle" href="#" id="MinimalClient.on_move-toggle" onclick="return toggle('MinimalClient.on_move');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#on_move">on_move</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.on_move-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.on_move-expanded"><a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">        <tt class="py-name">pos</tt> <tt class="py-op">=</tt> <tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_edit_target</tt><tt class="py-op">.</tt><tt class="py-name">text</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_slider_target</tt><tt class="py-op">.</tt><tt class="py-name">setValue</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.send_to_position()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#send_to_position"><a title="nsim.data_io.client_interface.NTrodeDataInterface.send_to_position" class="py-name" href="#" onclick="return doclink('link-36', 'send_to_position', 'link-36');">send_to_position</a></tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="MinimalClient.on_request"></a><div id="MinimalClient.on_request-def"><a name="L203"></a><tt class="py-lineno">203</tt> <a class="py-toggle" href="#" id="MinimalClient.on_request-toggle" onclick="return toggle('MinimalClient.on_request');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#on_request">on_request</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.on_request-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.on_request-expanded"><a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_io</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name" targets="Method nsim.data_io.client_interface.NTrodeDataInterface.request_position()=nsim.data_io.client_interface.NTrodeDataInterface-class.html#request_position"><a title="nsim.data_io.client_interface.NTrodeDataInterface.request_position" class="py-name" href="#" onclick="return doclink('link-37', 'request_position', 'link-37');">request_position</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">)</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">QtCore</tt><tt class="py-op">.</tt><tt class="py-name">pyqtSlot</tt><tt class="py-op">(</tt><tt class="py-name">float</tt><tt class="py-op">)</tt> </tt>
+<a name="MinimalClient.on_target_slider"></a><div id="MinimalClient.on_target_slider-def"><a name="L208"></a><tt class="py-lineno">208</tt> <a class="py-toggle" href="#" id="MinimalClient.on_target_slider-toggle" onclick="return toggle('MinimalClient.on_target_slider');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="nsim.data_io.minimal_client.MinimalClient-class.html#on_target_slider">on_target_slider</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">pos</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MinimalClient.on_target_slider-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="MinimalClient.on_target_slider-expanded"><a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">posi_edit_target</tt><tt class="py-op">.</tt><tt class="py-name">setText</tt><tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">pos</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line"> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line"> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line"><tt class="py-comment">##--- MAIN</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line"> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt class="py-name">__name__</tt> <tt class="py-op">==</tt> <tt class="py-string">'__main__'</tt><tt class="py-op">:</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">    <tt class="py-keyword">pass</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://github.com/pmeier82/Neural-Simulation">Neural Simulation</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Sep 22 13:36:51 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
