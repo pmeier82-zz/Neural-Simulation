@@ -59,11 +59,13 @@ class SampledND(NeuronData):
 
     ## constructor
 
-    def __init__(self, arcpath, **kwargs):
+    def __init__(self, path_to_arc, rootUEP='/', **kwargs):
         """
         :Parameters:
-            arcpath : path
+            path_to_arc : path
                 Path to the HDF5 archive.
+            rootUEP : str
+                root in the archive used as the user entry path (UEP).
         :Keywords:
             see NeuronData
         :Exceptions:
@@ -78,7 +80,7 @@ class SampledND(NeuronData):
         super(SampledND, self).__init__(**kwargs)
 
         # read in data - may raise IOError or NoSuchNodeError
-        arc = openFile(arcpath, 'r')
+        arc = openFile(path_to_arc, mode='r', rootUEP=rootUEP)
         soma_v = arc.getNode('/soma_v').read()
         ap_phase = xrange(*get_eap_range(soma_v))
         self.intra_v = arc.getNode('/soma_v').read()[..., ap_phase]
@@ -113,7 +115,7 @@ class SampledND(NeuronData):
         self.grid_step = abs(z_pos[1] - z_pos[0])
         self.grid_size = cbrt(self.extra_v.shape[0])
         # filename stuff
-        self.description = 'Einevoll::%s' % osp.basename(arcpath)
+        self.description = 'Einevoll::%s' % osp.basename(path_to_arc)
 
     ## interface methods - implementation
 
@@ -159,20 +161,20 @@ class SampledND(NeuronData):
 
     ## static methods
 
-    @staticmethod
-    def from_file(path):
+    @classmethod
+    def from_file(cls, path):
         """factory to create an SampledND from an archive
         
         :Parameters:
             path : str
                 Path to the archive to load from
         :Return:
-            SampledNd : if successfully loaded from the file
+            SampledND : if successfully loaded from the file
             None : on any error
         """
 
         try:
-            return SampledND(path)
+            return cls(path)
         except:
             return None
 

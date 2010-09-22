@@ -18,13 +18,13 @@
 ##
 ################################################################################
 #
-# sim - data_io/package.py
+# nsim - data_io/package.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21
 #
 
-"""package protocol for the simulation"""
+"""streaming package protocol for the simulation"""
 __docformat__ = 'restructuredtext'
 
 

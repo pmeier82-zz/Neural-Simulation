@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# nsim - scene/neuron_data/lerp.py
+# nsim - math/lerp.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-09-08

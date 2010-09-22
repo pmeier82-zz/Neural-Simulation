@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - data_io/client.py
+# nsim - data_io/client.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-07-19

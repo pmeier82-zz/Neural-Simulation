@@ -1,0 +1,93 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'scene_gen.ui'
+#
+# Created: Tue Sep 21 15:10:32 2010
+#      by: PyQt4 UI code generator 4.7.2
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+class Ui_SceneGenerator(object):
+    def setupUi(self, SceneGenerator):
+        SceneGenerator.setObjectName("SceneGenerator")
+        SceneGenerator.resize(567, 447)
+        self.centralwidget = QtGui.QWidget(SceneGenerator)
+        self.centralwidget.setObjectName("centralwidget")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.splitter = QtGui.QSplitter(self.centralwidget)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setHandleWidth(5)
+        self.splitter.setChildrenCollapsible(False)
+        self.splitter.setObjectName("splitter")
+        self.treeView = QtGui.QTreeView(self.splitter)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.treeView.sizePolicy().hasHeightForWidth())
+        self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setMinimumSize(QtCore.QSize(150, 200))
+        self.treeView.setObjectName("treeView")
+        self.WaveformGenerator = QtGui.QTabWidget(self.splitter)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.WaveformGenerator.sizePolicy().hasHeightForWidth())
+        self.WaveformGenerator.setSizePolicy(sizePolicy)
+        self.WaveformGenerator.setMinimumSize(QtCore.QSize(400, 200))
+        self.WaveformGenerator.setObjectName("WaveformGenerator")
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName("tab")
+        self.verticalLayout = QtGui.QVBoxLayout(self.tab)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtGui.QLabel(self.tab)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.pushButton = QtGui.QPushButton(self.tab)
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout_2.addWidget(self.pushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.frame = QtGui.QFrame(self.tab)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
+        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.frame)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout.addWidget(self.frame)
+        self.WaveformGenerator.addTab(self.tab, "")
+        self.tab_2 = QtGui.QWidget()
+        self.tab_2.setObjectName("tab_2")
+        self.WaveformGenerator.addTab(self.tab_2, "")
+        self.horizontalLayout.addWidget(self.splitter)
+        SceneGenerator.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(SceneGenerator)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 567, 20))
+        self.menubar.setObjectName("menubar")
+        SceneGenerator.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(SceneGenerator)
+        self.statusbar.setObjectName("statusbar")
+        SceneGenerator.setStatusBar(self.statusbar)
+
+        self.retranslateUi(SceneGenerator)
+        self.WaveformGenerator.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(SceneGenerator)
+
+    def retranslateUi(self, SceneGenerator):
+        SceneGenerator.setWindowTitle(QtGui.QApplication.translate("SceneGenerator", "NeuralSimulation - Scene Generator", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("SceneGenerator", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton.setText(QtGui.QApplication.translate("SceneGenerator", "RESET", None, QtGui.QApplication.UnicodeUTF8))
+        self.WaveformGenerator.setTabText(self.WaveformGenerator.indexOf(self.tab), QtGui.QApplication.translate("SceneGenerator", "Waveform Generator", None, QtGui.QApplication.UnicodeUTF8))
+        self.WaveformGenerator.setTabText(self.WaveformGenerator.indexOf(self.tab_2), QtGui.QApplication.translate("SceneGenerator", "Tab 2", None, QtGui.QApplication.UnicodeUTF8))
+

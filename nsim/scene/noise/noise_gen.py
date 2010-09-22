@@ -17,7 +17,6 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
 # nsim - scene/noise/noise_gen.py
 #

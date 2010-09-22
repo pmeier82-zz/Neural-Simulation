@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - __init__.py
+# nsim - __init__.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-20
@@ -28,21 +28,18 @@
 
 A package for simulation of extracellular recordings.
 
-.. packagetree:: sim
+.. packagetree:: nsim
 
-.. classtree:: sim.objects.Neuron
+.. classtree:: nsim
 
-.. importgraph:: sim
-
-
-
+.. importgraph:: nsim
 """
 __docformat__ = 'restructuredtext'
 
 
 ##---OTHER STUFF
 
-__version__ = '0.1.53'
+__version__ = '0.1.54'
 __revision__ = 'beta'
 
 __copyright__ = '(c) 2010 Philipp Meier'

@@ -69,7 +69,7 @@ class WaveformND(NeuronData):
         # super
         super(WaveformND, self).__init__(**kwargs)
 
-        # members
+        # interface members
         self.intra_v = waveform.copy()
         self.extra_v = waveform.copy()
         self.horizon = horizon
@@ -86,19 +86,54 @@ class WaveformND(NeuronData):
         return WaveformND.kernel(pos) * self.extra_v[phase]
 
 
-    ## static methods
+    ## class methods
 
-    @staticmethod
-    def from_file(path):
+    @classmethod
+    def from_file(cls, path_to_arc, rootUEP='/'):
         """factory to create an SampledND from an archive
         
         :Parameters:
-            path : str
+            path_to_arc : str
                 Path to the archive to load from
+            rootUEP : str
+                user entry path
         :Return:
-            SampledNd : if successfully loaded from the file
+            WaveformND : if successfully loaded from the file
             None : on any error
         """
+
+        try:
+            # are we good to go ?
+            arc = openFile(path_to_arc, mode='r', rootUEP='/')
+            TYPE = arc.getNode('/__TYPE__').read()
+            assert TYPE == 'NeuronData'
+            CLASS = arc.getNode('/__CLASS__').read()
+            assert CLASS == cls.__name__
+            # load stuff
+            param_waveform = arc.getNode('/waveform').read()
+            param_horizon = arc.getNode('/horizon').read()
+            param_sample_rate = arc.getNode('/sample_rate').read()
+            param_description = None
+            try:
+                param_description = arc.getNode('/description').read()
+            except:
+                param_description = 'Waveform_undefined'
+            return cls(
+               waveform=param_waveform,
+               horizon=param_horizon,
+               sample_rate=param_sample_rate,
+               description=param_description
+            )
+        except:
+            return None
+        finally:
+            try:
+                arc.close()
+                del arc
+            except:
+                pass
+
+    ## static methods
 
     @staticmethod
     def kernel(pos):
@@ -114,7 +149,7 @@ class WaveformND(NeuronData):
         return 1.0
 
 
-class RealisticWaveformND(WaveformND):
+class ScalingWaveformND(WaveformND):
     """data container for the neural simulation (see WaveformND)
        
     This subclass of WaveformND implements a realistic scaling kernel as:
@@ -138,7 +173,7 @@ class RealisticWaveformND(WaveformND):
 
 ##---PACKAGE
 
-__all__ = ['WaveformND', 'dist_kernel']
+__all__ = ['ScalingWaveformND', 'WaveformND']
 
 
 ##---MAIN

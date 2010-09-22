@@ -31,7 +31,8 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from neuron_data import NeuronData, NeuronDataContainer
-from nd_sampled import SampledND, get_eap_range
+from nd_sampled import SampledND
+from nd_waveform import ScalingWaveformND, WaveformND
 
 ##---PACKAGE
 
@@ -41,7 +42,9 @@ __all__ = [
     'NeuronDataContainer',
     # sampled neuron data
     'SampledND',
-    'get_eap_range'
+    # waveform neuron data
+    'ScalingWaveformND'
+    'WaveformND',
 ]
 
 

@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - gui/__init__.py
+# nsim - gui/__init__.py
 #
 # Philipp Meier - <pmeier82 at gmail dot com>
 # 2010-02-08
@@ -35,7 +35,7 @@ from Ui_add_recorder import Ui_AddRecorderDialog
 from Ui_gui_main import Ui_SimGui
 from Ui_init_dialog import Ui_InitDialog
 from Ui_multi_electrode_client import Ui_MultiElectrodeClient
-from ploting import NTrodePlot, TimeSeriesPlot, MatrixData, MatShow
+from plotting import NTrodePlot, TimeSeriesPlot, MatrixData, MatShow
 
 __all__ = [
     # gui elements

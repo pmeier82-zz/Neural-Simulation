@@ -17,9 +17,8 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
-# sim - noise/__init__.py
+# sim - scene/noise/__init__.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-21

@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - simulation.py
+# nsim - simulation.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-21
@@ -605,7 +605,7 @@ class BaseSimulation(dict):
         for sec in cfg.sections():
 
             # check section
-            sec_str = sec.split(' ')
+            sec_str = sec.split()
             cls = sec_str[0]
             if cls not in ['Neuron', 'Tetrode']:
                 continue
@@ -614,6 +614,7 @@ class BaseSimulation(dict):
                 kwargs['name'] = ' '.join(sec_str[1:])
 
             # elaborate class and keyword arguments
+            bad_ndata = False
             for k, v in cfg.items(sec):
 
                 # read items
@@ -622,20 +623,24 @@ class BaseSimulation(dict):
                 elif k in ['position', 'orientation', 'trajectory']:
                     if v == 'False':
                         kwargs[k] = False
-                    elif v == 'True':
+                    elif v == 'Truse':
                         kwargs[k] = True
                     else:
-                        kwargs[k] = map(float, v.split(' '))
+                        kwargs[k] = map(float, v.split())
                 elif k in ['neuron_data']:
                     kwargs[k] = v
-                    if v not in self.neuron_data:
-                        for path in ndata_paths:
-                            self.neuron_data.insert(osp.join(path, v))
+                    ndata_path_list = [osp.join(path, v)
+                                       for path in ndata_paths]
+                    added_ndata = self.neuron_data.insert(ndata_path_list)
+                    if added_ndata == 0:
+                        bad_ndata = True
                 else:
                     kwargs[k] = v
 
             # delegate action
-            if cls == 'Neuron':
+            if bad_ndata:
+                continue
+            elif cls == 'Neuron':
                 self.register_neuron(**kwargs)
             elif cls == 'Tetrode':
                 self.register_recorder(**kwargs)
@@ -698,8 +703,7 @@ class BaseSimulation(dict):
 
         :Parameters:
             cfg_file : str
-                Path to the config file. shoul be readale by a ConfigParser
-                instance.
+                Path to the config file. Should be readable by a ConfigParser.
         """
 
         # TODO: implement config file handling
@@ -708,7 +712,6 @@ class BaseSimulation(dict):
 
     def __len__(self):
         return len(filter(lambda x: isinstance(x, Neuron), self.values()))
-
     def __str__(self):
         return 'BaseSimulation :: %d items' % len(self)
 

@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - sim_objects/sim_object.py
+# nsim - scene/sim_object.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-21
@@ -36,9 +36,7 @@ __doctype__ = 'restructuredtext'
 
 ##---IMPORTS
 
-# packages
 import scipy as N
-# own packages
 from nsim.math import (
     quaternion_about_axis,
     unit_vector,

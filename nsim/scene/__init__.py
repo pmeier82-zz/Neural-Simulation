@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - scene/__init__
+# nsim - scene/__init__.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-03-23

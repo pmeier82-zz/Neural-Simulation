@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - data_io/__init__.py
+# nsim - data_io/__init__.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21

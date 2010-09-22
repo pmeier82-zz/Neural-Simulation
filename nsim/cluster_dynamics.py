@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - cluster_dynamics.py
+# nsim - cluster_dynamics.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-12
@@ -39,7 +39,7 @@ from scene import Neuron
 ##---CLASSES
 
 class ClusterDynamics(dict):
-    """class to administrate the firing behavior of several clusters"""
+    """class to administer the firing behaviour of several clusters"""
 
     ## constructor
 

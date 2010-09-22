@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - sim_objects/neuron.py
+# nsim - scene/neuron.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-21

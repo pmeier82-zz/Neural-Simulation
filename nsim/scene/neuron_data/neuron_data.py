@@ -40,6 +40,10 @@ from nsim.math import vector_norm
 
 ##---CLASSES
 
+class BeyondHorizonError(ValueError):
+    pass
+
+
 class NeuronData(object):
     """dataset factory for a neuron in the Neural Simulation
     
@@ -95,6 +99,8 @@ class NeuronData(object):
     def get_data(self, pos, phase=None):
         """return voltage data for relative position and phase
         
+        The relative position vector is matched with neuron_data.horizon and
+        
         :Parameters:
             pos : ndarray
                 The relative position in the dataset.
@@ -107,7 +113,9 @@ class NeuronData(object):
 
         # checking pos
         if vector_norm(pos) > self.horizon:
-            raise ValueError('norm of pos beyond horizon!')
+            raise BeyondHorizonError('norm of relative position [%s] '
+                                     'lies beyond the horizon [%s]!'
+                                     % (vector_norm(pos), self.horizon))
 
         # check for phase
         if phase is None:
@@ -115,10 +123,11 @@ class NeuronData(object):
         if N.isscalar(phase):
             phase = xrange(phase, phase + 1)
 
+        # call get_data implementation
         return self._get_data(pos, phase)
 
-    @staticmethod
-    def from_file(path):
+    @classmethod
+    def from_file(cls, path):
         """abstract factory method to create an instance from an archive"""
 
         raise NotImplementedError
@@ -132,8 +141,6 @@ class NeuronData(object):
 
     ## special methods
 
-    def __str__(self):
-        return '%s ( %s )' % (self.__class__.__name__, self.description)
     def __eq__(self, other):
         if not isinstance(other, NeuronData):
             return False
@@ -141,6 +148,8 @@ class NeuronData(object):
             return self.description == other.description
     def __hash__(self):
         return hash(self.description)
+    def __str__(self):
+        return '%s ( %s )' % (self.__class__.__name__, self.description)
 
 
 class NeuronDataContainer(dict):

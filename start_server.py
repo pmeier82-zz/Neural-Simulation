@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# sim - start.py
+# nsim - start_server.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-01-21
@@ -342,7 +342,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.progress.setValue(0)
             self.progress.setVisible(True)
 
-            # load neuron datas
+            # load neuron data
             nfiles = 0
             for path in rval:
                 ndata = NeuronDataLoader(path)

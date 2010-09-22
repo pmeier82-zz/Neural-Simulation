@@ -17,9 +17,8 @@
 ##  limitations under the Licence.
 ##
 ################################################################################
-# -*- coding: utf-8 -*-
 #
-# nsim - scene/noise/noise_gen.py
+# nsim - scene/noise/ar_model.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-09-14

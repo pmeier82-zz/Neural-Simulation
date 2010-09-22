@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+#
 # transformations.py
-
+#
 # Copyright (c) 2006, Christoph Gohlke
 # Copyright (c) 2006-2010, The Regents of the University of California
 # All rights reserved.
