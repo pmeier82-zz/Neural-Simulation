@@ -171,6 +171,11 @@ nsim.math.math3d.quaternion_slerp	nsim.math.math3d-module.html#quaternion_slerp
 nsim.math.math3d.inverse_matrix	nsim.math.math3d-module.html#inverse_matrix
 nsim.scene	nsim.scene-module.html
 nsim.scene.__package__	nsim.scene-module.html#__package__
+nsim.scene.neuron	nsim.scene.neuron-module.html
+nsim.scene.neuron.__doctype__	nsim.scene.neuron-module.html#__doctype__
+nsim.scene.neuron.vector_norm	nsim.math.math3d-module.html#vector_norm
+nsim.scene.neuron.__package__	nsim.scene.neuron-module.html#__package__
+nsim.scene.neuron.quaternion_matrix	nsim.math.math3d-module.html#quaternion_matrix
 nsim.scene.neuron_data	nsim.scene.neuron_data-module.html
 nsim.scene.neuron_data.__package__	nsim.scene.neuron_data-module.html#__package__
 nsim.scene.neuron_data.nd_sampled	nsim.scene.neuron_data.nd_sampled-module.html
@@ -527,6 +532,7 @@ nsim.math.math3d.Arcball.getconstrain	nsim.math.math3d.Arcball-class.html#getcon
 nsim.math.math3d.Arcball.drag	nsim.math.math3d.Arcball-class.html#drag
 nsim.math.math3d.Arcball.place	nsim.math.math3d.Arcball-class.html#place
 nsim.math.math3d.Arcball.setconstrain	nsim.math.math3d.Arcball-class.html#setconstrain
+nsim.scene.neuron.BadNeuronQuery	nsim.scene.neuron.BadNeuronQuery-class.html
 nsim.scene.neuron.Neuron	nsim.scene.neuron.Neuron-class.html
 nsim.scene.neuron.Neuron.set_amplitude	nsim.scene.neuron.Neuron-class.html#set_amplitude
 nsim.scene.sim_object.SimObject.orientation	nsim.scene.sim_object.SimObject-class.html#orientation
@@ -685,8 +691,13 @@ nsim.scene.sim_object.SimObject.sample_rate	nsim.scene.sim_object.SimObject-clas
 nsim.scene.sim_object.SimObject.position	nsim.scene.sim_object.SimObject-class.html#position
 nsim.scene_generator.SceneArchiveContainer	nsim.scene_generator.SceneArchiveContainer-class.html
 nsim.scene_generator.SceneArchiveContainer._has_main_grp	nsim.scene_generator.SceneArchiveContainer-class.html#_has_main_grp
+nsim.scene_generator.SceneArchiveContainer.get_config_item	nsim.scene_generator.SceneArchiveContainer-class.html#get_config_item
+nsim.scene_generator.SceneArchiveContainer.make_tag	nsim.scene_generator.SceneArchiveContainer-class.html#make_tag
+nsim.scene_generator.SceneArchiveContainer.set_config_item	nsim.scene_generator.SceneArchiveContainer-class.html#set_config_item
 nsim.scene_generator.SceneArchiveContainer._get_main_grp	nsim.scene_generator.SceneArchiveContainer-class.html#_get_main_grp
 nsim.scene_generator.SceneArchiveContainer._init__	nsim.scene_generator.SceneArchiveContainer-class.html#_init__
+nsim.scene_generator.SceneArchiveContainer.set_config	nsim.scene_generator.SceneArchiveContainer-class.html#set_config
+nsim.scene_generator.SceneArchiveContainer.get_config	nsim.scene_generator.SceneArchiveContainer-class.html#get_config
 nsim.scene_generator.SceneGenerator	nsim.scene_generator.SceneGenerator-class.html
 PyQt4.QtGui.QWidget.RenderFlag	PyQt4.QtGui.QWidget.RenderFlag-class.html
 nsim.gui.Ui_scene_gen.Ui_SceneGenerator.setupUi	nsim.gui.Ui_scene_gen.Ui_SceneGenerator-class.html#setupUi

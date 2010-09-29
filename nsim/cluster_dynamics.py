@@ -212,7 +212,7 @@ class ClusterDynamics(dict):
                 representing the id(Neuron) of that instance.
         :Returns:
             list : the current spike train of the requested neuron
-        :Raises:
+        :Exceptions:
             KeyError : if we cannot find a neuron with that key.
         """
 

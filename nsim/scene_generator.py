@@ -33,53 +33,53 @@ be configured and saved as a loadable archive. The loadable archives are HDF5
 containers with a predefined structure, as explained here:
 
 SCENE ARCHIVE (.sca) - HDF5 container
-    __TYPE__ : string node
-        all groups must contain a '__TYPE__' node identifying its purpose as a 
-        string. available identifiers are:
+    #TYPE : string node
+        all groups must contain a '#TYPE' identifying its purpose as a string.
+        available #TYPE identifiers are:
             SCENE_ARCHIVE : for the root node
             CONFIG        : for the NS config group
             NEURON_DATA   : for the neuron data group
-            +NeuronData   : for NeuronData nodes
+            NeuronData    : for NeuronData nodes
             SCENE         : for the scene group
-            +SimObject    : for SimObject nodes
-    __CLASS__ : string node
-        various groups define the parameters set to instantiate a class. this
-        string holds th name of the class. meaning varies for context.
+            SimObject     : SimObject nodes
+    #CLASS : string node
+        various groups define a parameter set to instantiate a class. this
+        string holds the name of the class as given by class.__class__.
     
     The basic structure for a scene archive is:
         
         ROOT
-         |- __TYPE__ = 'SCENE_ARCHIVE'
+         |- #TYPE = 'SCENE_ARCHIVE'
          |- CONFIG
-         |   |- __TYPE__ = 'CONFIG'
+         |   |- #TYPE = 'CONFIG'
          |   |- frame_size = 1024
          |   |- sample_rate = 16000.0
          |   |- [...]
          |- NEURON_DATA
-         |   |- __TYPE__ = 'NEURON_DATA'
+         |   |- #TYPE = 'NEURON_DATA'
          |   |- NDATA00
-         |   |   |- __TYPE__ = 'NeuronData'
-         |   |   |- __CLASS__ = '<neurondata subclass name>'
+         |   |   |- #TYPE = 'NeuronData'
+         |   |   |- #CLASS = '<neurondata subclass name>'
          |   |   |- [...]
          |   |- NDATA01
-         |   |   |- __TYPE__ = 'NeuronData'
-         |   |   |- __CLASS__ = '<neurondata subclass name>'
+         |   |   |- #TYPE = 'NeuronData'
+         |   |   |- #CLASS = '<neurondata subclass name>'
          |   |   |- [...]
          |   |- [...]
          |- SCENE
-             |- __TYPE__ = 'SCENE'
+             |- #TYPE = 'SCENE'
              |- SIMOBJ00
-             |   |- __TYPE__ = 'SimObject'
-             |   |- __CLASS__ = '<simobject subclass name>'
+             |   |- #TYPE = 'SimObject'
+             |   |- #CLASS = '<simobject subclass name>'
              |   |- [...]
              |- SIMOBJ01
-             |   |- __TYPE__ = 'SimObject'
-             |   |- __CLASS__ = '<simobject subclass name>'
+             |   |- #TYPE = 'SimObject'
+             |   |- #CLASS = '<simobject subclass name>'
              |   |- [...]
              |- [...]
     
-    All nodes are taged with at __TYPE__ tag and when a node specifies an
-    instanciateable class, a __CLASS__ tag is additionall given.
+    All nodes are tagged with at #TYPE tag and when a node specifies a parameter
+    set for a class, a #CLASS tag is additionally given.
     
     [t.b.c]  
 """
@@ -400,8 +400,6 @@ class SceneArchiveContainer(object):
             self._grp_scene = self._arc.createGroup(self._arc.root, 'SCENE')
             self._arc.createArray(self._grp_scene, '__TYPE__', 'SCENE')
 
-    ## load from archive
-
     ## internal helper functions
 
     def _has_main_grp(self, grp_type):
@@ -419,6 +417,55 @@ class SceneArchiveContainer(object):
                     rval = grp
                     break
         return rval
+
+    @staticmethod
+    def make_tag(tag_name):
+        return '#%s' % tag_name
+
+    ## data interface - CONFIG
+
+    def get_config(self):
+        """get CONFIG section as dict"""
+
+        rval = {}
+        for item in self._arc.walkNodes(self._grp_config):
+            if item.name.startswith('#'):
+                continue
+            rval[item.name] = item.read()
+        return rval
+
+    def set_config(self, config):
+        """set CONFIG section from dict"""
+
+        assert isinstance(config, dict)
+
+        for k, v in config:
+            try:
+                node = getattr(self._grp_config, k)
+                setattr(self._grp_config, k, v)
+            except:
+                self._arc.createArray(self._grp_config, k, v)
+
+    def get_config_item(self, key):
+        """get single config item"""
+
+        rval = None
+        try:
+            return getattr(self._grp_config, key)
+        except:
+            return None
+
+    def set_config_item(self, key, val):
+        """set single config item"""
+
+        setattr(self._grp_config, key, val)
+
+    ## data interface - NEURON_DATA
+
+    def load_ndata(self, key):
+        """load a neuron data from the archive"""
+
+
 
 
 ##---MAIN

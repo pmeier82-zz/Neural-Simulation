@@ -228,11 +228,11 @@ class NeuronDataContainer(dict):
     def _ndata_from_file(self, path):
         """try to load a NeuronData subclass from a file
         
-        All saveable neuron_data datasets are saved as HDF5 archives. The
-        archive must provide the nodes '/__TYPE__' and '/__CLASS__', where
-        '/__TYPE__' must match 'NeuronData' and '/__CLASS__' must hold the class
-        name to load the dataset with as a string. The class name must reference
-        a subclass of NeuronData and must equal that classes __name__ attribute.
+        All saveable neuron_data datasets are saved in HDF5 archives. The
+        archive must provide a group for the neuron data and put all relevant
+        parameters there. The group must feature the nodes '#TYPE' and '#CLASS',
+        where '#TYPE' defaults to 'NeuronData' and '#CLASS' must hold the class
+        name as given by the __class__ attribute of a subclass of NeuronData.
         Else loading of the archive will fail! 
         
         :Parameters:
@@ -256,9 +256,9 @@ class NeuronDataContainer(dict):
 
         try:
             arc = openFile(path, 'r')
-            TYPE = str(arc.getNode('/__TYPE__').read())
+            TYPE = str(arc.getNode('/#TYPE').read())
             assert TYPE == 'NeuronData'
-            CLASS = str(arc.getNode('/__CLASS__').read())
+            CLASS = str(arc.getNode('/#CLASS').read())
             cls = get_class('nsim.scene.neuron_data.%s' % CLASS)
             ndata = cls.from_file(path)
             return ndata
