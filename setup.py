@@ -27,13 +27,22 @@
 
 ##---IMPORTS
 
-from distutils.core import setup
+import os
+import ez_setup
+ez_setup.use_setuptools()
+from setuptools import setup
 
 
-##---STINGS
+##---HELPERS
+
+def read(*rnames):
+    return open(os.path.join(OSError.path.dirname(__file__), *rnames)).read()
+
+
+##---STRINGS
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'Intended Audience :: Education',
     'Intended Audience :: Science/Research',
@@ -45,33 +54,15 @@ CLASSIFIERS = [
 DESCRIPTION = 'A simulation framework for extracellular recordings'
 LONG_DESCRIPTION = """%s
 
-Extracellular recordings are a key tool to study the activity of
-neurons in vivo. Especially in the case of experiments with behaving
-animals, however, the tedious procedure of electrode placement can
-take a considerable amount of expensive and restricted experimental
-time. Furthermore, due to tissue drifts and other sources of
-variability in the recording setup, the position of the electrodes
-with respect to the neurons under study can change, causing low
-recording quality. Here, we developed a system online simulation of
-extracellular recordings that allows for feedback from electrode
-positioning systems and recording systems.
-
-The simulator is based on realistically reconstructed 3D neurons. The
-shape of the extracellular waveform is estimated from their morphology
-for every point on a 3D grid around the neurons. If a recording device
-is close to a neuron, the corresponding waveform for its spikes is
-calculated from that grid by interpolating the waveforms of the
-adjacent grid positions. This way we can simulate a realistic
-recording environment in which an unconstrained movement of electrodes
-and neurons and an interaction with a positioning system and online
-spike sorter is possible.
-""" % DESCRIPTION
+%s
+""" % (DESCRIPTION, read('README'))
 
 ##---SETUP BLOCK
 
 setup(
-    name='Neural Simulation',
-    version='0.1.55',
+    # names and description
+    name='Neural-Simulation',
+    version='0.2.0',
     author='Philipp Meier',
     author_email='pmeier82@googlemail.com',
     maintainer='Philipp Meier',
@@ -80,6 +71,7 @@ setup(
     download_url='http://github.com/pmeier82/Neural-Simulation/zipball/master',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
+    # package distribution
     packages=['nsim',
               'nsim.data_io',
               'nsim.gui',
@@ -92,5 +84,6 @@ setup(
     zip_safe=False,
     include_package_data=True,
     license='EUPL v1.1',
-    classifiers=CLASSIFIERS
+    classifiers=CLASSIFIERS,
+    install_requires=[],
 )
