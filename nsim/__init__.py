@@ -39,10 +39,10 @@ __docformat__ = 'restructuredtext'
 
 ##---OTHER STUFF
 
-__version__ = '0.1.54'
+__version__ = '0.1.60'
 __revision__ = 'beta'
 
-__copyright__ = '(c) 2010 Philipp Meier'
+__copyright__ = '(c) 2010-2011 Philipp Meier'
 __license__ = 'EUPL v1.1, http://ec.europa.eu/idabc/eupl'
 
 __authors__ = 'Philipp Meier'

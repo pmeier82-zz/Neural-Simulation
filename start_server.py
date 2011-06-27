@@ -345,8 +345,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             # load neuron data
             nfiles = 0
             for path in rval:
-                ndata = NeuronDataLoader(path)
-                nfiles += self._sim.neuron_data.insert(ndata)
+                nfiles += self._sim.neuron_data.insert(path)
                 self.progress.setValue(self.progress.value() + 1)
             self.progress.reset()
             self.progress.setVisible(False)
@@ -354,7 +353,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             QtGui.QMessageBox.information(
                 self,
                 'Info',
-                'found %d neuron data archives' % ndatas
+                'found %d neuron data archives' % nfiles
             )
 
         except:
