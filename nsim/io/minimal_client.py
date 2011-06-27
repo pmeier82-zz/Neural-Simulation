@@ -18,13 +18,13 @@
 ##
 ################################################################################
 #
-# nsim - data_io/minimal_client.py
+# nsim - io/minimal_client.py
 #
 # Philipp Meier - <pmeier82 at gmail dot com>
 # 2010-03-18
 #
 
-"""implementation of a minimal client fot the nsim package"""
+"""implementation of a minimal client for the nsim package protocol"""
 __docformat__ = 'restructuredtext'
 
 
@@ -33,7 +33,7 @@ __docformat__ = 'restructuredtext'
 from PyQt4 import QtCore, QtGui
 from client_interface import ChunkContainer, NTrodeDataInterface, DEFAULT_VELOCITY
 from nsim.gui import Ui_MultiElectrodeClient, NTrodePlot
-import scipy as N
+import scipy as sp
 
 
 ##---CLASSES
@@ -159,7 +159,7 @@ class MinimalClient(QtGui.QMainWindow, Ui_MultiElectrodeClient):
             noise = chunk.noise
             # selection: noise
             if 0 not in self._io._config:
-                signal = N.zeros_like(noise)
+                signal = sp.zeros_like(noise)
             else:
                 signal = noise.copy()
             # selection waveforms
@@ -174,7 +174,7 @@ class MinimalClient(QtGui.QMainWindow, Ui_MultiElectrodeClient):
                         if item[3] == 0:
                             temp.append(item[1])
                     if len(temp) > 0:
-                        gtrth[ident] = N.asarray(temp)
+                        gtrth[ident] = sp.asarray(temp)
             # handle chunk
             self.handle_data(signal, noise, gtrth)
             # update dataplot

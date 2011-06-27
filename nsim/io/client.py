@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# nsim - data_io/client.py
+# nsim - io/client.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-07-19
@@ -30,13 +30,13 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-import scipy as N
+import scipy as sp
 from select import select
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Event, Thread
 from time import sleep
 from Queue import Queue
-from server import MAXQUEUESIZE
+from tcp_server import MAXQUEUESIZE
 from package import SimPkg, recv_pkg, send_pkg
 
 
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                 break
             if client.status is not None and not moved:
                 ident = client.status[client.status[:, 1] == 20, 0]
-                pos_pkg = SimPkg(tid=SimPkg.T_STS, ident=ident, cont=N.asarray([150, 9999]))
+                pos_pkg = SimPkg(tid=SimPkg.T_STS, ident=ident, cont=sp.asarray([150, 9999]))
                 q_s.put(pos_pkg)
                 moved = True
     except KeyboardInterrupt:

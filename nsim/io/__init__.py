@@ -18,13 +18,13 @@
 ##
 ################################################################################
 #
-# nsim - data_io/__init__.py
+# nsim - io/__init__.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21
 #
 
-"""data io classes for the simulation"""
+"""io module for the simulation"""
 __docformat__ = 'restructuredtext'
 
 
@@ -34,7 +34,8 @@ from client import SimIOClientNotifier, SimIOConnection
 from client_interface import ChunkContainer, NTrodeDataInterface
 from minimal_client import MinimalClient
 from package import SimPkg, recv_pkg, send_pkg
-from server import SimIOManager, SimIOProtocol, SimIOServer
+from tcp_server import SimIOProtocol, SimIOServer
+from manager import SimIOManager
 
 
 ##---PACKAGE_ADMIN
@@ -48,8 +49,10 @@ __all__ = [
     'NTrodeDataInterface',
     # minimal_client
     'MinimalClient',
-    # server
+    # manager
     'SimIOManager',
+    # server_blockstream
+    # server_tcp
     'SimIOProtocol',
     'SimIOServer',
     # package

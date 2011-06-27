@@ -36,7 +36,7 @@ from setuptools import setup
 ##---HELPERS
 
 def read(*rnames):
-    return open(os.path.join(OSError.path.dirname(__file__), *rnames)).read()
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 
 ##---STRINGS

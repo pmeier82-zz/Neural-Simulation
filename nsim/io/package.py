@@ -18,13 +18,13 @@
 ##
 ################################################################################
 #
-# nsim - data_io/package.py
+# nsim - io/package.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21
 #
 
-"""streaming package protocol for the simulation"""
+"""frame package protocol"""
 __docformat__ = 'restructuredtext'
 
 
@@ -33,7 +33,7 @@ __docformat__ = 'restructuredtext'
 # builtins
 from struct import calcsize, pack, unpack
 # packages
-import scipy as N
+import scipy as sp
 
 
 ##---MODULE_ADMIN
@@ -58,12 +58,12 @@ class ContentItem(object):
         # check by type
         if isinstance(cont, ContentItem):
             self.cont = cont.cont
-        elif isinstance(cont, N.ndarray):
+        elif isinstance(cont, sp.ndarray):
             self.cont = cont
         elif cont is None:
-            self.cont = N.array([])
+            self.cont = sp.array([])
         else:
-            self.cont = N.asarray(cont)
+            self.cont = sp.asarray(cont)
 
         # check cont for shape
         if len(self.cont.shape) > 2:
@@ -202,7 +202,7 @@ class SimPkg(object):
         if len(self.cont) != len(other.cont):
             return False
         for i in xrange(len(self.cont)):
-            if not N.allclose(self.cont[i].cont, other.cont[i].cont):
+            if not sp.allclose(self.cont[i].cont, other.cont[i].cont):
                 return False
         return True
 
@@ -253,9 +253,9 @@ class SimPkg(object):
             idx += ContentItem.HLEN
 
             # read content data
-            cont_item = N.fromstring(
+            cont_item = sp.fromstring(
                 data[idx:idx + nbytes],
-                dtype=N.dtype(dtype_str)
+                dtype=sp.dtype(dtype_str)
             )
             if dim0 >= 0:
                 if dim1 >= 0:
@@ -322,7 +322,7 @@ if __name__ == '__main__':
 
     print
     print 'PACKAGE TEST - constructor with randn(4,4) and arange(10)'
-    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (N.randn(4, 4), N.arange(10)))
+    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (sp.randn(4, 4), sp.arange(10)))
     print mypkg
     print
     print 'PACKAGE TEST - from package'

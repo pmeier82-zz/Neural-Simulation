@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# nsim - data_io/client_interface.py
+# nsim - io/client_interface.py
 #
 # Philipp Meier - <pmeier82 at gmail dot com>
 # 2010-03-11
@@ -37,7 +37,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from PyQt4 import QtCore, QtGui
-import scipy as N
+import scipy as sp
 from nsim.gui import Ui_InitDialog
 from package import SimPkg
 from client import SimIOClientNotifier, SimIOConnection
@@ -80,7 +80,7 @@ class ChunkContainer(object):
 
     def get_waveform(self):
         if self._waveform is None:
-            self._waveform = N.zeros_like(self.noise)
+            self._waveform = sp.zeros_like(self.noise)
             for ident in self.units:
                 for item in self.units[ident]['gt_buf']:
                     self._waveform[item[1]:item[2]] += self.units[ident]['wf_buf'][item[0]][item[3]:item[4]]
@@ -111,13 +111,13 @@ class ChunkContainer(object):
         # prepare
         rval = []
         noise = item_list.pop(0)
-        if isinstance(noise, (N.ndarray, None.__class__)):
+        if isinstance(noise, (sp.ndarray, None.__class__)):
             if isinstance(noise, None.__class__):
                 thislen = 0
             else:
                 appendlen, nchan = noise.shape
                 if self.noise is None:
-                    self.noise = N.empty((self.cnklen, nchan))
+                    self.noise = sp.empty((self.cnklen, nchan))
                 # normal append case
                 thislen = appendlen
                 if self.cnkptr + thislen >= self.cnklen:
@@ -138,8 +138,8 @@ class ChunkContainer(object):
         while len(item_list) > 0:
             # get data
             ident = item_list.pop(0)
-            if isinstance(ident, N.ndarray):
-                ident = N.asscalar(ident)
+            if isinstance(ident, sp.ndarray):
+                ident = sp.asscalar(ident)
             wform = item_list.pop(0)
             gtrth = item_list.pop(0)
             if len(gtrth) == 0:
@@ -151,7 +151,7 @@ class ChunkContainer(object):
             # handle waveform
             wform_key = -1
             for i in xrange(len(self.units[ident]['wf_buf'])):
-                if N.allclose(wform, self.units[ident]['wf_buf'][i]):
+                if sp.allclose(wform, self.units[ident]['wf_buf'][i]):
                     wform_key = i
                     break
             if wform_key == -1:
@@ -193,9 +193,9 @@ class ChunkContainer(object):
                     ])
             # rval building
             if len(gtrth_resid) > 0:
-                gtrth_resid = N.vstack(gtrth_resid)
+                gtrth_resid = sp.vstack(gtrth_resid)
                 rval.extend([ident, wform, gtrth_resid])
-                if not isinstance(rval[0], (N.ndarray, None.__class__)):
+                if not isinstance(rval[0], (sp.ndarray, None.__class__)):
                     rval.insert(0, None)
         # return
         self.cnkptr += thislen
@@ -499,7 +499,7 @@ class NTrodeDataInterface(QtCore.QObject):
             SimPkg(
                 tid=SimPkg.T_POS,
                 ident=self._identity,
-                cont=(N.array([position, velocity]),)
+                cont=(sp.array([position, velocity]),)
             )
         )
 
@@ -533,7 +533,7 @@ def copy_ar(src, src_slc, dst, dst_slc):
     size and define what slice will be copied where.
     """
 
-    assert isinstance(src, N.ndarray) and isinstance(dst, N.ndarray)
+    assert isinstance(src, sp.ndarray) and isinstance(dst, sp.ndarray)
     assert dst_slc.stop - dst_slc.start == src_slc.stop - src_slc.start
     dst[dst_slc] = src[src_slc].copy()
 
@@ -601,7 +601,7 @@ def copy_gt(wf, gt, dst, cap=0, offset=0):
                 ])
         if len(gt_new) > 0:
             dst.append(wf[i])
-            dst.append(N.asarray(gt_new))
+            dst.append(sp.asarray(gt_new))
 
 
 ##---MAIN
@@ -610,9 +610,9 @@ if __name__ == '__main__':
 
     C0 = ChunkContainer(1000)
     C1 = ChunkContainer(1000)
-    base_noise = N.zeros((900, 1))
-    base_wf1 = (N.ones((1, 20)) * N.arange(20)).T
-    base_wf2 = (N.ones((1, 20)) * N.arange(20)[::-1]).T
+    base_noise = sp.zeros((900, 1))
+    base_wf1 = (sp.ones((1, 20)) * sp.arange(20)).T
+    base_wf2 = (sp.ones((1, 20)) * sp.arange(20)[::-1]).T
 
     residual = None
     for i in xrange(2):
@@ -623,8 +623,8 @@ if __name__ == '__main__':
     from pylab import figure, show
     fig = figure()
     ax = fig.add_subplot(111)
-    ax.plot(N.atleast_2d(N.arange(C0.cnklen)).T, C0.waveform, 'r')
-    ax.plot(N.atleast_2d(N.arange(C1.cnklen)).T + C0.cnklen, C1.waveform, 'b')
+    ax.plot(sp.atleast_2d(sp.arange(C0.cnklen)).T, C0.waveform, 'r')
+    ax.plot(sp.atleast_2d(sp.arange(C1.cnklen)).T + C0.cnklen, C1.waveform, 'b')
     ax.axvline(C0.cnklen)
     ax.axvline(C0.cnklen - 1)
     show()
