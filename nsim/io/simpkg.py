@@ -177,9 +177,9 @@ class SimPkg(object):
 
 
         # members
-        self.tid = tid or self.T_UKN
-        self.ident = ident or self.NOIDENT
-        self.frame = frame or self.NOFRAME
+        self.tid = tid or T_UKN
+        self.ident = ident or NOIDENT
+        self.frame = frame or NOFRAME
         self.cont = []
 
         # contents
@@ -232,7 +232,7 @@ class SimPkg(object):
 
     def __str__(self):
         rval = 'SimIOPackage(%s) #[%d] - frame %d - from %d' % (
-            self.T_MAP[self.tid], self.nitems, self.frame, self.ident
+            T_MAP[self.tid], self.nitems, self.frame, self.ident
         )
         if self.nitems == 0:
             rval += '\nempty'
@@ -343,7 +343,7 @@ if __name__ == '__main__':
 
     print
     print 'PACKAGE TEST - constructor with randn(4,4) and arange(10)'
-    mypkg = SimPkg(SimPkg.T_UKN, 1337, 666, (sp.randn(4, 4), sp.arange(10)))
+    mypkg = SimPkg(T_UKN, 1337, 666, (sp.randn(4, 4), sp.arange(10)))
     print mypkg
     print
     print 'PACKAGE TEST - from package'

@@ -39,7 +39,8 @@ __docformat__ = 'restructuredtext'
 from PyQt4 import QtCore, QtGui
 import scipy as sp
 from nsim.gui import Ui_InitDialog
-from simpkg import SimPkg
+from simpkg import (SimPkg, T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, T_MAP,
+                    NOFRAME, NOIDENT)
 from client import SimIOClientNotifier, SimIOConnection
 
 
@@ -406,7 +407,7 @@ class NTrodeDataInterface(QtCore.QObject):
     sample_rate = property(get_sample_rate)
 
     def get_status(self):
-        return self._status
+        return self._sttatus
     status = property(get_status)
 
     ## methods behavior
@@ -417,7 +418,7 @@ class NTrodeDataInterface(QtCore.QObject):
         # checks
         if self._cnklen is None or self._cnk is None:
             raise ValueError('trying to handle a recorder package when the chunk length is not known!')
-        if pkg.tid != SimPkg.T_REC:
+        if pkg.tid != T_REC:
             raise ValueError('trying to handle non recorder package!')
 
         # inits
@@ -449,7 +450,7 @@ class NTrodeDataInterface(QtCore.QObject):
 
             # we need to initialize first!
             if self._status is None:
-                if pkg.tid == SimPkg.T_STS:
+                if pkg.tid == T_STS:
                     # intitialize internals
                     self._identity, self._sample_rate, self._config = \
                         InitDlg.init_dialog(pkg.cont[0].cont)
@@ -461,24 +462,24 @@ class NTrodeDataInterface(QtCore.QObject):
                     continue
 
             # if waveform or position package, drop if its not for us
-            if pkg.tid in [SimPkg.T_REC, SimPkg.T_POS]:
+            if pkg.tid in [T_REC, T_POS]:
                 if self.identity is not None:
                     if pkg.ident != self.identity:
                         continue
 
             # what package has been aquired
-            if pkg.tid == SimPkg.T_STS:
+            if pkg.tid == T_STS:
                 self._status = pkg.cont[0].cont
-            elif pkg.tid == SimPkg.T_POS:
+            elif pkg.tid == T_POS:
                 try:
                     self._position = float(pkg.cont[0].cont[0])
                     self.sig_update_pos.emit(self._position)
                 except:
                     pass
-            elif pkg.tid == SimPkg.T_REC:
+            elif pkg.tid == T_REC:
                 self.handle_recorder_package(pkg)
             else:
-                print SimPkg.T_MAP[pkg.tid]
+                print T_MAP[pkg.tid]
 
     @QtCore.pyqtSlot(float)
     @QtCore.pyqtSlot(float, float)
@@ -497,7 +498,7 @@ class NTrodeDataInterface(QtCore.QObject):
 
         self._io.q_send.put(
             SimPkg(
-                tid=SimPkg.T_POS,
+                tid=T_POS,
                 ident=self._identity,
                 cont=(sp.array([position, velocity]),)
             )
@@ -507,7 +508,7 @@ class NTrodeDataInterface(QtCore.QObject):
     def request_position(self):
         """retrieve the current position of the device"""
 
-        self._io.q_send.put(SimPkg(tid=SimPkg.T_POS, ident=self.identity))
+        self._io.q_send.put(SimPkg(tid=T_POS, ident=self.identity))
 
     ## other stuff
 

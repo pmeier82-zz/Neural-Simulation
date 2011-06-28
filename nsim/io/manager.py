@@ -36,7 +36,7 @@ from Queue import Queue
 # packages
 import scipy as sp
 # own packages
-from server_blkstr import BlkIOServer
+#from server_blkstr import BlkIOServer
 from server_simpkg import SimIOServer
 from simpkg import T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, NOFRAME, NOIDENT
 
@@ -91,7 +91,7 @@ class IOManager(object):
 
     def initialize(self):
 
-        self.finalize()
+        self.finalise()
         self._srv = self._srv_cls(
             self._q_recv,
             self._q_send,
@@ -101,7 +101,7 @@ class IOManager(object):
         self._status = None
         self._is_initialized = True
 
-    def finalize(self):
+    def finalise(self):
 
         if self._srv is not None:
             self._srv.stop()
@@ -122,12 +122,8 @@ class IOManager(object):
         if not isinstance(value, dict):
             return
         if self._status != value:
-            status_pkg = IOManager.build_status_pkg(value)
-            if status_pkg is not None:
-                self._status = status_pkg
-                self._srv.status = status_pkg
-            else:
-                print 'problem with status value'
+            self._status = value
+            self.send_item(T_STS, NOIDENT, NOFRAME, self._status)
     status = property(get_status, set_status)
 
     def get_q_recv(self):
@@ -205,4 +201,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print
         print 'stopping due to KeyboardInterrupt'
-        io_man.finalize()
+        io_man.finalise()

@@ -746,7 +746,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.on_input_cmdpnl_timer()
         self.on_append_log('')
         self.on_append_log('..shutting down!')
-        self._sim.finalize()
+        self._sim.finalise()
         QtGui.QMessageBox.information(
             self,
             'Shutdown',

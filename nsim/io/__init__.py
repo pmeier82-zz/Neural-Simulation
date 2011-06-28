@@ -34,7 +34,7 @@ from client import *
 from client_interface import *
 from manager import *
 from minimal_client import *
-from server_blkstr import *
+#from server_blkstr import *
 from server_simpkg import *
 from simpkg import *
 

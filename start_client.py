@@ -33,7 +33,7 @@ __docformat__ = 'restructuredtext'
 ##---IMPORTS
 
 from PyQt4 import QtGui
-from nsim.data_io import MinimalClient
+from nsim.io import MinimalClient
 
 
 ##---CLASSES
@@ -54,7 +54,7 @@ class TestClient(MinimalClient):
 
 ##---MAIN
 
-def main(ip_str='130.149.23.127'):
+def main(ip_str='130.149.24.29'):
 
     app = QtGui.QApplication([])
 

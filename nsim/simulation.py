@@ -247,7 +247,7 @@ class BaseSimulation(dict):
         self.io_man.initialize()
         self.neuron_data.clear()
 
-    def finalize(self):
+    def finalise(self):
         """finalise the simulation"""
 
         self.clear()
@@ -350,7 +350,7 @@ class BaseSimulation(dict):
                     log_str += 'R[%s]:' % pkg.ident
 
                     # position event
-                    if pkg.tid == SimPkg.T_POS:
+                    if pkg.tid == T_POS:
 
                         # position request
                         if pkg.nitems == 0:
@@ -369,8 +369,8 @@ class BaseSimulation(dict):
                             continue
 
                         # send position acknowledgement
-                        self.io_man.send_package(
-                            SimPkg.T_POS,
+                        self.io_man.send_item(
+                            T_POS,
                             pkg.ident,
                             self._frame,
                             self[pkg.ident].trajectory_pos
@@ -386,9 +386,9 @@ class BaseSimulation(dict):
             else:
 
                 log_str += 'O[%s]:' % pkg.ident
-                if pkg.tid == SimPkg.T_CON:
+                if pkg.tid == T_CON:
                     log_str += 'CONNECT from %s' % str(pkg.cont)
-                elif pkg.tid == SimPkg.T_END:
+                elif pkg.tid == T_END:
                     log_str += 'DISCONNECT from %s' % str(pkg.cont)
                 else:
                     log_str += 'unknown'
