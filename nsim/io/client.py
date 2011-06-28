@@ -36,8 +36,8 @@ from socket import socket, AF_INET, SOCK_STREAM
 from threading import Event, Thread
 from time import sleep
 from Queue import Queue
-from tcp_server import MAXQUEUESIZE
-from package import SimPkg, recv_pkg, send_pkg
+from manager import MAXQUEUESIZE
+from simpkg import SimPkg, recv_pkg, send_pkg
 
 
 ##---MODULE_ADMIN

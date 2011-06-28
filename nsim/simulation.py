@@ -77,7 +77,8 @@ __docformat__ = 'restructuredtext'
 from ConfigParser import ConfigParser
 import os.path as osp
 from cluster_dynamics import ClusterDynamics
-from data_io import SimIOManager, SimPkg
+from io import (IOManager, T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, T_XXX,
+                NOFRAME, NOIDENT)
 from scene import (
     NeuronDataContainer,
     Neuron,
@@ -205,7 +206,7 @@ class BaseSimulation(dict):
 
         # public members
         self.cls_dyn = ClusterDynamics()
-        self.io_man = SimIOManager()
+        self.io_man = IOManager()
         self.neuron_data = NeuronDataContainer()
         self.debug = kwargs.get('debug', False)
 
@@ -247,13 +248,13 @@ class BaseSimulation(dict):
         self.neuron_data.clear()
 
     def finalize(self):
-        """finalize the simulation"""
+        """finalise the simulation"""
 
         self.clear()
 
         # reset pubic members
         self.cls_dyn.clear()
-        self.io_man.finalize()
+        self.io_man.finalise()
         self.neuron_data.clear()
 
     ## properties
@@ -287,8 +288,8 @@ class BaseSimulation(dict):
 
     def get_status(self):
         self._status = {
-            'frame_size'    : self.frame_size,
-            'sample_rate'   : self.sample_rate,
+            'frame_size'    : self._frame_size,
+            'sample_rate'   : self._sample_rate,
             'neurons'       : self.neuron_keys,
             'recorders'     : self.recorder_keys,
         }
@@ -311,7 +312,7 @@ class BaseSimulation(dict):
         """advance the simulation by one frame"""
 
         # inc frame counter
-        self.frame += 1
+        self._frame += 1
 
         # process events
         self._simulate_io_tick()
@@ -321,6 +322,9 @@ class BaseSimulation(dict):
 
         # record for recorders
         self._simulate_recorder_tick()
+
+        # place q-filler
+        self.io_man.send_item(T_XXX, NOIDENT, self._frame, None)
 
     def _simulate_io_tick(self):
         """process io loop for the current frame
@@ -395,23 +399,23 @@ class BaseSimulation(dict):
         """process neurons for current frame
 
         This will generate spike trains and configure the neuronal firing
-        behavior for the current frame.
+        behaviour for the current frame.
         """
 
         # generate spike trains for the scene
-        self.cls_dyn.generate(self.frame_size)
+        self.cls_dyn.generate(self._frame_size)
 
         # propagate spike trains to neurons
         for nrn_k in self.neuron_keys:
             self[nrn_k].simulate(
-                frame_size=self.frame_size,
+                frame_size=self._frame_size,
                 firing_times=self.cls_dyn.get_spike_train(nrn_k)
             )
 
     def _simulate_recorder_tick(self):
         """process recorders for the current frame
 
-        This will record waveforms and grountruth for the current frame.
+        This will record waveforms and groundtruth for the current frame.
         """
 
         # list of all neurons
@@ -419,13 +423,13 @@ class BaseSimulation(dict):
 
         # record per recorder
         for rec_k in self.recorder_keys:
-            self.io_man.send_package(
-                SimPkg.T_REC,
+            self.io_man.send_item(
+                T_REC,
                 rec_k,
                 self._frame,
                 self[rec_k].simulate(
                     nlist=nlist,
-                    frame_size=self.frame_size
+                    frame_size=self._frame_size
                 )
             )
 
@@ -435,7 +439,7 @@ class BaseSimulation(dict):
         """log a string"""
 
         for ext in self._externals:
-            ext.log('[#%09d] %s' % (self.frame, log_str))
+            ext.log('[#%09d] %s' % (self._frame, log_str))
 
     def log_d(self, log_str):
         """log a string"""
@@ -658,8 +662,8 @@ class BaseSimulation(dict):
 
         # write CONFIG section
         cfg.add_section('CONFIG')
-        cfg.set('CONFIG', 'frame_size', self.frame_size)
-        cfg.set('CONFIG', 'sample_rate', self.sample_rate)
+        cfg.set('CONFIG', 'frame_size', self._frame_size)
+        cfg.set('CONFIG', 'sample_rate', self._sample_rate)
         ndata_paths = '\t\n'.join(self.neuron_data.paths)
         cfg.set('CONFIG', 'neuron_data_dir', ndata_paths)
 

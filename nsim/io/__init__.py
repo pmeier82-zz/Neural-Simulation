@@ -24,42 +24,19 @@
 # 2010-04-21
 #
 
-"""io module for the simulation"""
+"""i/o module for the Neural-Simulation"""
 __docformat__ = 'restructuredtext'
 
 
 ##---IMPORTS
 
-from client import SimIOClientNotifier, SimIOConnection
-from client_interface import ChunkContainer, NTrodeDataInterface
-from minimal_client import MinimalClient
-from package import SimPkg, recv_pkg, send_pkg
-from tcp_server import SimIOProtocol, SimIOServer
-from manager import SimIOManager
-
-
-##---PACKAGE_ADMIN
-
-__all__ = [
-    # client
-    'SimIOClientNotifier',
-    'SimIOConnection',
-    # client_interface
-    'ChunkContainer',
-    'NTrodeDataInterface',
-    # minimal_client
-    'MinimalClient',
-    # manager
-    'SimIOManager',
-    # server_blockstream
-    # server_tcp
-    'SimIOProtocol',
-    'SimIOServer',
-    # package
-    'SimPkg',
-    'recv_pkg',
-    'send_pkg',
-]
+from client import *
+from client_interface import *
+from manager import *
+from minimal_client import *
+from server_blkstr import *
+from server_simpkg import *
+from simpkg import *
 
 
 ##---MAIN

@@ -35,14 +35,18 @@ import logging
 from Queue import Queue
 # packages
 import scipy as sp
-# own imports
-from package import SimPkg
-from tcp_server import SimIOServer
+# own packages
+from server_blkstr import BlkIOServer
+from server_simpkg import SimIOServer
+from simpkg import T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, NOFRAME, NOIDENT
 
 
 ##---MODULE_ADMIN
 
-__all__ = ['SimIOManager']
+__all__ = [
+    # class
+    'IOManager',
+]
 
 
 ##---CONSTANTS
@@ -57,35 +61,29 @@ logging.basicConfig(level=logging.DEBUG)
 
 ##---CLASSES
 
-class SimIOManager(object):
+class IOManager(object):
     """the singleton input/output manager thread
 
     This class handles all data input and output for a BaseSimulation object.
-    Data is received from and sent to via Queue.Queue objects using the protocol
-    defined in package.py.
+    Data is received from and sent to via Queue.Queue objects using one or more
+    protocol defined in the server_*.py modules.
     """
 
     ## constructor
 
     def __init__(self, **kwargs):
         """
-        :Parameters:
-            kwargs : keywords
         :Keywords:
-            addr : str
-                Host address the server binds to.
-                Default=all
-            port : int
-                Host port the server binds to.
-                Default=31337
+            srv_cls : IOServer class
+                Default=SimIOServer
+            srv_kwargs : dict
+                keywords to pass to the server instance
         """
 
         # members
         self._status = None
-
-        # io members
-        self.addr_ini = (kwargs.get('addr', '0.0.0.0'), kwargs.get('port', 31337))
-        self.addr = 'not connected'
+        self._srv_cls = kwargs.get('srv_cls', SimIOServer)
+        self._srv_kwargs = kwargs.get('srv_kwargs', {})
         self._q_recv = Queue(maxsize=MAXQUEUESIZE)
         self._q_send = Queue(maxsize=MAXQUEUESIZE)
         self._srv = None
@@ -94,13 +92,12 @@ class SimIOManager(object):
     def initialize(self):
 
         self.finalize()
-        self._srv = SimIOServer(
-            self.addr_ini,
+        self._srv = self._srv_cls(
             self._q_recv,
-            self._q_send
+            self._q_send,
+            **self._srv_kwargs
         )
         self._srv.start()
-        self.addr = self._srv.server_address
         self._status = None
         self._is_initialized = True
 
@@ -110,9 +107,11 @@ class SimIOManager(object):
             self._srv.stop()
             self._srv = None
         while not self._q_recv.empty():
-            self._q_recv.get_nowait()
+            item = self._q_recv.get_nowait()
+            del item
         while not self._q_send.empty():
-            self._q_send.get_nowait()
+            item = self._q_send.get_nowait()
+            del item
         self._is_initialized = False
 
     ## properties
@@ -123,7 +122,7 @@ class SimIOManager(object):
         if not isinstance(value, dict):
             return
         if self._status != value:
-            status_pkg = SimIOManager.build_status_pkg(value)
+            status_pkg = IOManager.build_status_pkg(value)
             if status_pkg is not None:
                 self._status = status_pkg
                 self._srv.status = status_pkg
@@ -155,20 +154,19 @@ class SimIOManager(object):
             self._q_recv.task_done()
         return rval
 
-    def send_package(
-        self,
-        tid=SimPkg.T_UKN,
-        ident=SimPkg.NOIDENT,
-        frame=SimPkg.NOFRAME,
+    def send_item(self,
+        tid=T_UKN,
+        ident=NOIDENT,
+        frame=NOFRAME,
         cont=None
     ):
-        """build a package fromdata and send to clients
+        """build a package from data and send to clients
 
         SimPkg constructor wrapper
 
         :Parameters:
-            pkg : SimPkg
-                the SimPkg type id
+            tid : int
+                the type id
                 Default=T_UKN
             ident : long
                 target ident or None if unrestricted
@@ -177,48 +175,11 @@ class SimIOManager(object):
                 target frame
                 Default=NOFRAME
             cont : list
-                the conetnt of the package (ndarrays)
+                the content of the package (ndarrays)
                 Default=None
         """
 
-        self.send_pkg(SimPkg(tid=tid, ident=ident, frame=frame, cont=cont))
-
-    def send_pkg(self, pkg):
-        """senda SimPkg to clients
-
-        :Parameters:
-            pkg : SimPkg
-                The SimPkg instance to send.
-        """
-
-        self.q_send.put(pkg)
-
-    ## static utility
-
-    @staticmethod
-    def build_status_pkg(status):
-        """build a package from status
-
-        items are mapped by id:
-            0   : sample_rate
-            1   : frame_size
-            10  : neurons
-            20  : recorders
-        """
-
-        try:
-            cont = [
-                [status['sample_rate'], 0],
-                [status['frame_size'], 1]
-            ]
-            if len(status['neurons']) > 0:
-                cont.extend([[item, 10] for item in status['neurons']])
-            if len(status['recorders']) > 0:
-                cont.extend([[item, 20] for item in status['recorders']])
-            cont = sp.asarray(cont, dtype=sp.float32)
-            return SimPkg(tid=SimPkg.T_STS, cont=cont)
-        except:
-            return None
+        self.q_send.put((tid, ident, frame, cont))
 
 
 ##---MAIN
@@ -229,7 +190,7 @@ if __name__ == '__main__':
 
     print
     print 'setting up manager..'
-    io_man = SimIOManager()
+    io_man = IOManager()
     io_man.initialize()
 
     try:
@@ -240,8 +201,8 @@ if __name__ == '__main__':
             else:
                 print '.'
             sleep(5)
-            io_man.send_package(cont=sp.ones((4, 4)))
+            io_man.send_item(cont=sp.ones((4, 4)))
     except KeyboardInterrupt:
         print
-        print 'stoping due to KeyboardInterrupt'
+        print 'stopping due to KeyboardInterrupt'
         io_man.finalize()

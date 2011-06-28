@@ -18,7 +18,7 @@
 ##
 ################################################################################
 #
-# nsim - io/package.py
+# nsim - io/simpkg.py
 #
 # Philipp Meier - <pmeier82 at googlemail dot com>
 # 2010-04-21
@@ -38,7 +38,47 @@ import scipy as sp
 
 ##---MODULE_ADMIN
 
-__all__ = ['SimPkg', 'recv_pkg', 'send_pkg', 'receive_n_bytes']
+__all__ = [
+    # classes
+    'ContentItem',
+    'SimPkg',
+    # functions
+    'recv_pkg',
+    'send_pkg',
+    'receive_n_bytes',
+    # constants
+    'T_UKN',
+    'T_CON',
+    'T_END',
+    'T_STS',
+    'T_POS',
+    'T_REC',
+    'T_XXX',
+    'T_MAP',
+    'NOIDENT',
+    'NOFRAME',
+]
+
+
+##---CONSTANTS
+
+T_UKN = 0   # unknown
+T_CON = 1   # connection new
+T_END = 2   # connection end
+T_STS = 4   # status
+T_POS = 8   # position
+T_REC = 16  # recorder
+T_XXX = 32  # stopper item for th queue
+T_MAP = {
+    0   : 'T_UKN',
+    1   : 'T_CON',
+    2   : 'T_END',
+    4   : 'T_STS',
+    8   : 'T_POS',
+    16  : 'T_REC',
+}
+NOIDENT = 0L
+NOFRAME = 0L
 
 
 ##---CLASSES
@@ -56,6 +96,7 @@ class ContentItem(object):
     def __init__(self, cont):
 
         # check by type
+        self.cont = None
         if isinstance(cont, ContentItem):
             self.cont = cont.cont
         elif isinstance(cont, sp.ndarray):
@@ -67,7 +108,7 @@ class ContentItem(object):
 
         # check cont for shape
         if len(self.cont.shape) > 2:
-            raise ValueError('shape shoud be <= 2')
+            raise ValueError('shape should be <= 2')
 
     ## properties
 
@@ -117,26 +158,6 @@ class SimPkg(object):
 
     HDEF = '!BQQB' # tid, ident, frame, nitems
     HLEN = calcsize(HDEF)
-
-    T_UKN = 0   # unknown
-    T_CON = 1   # connection new
-    T_END = 2   # connection end
-    T_STS = 4   # status
-
-    T_POS = 8   # position
-    T_REC = 16  # recorder
-
-    T_MAP = {
-        0   : 'T_UKN',
-        1   : 'T_CON',
-        2   : 'T_END',
-        4   : 'T_STS',
-        8   : 'T_POS',
-        16  : 'T_REC',
-    }
-
-    NOIDENT = 0L
-    NOFRAME = 0L
 
     ## constructor
 

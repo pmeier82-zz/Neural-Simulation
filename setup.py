@@ -51,7 +51,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 2.6',
     'Topic :: Scientific/Engineering :: Bio-Informatics'
 ]
-DESCRIPTION = 'A simulation framework for extracellular recordings'
+DESCRIPTION = 'A simulation framework for extracellular recordings.'
 LONG_DESCRIPTION = """%s
 
 %s
@@ -73,7 +73,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     # package distribution
     packages=['nsim',
-              'nsim.data_io',
+              'nsim.io',
               'nsim.gui',
               'nsim.math',
               'nsim.scene',
