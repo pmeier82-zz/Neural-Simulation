@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/phil/SVN/Python/SpikePy/sim/gui/add_recorder.ui'
+# Form implementation generated from reading ui file 'add_recorder.ui'
 #
-# Created: Wed May 26 12:23:13 2010
-#      by: PyQt4 UI code generator 4.7.2
+# Created: Wed Jun 29 19:49:01 2011
+#      by: pyside-uic 0.2.10 running on PySide 1.0.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 
 class Ui_AddRecorderDialog(object):
     def setupUi(self, AddRecorderDialog):
@@ -49,7 +49,7 @@ class Ui_AddRecorderDialog(object):
         self.lo_form0_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.edt_snr)
         self.lo_vert0.addLayout(self.lo_form0_2)
         self.bbox_dialog = QtGui.QDialogButtonBox(AddRecorderDialog)
-        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort | QtGui.QDialogButtonBox.Save)
+        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort|QtGui.QDialogButtonBox.Save)
         self.bbox_dialog.setCenterButtons(True)
         self.bbox_dialog.setObjectName("bbox_dialog")
         self.lo_vert0.addWidget(self.bbox_dialog)
@@ -75,14 +75,4 @@ class Ui_AddRecorderDialog(object):
         self.edt_orientation.setToolTip(QtGui.QApplication.translate("AddRecorderDialog", "Enter the 3-dimensional orientation vector as a whitespace seperated sequence (x, y, z). The orientation is also the direction of movement for the recorder!!  E.g. \"1.0 0.0 0.0\" (Default=[0,0,1])", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_snr.setText(QtGui.QApplication.translate("AddRecorderDialog", "SNR", None, QtGui.QApplication.UnicodeUTF8))
         self.edt_snr.setToolTip(QtGui.QApplication.translate("AddRecorderDialog", "The SNR (Signal to Noise Ratio) of the recorder. A scaling factor for the noise process as a float. E.g. \"3.0\" (Default=1.0)", None, QtGui.QApplication.UnicodeUTF8))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    AddRecorderDialog = QtGui.QDialog()
-    ui = Ui_AddRecorderDialog()
-    ui.setupUi(AddRecorderDialog)
-    AddRecorderDialog.show()
-    sys.exit(app.exec_())
 

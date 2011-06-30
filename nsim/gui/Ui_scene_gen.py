@@ -2,12 +2,12 @@
 
 # Form implementation generated from reading ui file 'scene_gen.ui'
 #
-# Created: Tue Sep 21 15:10:32 2010
-#      by: PyQt4 UI code generator 4.7.2
+# Created: Wed Jun 29 19:49:34 2011
+#      by: pyside-uic 0.2.10 running on PySide 1.0.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 
 class Ui_SceneGenerator(object):
     def setupUi(self, SceneGenerator):

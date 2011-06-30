@@ -24,7 +24,7 @@
 # 2010-02-15
 #
 
-"""io manager class, this class channels the output and input streams"""
+"""io manager class using the blockstream protocoll"""
 __docformat__ = 'restructuredtext'
 
 
@@ -36,22 +36,15 @@ from Queue import Queue
 # packages
 import scipy as sp
 # own packages
-#from server_blkstr import BlkIOServer
-from server_simpkg import SimIOServer
-from simpkg import T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, NOFRAME, NOIDENT
+from nsim.events import *
+from blockstream import *
 
 
 ##---MODULE_ADMIN
 
 __all__ = [
-    # class
     'IOManager',
 ]
-
-
-##---CONSTANTS
-
-MAXQUEUESIZE = 1000
 
 
 ##---LOGGING
@@ -74,120 +67,148 @@ class IOManager(object):
     def __init__(self, **kwargs):
         """
         :Keywords:
-            srv_cls : IOServer class
-                Default=SimIOServer
-            srv_kwargs : dict
-                keywords to pass to the server instance
+            verbose : bool
+                verboseness flag
         """
 
         # members
-        self._status = None
-        self._srv_cls = kwargs.get('srv_cls', SimIOServer)
-        self._srv_kwargs = kwargs.get('srv_kwargs', {})
-        self._q_recv = Queue(maxsize=MAXQUEUESIZE)
-        self._q_send = Queue(maxsize=MAXQUEUESIZE)
-        self._srv = None
-        self._is_initialized = False
+        self._recorder_map = {}
+        self._w_bxpd = None
+        self._q_w_bxpd = Queue()
+        self._w_sort = None
+        self._q_w_sort = Queue()
+#        self._w_posi = None
+#        self._q_w_posi = Queue()
+#        self._r_posi = None
+#        self._q_r_posi = Queue()
+        self._is_initialised = False
+        self._verbose = bool(kwargs.get('verbose', False))
 
     def initialize(self):
 
         self.finalise()
-        self._srv = self._srv_cls(
-            self._q_recv,
-            self._q_send,
-            **self._srv_kwargs
-        )
-        self._srv.start()
-        self._status = None
-        self._is_initialized = True
+        self._w_bxpd = BS3Writer('BXPD', self._q_w_bxpd, verbose=self._verbose,
+                                 ident='NS BXPD')
+        self._w_bxpd.start()
+#        self._w_posi = BS3Writer('POSI', self._q_w_posi, verbose=self._verbose,
+#                                 ident='NS POSI')
+#        self._w_posi.start()
+        self._w_sort = BS3Writer('SORT', self._q_w_sort, verbose=self._verbose,
+                                 ident='NS SORT')
+        self._w_sort.start()
+#        self._r_posi = BS3Reader(POSIProtocolHandler, self._q_r_posi,
+#                                 verbose=self._verbose, ident='NS POSI')
+#        self._r_posi.start()
+        self._is_initialised = True
 
     def finalise(self):
 
-        if self._srv is not None:
-            self._srv.stop()
-            self._srv = None
-        while not self._q_recv.empty():
-            item = self._q_recv.get_nowait()
-            del item
-        while not self._q_send.empty():
-            item = self._q_send.get_nowait()
-            del item
-        self._is_initialized = False
+        if self._w_bxpd is not None:
+            self._w_bxpd.stop()
+            self._w_bxpd = None
+#        if self._w_posi is not None:
+#            self._w_posi.stop()
+#            self._w_posi = None
+        if self._w_sort is not None:
+            self._w_sort.stop()
+            self._w_sort = None
+#        if self._r_posi is not None:
+#            self._r_posi.stop()
+#            self._r_posi = None
+        self._is_initialised = False
 
     ## properties
 
-    def get_status(self):
-        return self._status
-    def set_status(self, value):
-        if not isinstance(value, dict):
-            return
-        if self._status != value:
-            self._status = value
-            self.send_item(T_STS, NOIDENT, NOFRAME, self._status)
-    status = property(get_status, set_status)
-
-    def get_q_recv(self):
-        return self._q_recv
-    q_recv = property(get_q_recv)
-
-    def get_q_send(self):
-        return self._q_send
-    q_send = property(get_q_send)
-
-    def get_is_initialized(self):
-        return self._is_initialized
-    is_initialized = property(get_is_initialized)
+    def get_is_initialised(self):
+        return self._is_initialised
+    is_initialised = property(get_is_initialised)
 
     ## io methods
 
     def tick(self):
-        """querys the receive-queue returns all queued items"""
+        """querys the POSI queue and returns all queued items"""
 
         rval = []
-        while not self._q_recv.empty():
-            item = self._q_recv.get()
-            rval.append(item)
-            self._q_recv.task_done()
+#        while not self._q_r_posi.empty():
+#            item = self._q_recv.get()
+#            rval.append(item)
+#            self._q_recv.task_done()
         return rval
 
-    def send_item(self,
-        tid=T_UKN,
-        ident=NOIDENT,
-        frame=NOFRAME,
-        cont=None
-    ):
-        """build a package from data and send to clients
-
-        SimPkg constructor wrapper
-
+    def update_preambles(self, bxpd, sort):
+        """set preambles for the writers
+        
         :Parameters:
-            tid : int
-                the type id
-                Default=T_UKN
-            ident : long
-                target ident or None if unrestricted
-                Default=NOIDENT
-            frame : long
-                target frame
-                Default=NOFRAME
-            cont : list
-                the content of the package (ndarrays)
-                Default=None
+            bxpd : bxpd setup object
+            sort : sort setup object
         """
 
-        self.q_send.put((tid, ident, frame, cont))
+        # BXPD
+        self._q_w_bxpd.put(
+            BS3BxpdSetupBlock(
+                # header
+                BS3BxpdBlockHeader(0),
+                # sample rates
+                [float(bxpd['sample_rate'] / 1000.0)],
+                # analog channels
+                bxpd['anchans'],
+                # digital channels
+                [],
+                # event channels
+                [],
+                # groups
+                bxpd['groups']
+            )
+        )
+
+        # SORT
+        self._q_w_sort.put(
+            BS3SortSetupBlock(
+                BS3SortBlockHeader(0),
+                sort['groups']
+            )
+        )
+
+    def send_frame(self, bxpd, sort):
+        """send data for one frame
+
+        :Parameters:
+            bxpd : bxpd data object
+            sort : data object
+        """
+
+        # BXPD
+        self._q_w_bxpd.put(
+            BS3BxpdDataBlock(
+                BS3BxpdBlockHeader(1),
+                bxpd['time_stamp'],
+                bxpd['srate_offsets'],
+                bxpd['anchans'],
+                [],
+                [])
+        )
+
+        # SORT
+        self._q_w_sort.put(
+            BS3SortDataBlock(
+                BS3SortBlockHeader(1),
+                sort['events']
+            )
+        )
 
 
 ##---MAIN
 
-if __name__ == '__main__':
+def main(nblocks=1000):
 
     from time import sleep
 
     print
     print 'setting up manager..'
-    io_man = IOManager()
+    io_man = IOManager(verbose=True)
     io_man.initialize()
+
+    bxpd = object()
 
     try:
         while True:
@@ -197,8 +218,12 @@ if __name__ == '__main__':
             else:
                 print '.'
             sleep(5)
-            io_man.send_item(cont=sp.ones((4, 4)))
     except KeyboardInterrupt:
         print
         print 'stopping due to KeyboardInterrupt'
         io_man.finalise()
+
+
+if __name__ == '__main__':
+
+    main()

@@ -38,6 +38,14 @@ from nsim.math import quaternion_matrix, vector_norm
 from neuron_data import NeuronData
 
 
+##---ALL
+
+__all__ = [
+    'BadNeuronQuery',
+    'Neuron',
+]
+
+
 ##---EXCEPTIONS
 
 class BadNeuronQuery(Exception):
@@ -66,10 +74,10 @@ class Neuron(SimObject):
                 Default=1.0
         """
 
-        # check neuron_data
-        if not isinstance(neuron_data, NeuronData):
-            raise ValueError('neuron_data is %s and not a subclass of '
-                             'NeuronData!' % neuron_data.__class__.__name__)
+#        # check neuron_data
+#        if not isinstance(neuron_data, NeuronData):
+#            raise ValueError('neuron_data is %s and not a subclass of '
+#                             'NeuronData!' % neuron_data.__class__.__name__)
 
         # super
         super(Neuron, self).__init__(**kwargs)
@@ -151,7 +159,7 @@ class Neuron(SimObject):
         for t in self._firing_times:
 
             # waveform overshoots
-            if t >= self._frame_size:
+            if t + self._neuron_data.intra_v.size >= self._frame_size:
                 residual = self._frame_size - t
                 self._interval_waveform.append([
                     t,
@@ -197,7 +205,7 @@ class Neuron(SimObject):
                 3d coordinates of the components of the recorder. One coordinate
                 per row, as given by recorder.points.
         :Returns:
-            tuple : (waveform, interval_waveforms)
+            tuple : (ident, waveform, interval_waveforms)
         :Raises:
             BadNeuronQuery : if self._frame_size is None or the position is
             beyond the neuron's horizon.
@@ -206,7 +214,7 @@ class Neuron(SimObject):
         # check for any valid positions
         rel_pos = positions - self._position
         rel_pos_valid = [
-            vector_norm(rel_pos[i]) < self._neuron_data.horizon
+            bool(vector_norm(rel_pos[i]) < self._neuron_data.horizon)
             for  i in xrange(rel_pos.shape[0])
         ]
         if not N.any(rel_pos_valid):
@@ -234,11 +242,6 @@ class Neuron(SimObject):
 
         # return
         return id(self), wf, self._interval_waveform
-
-
-##---PACKAGE
-
-__all__ = ['BadNeuronQuery', 'Neuron']
 
 
 ##---MAIN

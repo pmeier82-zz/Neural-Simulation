@@ -76,9 +76,10 @@ __docformat__ = 'restructuredtext'
 
 from ConfigParser import ConfigParser
 import os.path as osp
+import scipy as sp
 from cluster_dynamics import ClusterDynamics
-from io import (IOManager, T_UKN, T_CON, T_END, T_STS, T_POS, T_REC, T_XXX,
-                NOFRAME, NOIDENT)
+from io import IOManager
+from events import *
 from scene import (
     NeuronDataContainer,
     Neuron,
@@ -88,14 +89,12 @@ from scene import (
 )
 
 
-##---VERSION
+##---ALL
 
-try:
-    __version__ = 'rev. %s - %s %s' % tuple(
-        '$Id: simulation.py 4857 2010-06-09 14:59:29Z phil $'.split(' ')[2:5]
-    )
-except:
-    __version__ = 'unknown'
+__all__ = [
+    'SimExternalDelegate',
+    'BaseSimulation'
+]
 
 
 ##---CONSTANTS
@@ -110,8 +109,8 @@ class SimExternalDelegate(object):
 
     An instance of SimExternalDelegate should pass messages/events on to a
     suitable external interface, like a GUI kit (frex QT or GTK). As we must not
-    make assumptions about the frontend, we provide this delegate class for the
-    frontend to receive events.
+    make assumptions about the gui frontend, we provide this delegate class for
+    the frontend to receive events.
     """
 
     ## constructor
@@ -175,9 +174,6 @@ class BaseSimulation(dict):
 
     def __init__(self, **kwargs):
         """
-        :Parameters:
-            kwargs : dict
-                Keyword arguments, see Keywords.
         :Keywords:
             debug : bool
                 Debug output toggle.
@@ -185,30 +181,35 @@ class BaseSimulation(dict):
             externals : list
                 A list of SimExternalDelegate instances. Internal state changes
                 will be propagated to the delegates.
-                Default=False
+                Default=[]
             sample_rate : float
-                Sample rate.
-            frame : int
+                Sample rate in Hz
+                Default=32000.0
+            frame : long
                 Frame to start at.
+                Default=0
             frame_size : int
                 Frame size.
+                Default=1024
             cfg : str
                 Path to a config file, readable by a ConfigParser instance.
         """
 
-        # private property members
+        # private members
         self._cfg = None
         self._externals = []
         self._frame = None
         self._frame_size = None
         self._sample_rate = None
-        self._status = None
+        self._recorder_map = {}
+        self._next_recorder_idx = 0
+        self._group_ids = {}
 
         # public members
-        self.cls_dyn = ClusterDynamics()
-        self.io_man = IOManager()
-        self.neuron_data = NeuronDataContainer()
         self.debug = kwargs.get('debug', False)
+        self.cls_dyn = ClusterDynamics()
+        self.io_man = IOManager(verbose=self.debug)
+        self.neuron_data = NeuronDataContainer()
 
         # externals
         for ext in kwargs.get('externals', []):
@@ -216,8 +217,8 @@ class BaseSimulation(dict):
                 continue
             self._externals.append(ext)
 
-    def initialize(self, **kwargs):
-        """initialize the simulation
+    def initialise(self, **kwargs):
+        """initialise the simulation
 
         :Keywords:
             debug : bool
@@ -231,31 +232,33 @@ class BaseSimulation(dict):
                 Default=16
             sample_rate : float
                 Sample rate to operate.
-                Default=16000.0
+                Default=32000.0
         """
 
-        self.clear()
+        # drop all contents
+        self.finalise()
 
-        # reset private members
-        self.sample_rate = kwargs.get('sample_rate', 16000.0)
-        self.frame = kwargs.get('frame', 0)
-        self.frame_size = kwargs.get('frame_size', 1024)
-        self.status
-
-        # reset pubic members
-        self.cls_dyn.clear()
+        # io_man
         self.io_man.initialize()
-        self.neuron_data.clear()
+
+        # reset properties
+        self.sample_rate = kwargs.get('sample_rate', 32000.0)
+        self.frame = kwargs.get('frame', 0L)
+        self.frame_size = kwargs.get('frame_size', 1024)
+        self._next_recorder_idx = 0
 
     def finalise(self):
         """finalise the simulation"""
 
-        self.clear()
-
-        # reset pubic members
-        self.cls_dyn.clear()
+        # shutdown io_man
         self.io_man.finalise()
+
+        # clear stuff
+        self.cls_dyn.clear()
+        self._recorder_map.clear()
+        self._group_ids.clear()
         self.neuron_data.clear()
+        self.clear()
 
     ## properties
 
@@ -273,7 +276,6 @@ class BaseSimulation(dict):
         self._frame_size = int(value)
         for ext in self._externals:
             ext.frame_size(self._frame_size)
-        self.status
     frame_size = property(get_frame_size, set_frame_size)
 
     def get_sample_rate(self):
@@ -283,20 +285,7 @@ class BaseSimulation(dict):
         self.cls_dyn.sample_rate = self._sample_rate
         for ext in self._externals:
             ext.sample_rate(self._sample_rate)
-        self.status
     sample_rate = property(get_sample_rate, set_sample_rate)
-
-    def get_status(self):
-        self._status = {
-            'frame_size'    : self._frame_size,
-            'sample_rate'   : self._sample_rate,
-            'neurons'       : self.neuron_keys,
-            'recorders'     : self.recorder_keys,
-        }
-        if self.io_man.is_initialized:
-            self.io_man.status = self._status
-        return self._status
-    status = property(get_status)
 
     def get_neuron_keys(self):
         return [idx for idx in self if isinstance(self[idx], Neuron)]
@@ -311,94 +300,84 @@ class BaseSimulation(dict):
     def simulate(self):
         """advance the simulation by one frame"""
 
-        # inc frame counter
-        self._frame += 1
-
         # process events
-        self._simulate_io_tick()
-
+        self._io_tick()
         # process units
-        self._simulate_neuron_tick()
+        self._neuron_tick()
+        # process recorders
+        self._recorder_tick()
+        # increment frame counter
+        self.frame += 1
 
-        # record for recorders
-        self._simulate_recorder_tick()
-
-        # place q-filler
-        self.io_man.send_item(T_XXX, NOIDENT, self._frame, None)
-
-    def _simulate_io_tick(self):
-        """process io loop for the current frame
+    def _io_tick(self):
+        """process input events loop for the current frame
 
         This will tick the SimIOManager and process all queued events.
         """
 
         # get events
         events = self.io_man.tick()
-
         while len(events) > 0:
 
-            pkg = events.pop(0)
-            print pkg
+            ev = events.pop(0)
+            if self.debug:
+                self.log_d(ev)
+            tid, ident, cont = ev
 
             log_str = '>>> '
 
-            if pkg.ident in self:
+            if ident in self:
 
                 # recorder event
-                if isinstance(self[pkg.ident], Recorder):
+                if isinstance(self[ident], Recorder):
 
-                    log_str += 'R[%s]:' % pkg.ident
+                    log_str += 'R[%s]:' % ident
 
                     # position event
-                    if pkg.tid == T_POS:
+                    if tid == T_POS:
 
                         # position request
-                        if pkg.nitems == 0:
-                            log_str += 'MOVE[%s] - request' % (self[pkg.ident].name)
+                        if len(cont) == 0:
+                            log_str += 'MOVE[%s] - request' % (self[ident].name)
 
                         # reposition request
-                        elif pkg.nitems == 1:
-                            pos, vel = pkg.cont[0].cont[:2]
+                        elif len(cont) == 2:
+                            pos, vel = cont
                             log_str += 'MOVE: %s, %s' % (pos, vel)
-                            self[pkg.ident].trajectory_pos = pos
+                            self[ident].trajectory_pos = pos
                             # TODO: implementation of the velocity component
 
                         # weird position event
                         else:
-                            print 'weird event, was T_POS with:', pkg.cont
+                            print 'weird event, was T_POS with:', cont
                             continue
 
                         # send position acknowledgement
                         self.io_man.send_item(
                             T_POS,
-                            pkg.ident,
+                            ident,
                             self._frame,
-                            self[pkg.ident].trajectory_pos
+                            self[ident].trajectory_pos
                         )
 
                 # neuron event
-                elif isinstance(self[pkg.ident], Neuron):
-                    log_str += 'N:[%s] neuron event' % pkg.ident
+                elif isinstance(self[ident], Neuron):
+                    log_str += 'N:[%s] neuron event' % ident
                 else:
-                    log_str += 'ANY:[%s] unknown' % pkg.ident
+                    log_str += 'ANY:[%s] unknown' % ident
 
             # other event
             else:
 
-                log_str += 'O[%s]:' % pkg.ident
-                if pkg.tid == T_CON:
-                    log_str += 'CONNECT from %s' % str(pkg.cont)
-                elif pkg.tid == T_END:
-                    log_str += 'DISCONNECT from %s' % str(pkg.cont)
-                else:
-                    log_str += 'unknown'
+                log_str += 'O[%s]:unknown' % ident
+
             # log
             self.log(log_str)
 
-    def _simulate_neuron_tick(self):
+    def _neuron_tick(self):
         """process neurons for current frame
 
-        This will generate spike trains and configure the neuronal firing
+        This will generate spike trains and configure the firing
         behaviour for the current frame.
         """
 
@@ -412,26 +391,49 @@ class BaseSimulation(dict):
                 firing_times=self.cls_dyn.get_spike_train(nrn_k)
             )
 
-    def _simulate_recorder_tick(self):
+    def _recorder_tick(self):
         """process recorders for the current frame
 
-        This will record waveforms and groundtruth for the current frame.
+        This will record waveforms and ground truth for the current frame.
         """
 
-        # list of all neurons
-        nlist = [self[nrn_k] for nrn_k in self.neuron_keys]
+        # inits
+        nkeys = self.neuron_keys
+        nlist = [self[nrn_k] for nrn_k in nkeys]
+        start_sp = self._frame * self._frame_size
+        time0ms = start_sp * self._sample_rate
+        time1ms = (start_sp + self._frame_size) * self._sample_rate
+        bxpd = {}
+        bxpd['time_stamp'] = (time0ms, time1ms)
+        bxpd['srate_offsets'] = [start_sp]
+        bxpd['anchans'] = []
+        sort = {}
+        sort['events'] = []
 
         # record per recorder
-        for rec_k in self.recorder_keys:
-            self.io_man.send_item(
-                T_REC,
-                rec_k,
-                self._frame,
-                self[rec_k].simulate(
-                    nlist=nlist,
-                    frame_size=self._frame_size
-                )
-            )
+        for rid in sorted(self._recorder_map):
+            if self._recorder_map[rid] is None:
+                continue
+            rec = self[self._recorder_map[rid]]
+
+            # build block
+            frame = rec.simulate(nlist=nlist, frame_size=self._frame_size)
+            signal = frame[0]
+#            plot_data = frame[0]
+#            plot_data[idx[0]:idx[1]] += frame[-2][idx[2]:idx[3]]
+            for i in xrange(1, len(frame), 3):
+                ident, wf, intervals = frame[i:i + 3]
+                for idx in intervals:
+                    signal[idx[0]:idx[1]] += wf[idx[2]:idx[3]]
+                sort['events'].append((self._group_ids[rid],
+                                       nkeys.index(ident),
+                                       idx[0],
+                                       0, 0, 0))
+            for c in xrange(rec.nchan):
+                bxpd['anchans'].append(signal[:, c])
+
+        # send to io_man
+        self.io_man.send_frame(bxpd, sort)
 
     ## methods logging
 
@@ -447,6 +449,58 @@ class BaseSimulation(dict):
         if self.debug is True:
             for ext in self._externals:
                 ext.log('[DEBUG] %s' % log_str)
+
+    ## io methods
+
+    def blockstream_update(self):
+        """builds blockstream updates"""
+
+        bxpd = {}
+        sort = {}
+
+        bxpd['sample_rate'] = self._sample_rate
+        bxpd['anchans'] = []
+        bxpd['groups'] = []
+        sort['groups'] = []
+        nc = 0
+        gid = 0
+
+        for nid in self.neuron_keys:
+            self[nid].simulate(
+                frame_size=self._frame_size,
+                firing_times=[0]
+            )
+        for rid in sorted(self._recorder_map):
+            if self._recorder_map[rid] is None:
+                continue
+            rec = self[self._recorder_map[rid]]
+
+            # bxpd
+            for i in xrange(rec.nchan):
+                bxpd['anchans'].append(((nc + i), 0, 0, ''))
+            bxpd['groups'].append((0, '', rec.nchan, tuple(range(nc, nc + rec.nchan))))
+            nc += rec.nchan
+            self._group_ids[rid] = gid
+
+            # sort
+            tf = 100 # FIXME: needs better value
+            units = []
+            for nid in self.neuron_keys:
+                nrn = self[nid]
+                wf = nrn.query_for_recorder(rec.points[:rec.nchan])[1]
+                units.append((sp.zeros_like(wf), wf, 1.0, 0, 0))
+            sort['groups'].append((gid,
+                                   rec.nchan,
+                                   tf,
+                                   0,
+                                   sp.zeros((tf * rec.nchan * tf * rec.nchan)),
+                                   units
+            ))
+
+            gid += 1
+
+        # send to io_man
+        self.io_man.update_preambles(bxpd, sort)
 
     ## methods object management
 
@@ -476,6 +530,9 @@ class BaseSimulation(dict):
                 Default=1.0
             cluster : int
                 The cluster idx
+            update : bool
+                If True, build new blockstream preambles
+                Default=False
         :Raises:
             some error .. mostly ValueErrors for invalid parameters.
         :Returns:
@@ -506,9 +563,12 @@ class BaseSimulation(dict):
             cls_idx = int(cls_idx)
         self.cls_dyn.add_neuron(neuron, cls_idx=cls_idx)
 
+        # update io_man
+        if bool(kwargs.get('update', False)) is True:
+            self.blockstream_update()
+
         # log and return
         self.log('>> %s created!' % neuron)
-        self.status
         return str(neuron)
 
     def register_recorder(self, **kwargs):
@@ -539,6 +599,9 @@ class BaseSimulation(dict):
             noise_params : list
                 The noise generator parameters.
                 Default=None
+            update : bool
+                If True, build new blockstream preambles
+                Default=False
         :Raises:
             some error ..mostly ValueError for invalid parameters.
         :Returns:
@@ -546,12 +609,19 @@ class BaseSimulation(dict):
         """
 
         # build tetrode
-        tetrode = Tetrode(**kwargs)
+        tetrode = Tetrode(self._next_recorder_idx, **kwargs)
         self[id(tetrode)] = tetrode
+
+        # recorder map
+        self._recorder_map[self._next_recorder_idx] = id(tetrode)
+        self._next_recorder_idx += 1
+
+        # update io_man
+        if bool(kwargs.get('update', False)) is True:
+            self.blockstream_update()
 
         # connect and return
         self.log('>> %s created!' % tetrode)
-        self.status
         return str(tetrode)
 
     def remove_object(self, key):
@@ -582,7 +652,13 @@ class BaseSimulation(dict):
         try:
             item = self.pop(lookup)
             self.log('>> %s destroyed!' % item)
-            self.status
+            if isinstance(item, Recorder):
+                for k in self._recorder_map:
+                    if self._recorder_map[k] == id(item):
+                        self._recorder_map[k] = None
+                        break
+            if isinstance(item, (Neuron, Recorder)):
+                self.blockstream_update()
             return True
         except:
             return False
@@ -722,6 +798,32 @@ class BaseSimulation(dict):
 
 if __name__ == '__main__':
 
+    from time import sleep
+
     print
     print 'creating BaseSimulation'
     sim = BaseSimulation()
+    print 'initializing'
+    sim.initialise(frame_size=32 * 100)
+    print 'adding neuron data'
+    sim.neuron_data.insert('C:\\Users\\phil\\Development\\EspenData\\LFP-0-20110608_155038.h5')
+    print sim.neuron_data
+    print 'registering neuron'
+    sim.register_neuron(
+        neuron_data=sim.neuron_data.keys()[0],
+    )
+    print 'registering recorder'
+    sim.register_recorder()
+    print 'building preambles'
+    sim.blockstream_update()
+    print sim
+    print
+    print 'starting loop'
+#    raw_input()
+    while True:
+
+        print '.',
+#        sleep(5)
+        print '.',
+        sim.simulate()
+        print '.'

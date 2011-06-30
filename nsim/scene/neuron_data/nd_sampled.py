@@ -34,8 +34,16 @@ import os.path as osp
 from tables import openFile
 import scipy as N
 from scipy.special import cbrt
-from neuron_data import NeuronData
+from neuron_data_base import NeuronData
 from nsim.math import lerp3
+
+
+##---ALL
+
+__all__ = [
+    'SampledND',
+    'get_eap_range',
+]
 
 
 ##---CLASSES
@@ -68,6 +76,9 @@ class SampledND(NeuronData):
                 root in the archive used as the user entry path (UEP).
         :Keywords:
             see NeuronData
+            clamp_soma_v : bool
+                if True, try to find the significant part of the intracellular
+                waveform.
         :Exceptions:
             IOError:
                 Error finding or reading in the archive.
@@ -82,9 +93,14 @@ class SampledND(NeuronData):
         # read in data - may raise IOError or NoSuchNodeError
         arc = openFile(path_to_arc, mode='r', rootUEP=rootUEP)
         soma_v = arc.getNode('/soma_v').read()
-        ap_phase = xrange(*get_eap_range(soma_v))
+        ap_phase = xrange(0, soma_v.size)
+        if bool(kwargs.get('clamp_soma_v', True)) is True:
+            ap_phase = xrange(*get_eap_range(soma_v))
         self.intra_v = arc.getNode('/soma_v').read()[..., ap_phase]
-        self.extra_v = arc.getNode('/LFP').read().T[..., ap_phase]
+        LFP = arc.getNode('/LFP').read()
+        if LFP.shape[0] < LFP.shape[1]:
+            LFP = LFP.T
+        self.extra_v = LFP[..., ap_phase]
         # read temporary data
         x_pos = arc.getNode('/el_pos_x').read()
         y_pos = arc.getNode('/el_pos_y').read()
@@ -218,11 +234,6 @@ def get_eap_range(iap_v):
     start = stop = (der_1st > 1e-1).argmax()
     stop += (der_1st[stop:] > 1e-2).argmin()
     return start, stop
-
-
-##---PACKAGE
-
-__all__ = ['SampledND', 'get_eap_range']
 
 
 ##---MAIN

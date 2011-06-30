@@ -30,22 +30,10 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-from neuron_data import NeuronData, NeuronDataContainer
-from nd_sampled import SampledND
-from nd_waveform import ScalingWaveformND, WaveformND
-
-##---PACKAGE
-
-__all__ = [
-    # neuron data interface
-    'NeuronData',
-    'NeuronDataContainer',
-    # sampled neuron data
-    'SampledND',
-    # waveform neuron data
-    'ScalingWaveformND'
-    'WaveformND',
-]
+from neuron_data_base import *
+from nd_sampled import *
+from nd_waveform import *
+from nd_check_format import *
 
 
 ##---MAIN

@@ -33,27 +33,11 @@ __docformat__ = 'restructuredtext'
 
 ##---IMPORTS
 
-from neuron_data import NeuronData, NeuronDataContainer
-from sim_object import SimObject
-from neuron import Neuron
-from recorder import Recorder, Tetrode
-
-
-##---PACKAGE
-
-__all__ = [
-    'BadNeuronQuery',
-    # from data
-    'NeuronData',
-    'NeuronDataContainer',
-    # from sim_object
-    'SimObject',
-    # from neuron
-    'Neuron',
-    # from recorder
-    'Recorder',
-    'Tetrode'
-]
+from neuron_data import *
+from noise import *
+from sim_object import *
+from neuron import *
+from recorder import *
 
 
 ##---MAIN

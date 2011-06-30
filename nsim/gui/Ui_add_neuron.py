@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/phil/SVN/Python/SpikePy/sim/gui/add_neuron.ui'
+# Form implementation generated from reading ui file 'add_neuron.ui'
 #
-# Created: Wed May 26 12:23:12 2010
-#      by: PyQt4 UI code generator 4.7.2
+# Created: Wed Jun 29 19:48:09 2011
+#      by: pyside-uic 0.2.10 running on PySide 1.0.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 
 class Ui_AddNeuronDialog(object):
     def setupUi(self, AddNeuronDialog):
@@ -74,7 +74,7 @@ class Ui_AddNeuronDialog(object):
         self.lo_form0_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.edt_name)
         self.lo_vert0.addLayout(self.lo_form0_2)
         self.bbox_dialog = QtGui.QDialogButtonBox(AddNeuronDialog)
-        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort | QtGui.QDialogButtonBox.Save)
+        self.bbox_dialog.setStandardButtons(QtGui.QDialogButtonBox.Abort|QtGui.QDialogButtonBox.Save)
         self.bbox_dialog.setCenterButtons(True)
         self.bbox_dialog.setObjectName("bbox_dialog")
         self.lo_vert0.addWidget(self.bbox_dialog)
@@ -113,14 +113,4 @@ class Ui_AddNeuronDialog(object):
         self.edt_cluster.setToolTip(QtGui.QApplication.translate("AddNeuronDialog", "The index of the cluster the neuron will belong to as an interger. E.g. \"1\" (Default=0)", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_name.setText(QtGui.QApplication.translate("AddNeuronDialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.edt_name.setToolTip(QtGui.QApplication.translate("AddNeuronDialog", "Optional name for the neuron as a string. E.g. \"Neuron A\"", None, QtGui.QApplication.UnicodeUTF8))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    AddNeuronDialog = QtGui.QDialog()
-    ui = Ui_AddNeuronDialog()
-    ui.setupUi(AddNeuronDialog)
-    AddNeuronDialog.show()
-    sys.exit(app.exec_())
 

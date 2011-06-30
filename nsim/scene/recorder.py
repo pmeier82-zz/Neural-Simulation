@@ -39,6 +39,14 @@ from noise import NoiseGen, ArNoiseGen
 from nsim.math import unit_vector
 
 
+##---ALL
+
+__all__ = [
+    'Recorder',
+    'Tetrode',
+]
+
+
 ##---CLASSES
 
 class Recorder(SimObject):
@@ -49,8 +57,11 @@ class Recorder(SimObject):
     """
 
     ## constructor
-    def __init__(self, **kwargs):
+    def __init__(self, index, **kwargs):
         """
+        :Parameters:
+            index : int
+                fixed recorder index in the simulation
         :Keywords:
             snr : float
                 Signal to Noise Ratio (SNR) for the noise process.
@@ -64,6 +75,7 @@ class Recorder(SimObject):
         super(Recorder, self).__init__(**kwargs)
 
         # members
+        self._index = int(index)
         self._origin = self.position.copy()
         if self.points is None:
             self.nchan = 1
@@ -152,8 +164,11 @@ class Tetrode(Recorder):
     """tetrode object, resembling a tetrode as build by Thomas Recording GmbH"""
 
     # constructor
-    def __init__(self, **kwargs):
+    def __init__(self, index, **kwargs):
         """
+        :Parameters:
+            index : int
+                fixed recorder index in the simulation
         :Keywords:
             noise_params : list
                 List with 2 matricies, [ar parameters, channel covariance] with
@@ -174,7 +189,7 @@ class Tetrode(Recorder):
         kwargs.update(points=points)
 
         # super
-        super(Tetrode, self).__init__(noise=False, **kwargs)
+        super(Tetrode, self).__init__(index, noise=False, **kwargs)
 
         # noise AR model from munk data
         noise_params = kwargs.get('noise_params', None)
@@ -214,42 +229,30 @@ class Tetrode(Recorder):
         self._noise_gen = ArNoiseGen(noise_params)
 
 
-##---PACKAGE
-
-__all__ = ['Recorder', 'Tetrode']
-
-
 ##---MAIN
 
 if __name__ == '__main__':
 
     # inits
-    from neuron import NeuronData
+    from neuron_data import SampledND
     import pylab as P
     frame_size = 500
-    ndpath = '/home/phil/SVN/Data/Einevoll/LFP-20100516_225124.h5'
+#    ndpath = '/home/phil/SVN/Data/Einevoll/LFP-20100516_225124.h5'
+    ndpath = 'C:\\Users\\phil\\Development\\EspenData\\LFP-0-20110608_155038.h5'
     ftimes = [0]
 
     # neuron
     print
     print 'build neuron'
-    nd = NeuronData(ndpath)
+    nd = SampledND(ndpath, clamp_soma_v=False)
     n = Neuron(neuron_data=nd)
 
     # tetrode
     print
     print 'Building Tetrode'
-    t = Tetrode(snr=3.0)
+    t = Tetrode(0, snr=1.0)
     print t
     print 'snr:', t.snr
-
-    # noise frame
-    print
-    print 'noise frame'
-    frame = t.simulate(nlist=[], frame_size=frame_size)
-    print frame
-    f = P.figure()
-    P.plot(frame)
 
     print
     print 'spike frame'
@@ -257,7 +260,10 @@ if __name__ == '__main__':
     frame = t.simulate(nlist=[n], frame_size=frame_size)
     print frame
     f = P.figure()
-    P.plot(frame)
+    idx = frame[-1][0]
+    plot_data = frame[0]
+    plot_data[idx[0]:idx[1]] += frame[-2][idx[2]:idx[3]]
+    P.plot(plot_data)
 
     # finalize
     P.show()

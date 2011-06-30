@@ -37,6 +37,15 @@ from collections import deque
 from noise_gen import NoiseGen
 
 
+##---ALL
+
+__all__ = [
+    'ar_fit',
+    'ar_model_check_stable',
+    'ArNoiseGen',
+]
+
+
 ##---CONSTANTS
 
 EPS = N.finfo(N.float64).eps
@@ -375,12 +384,6 @@ class ArNoiseGen(NoiseGen):
 
 
 ##---MAIN
-
-__all__ = [
-    'ar_fit',
-    'ar_model_check_stable',
-    'ArNoiseGen',
-]
 
 if __name__ == '__main__':
 

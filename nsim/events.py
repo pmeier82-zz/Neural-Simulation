@@ -18,54 +18,53 @@
 ##
 ################################################################################
 #
-# nsim - start_client.py
+# nsim - events.py
 #
-# Philipp Meier - <pmeier82 at gmail dot com>
-# 2010-03-18
-#
-# $Id: start.py 4925 2010-07-29 19:45:54Z phil $
+# Philipp Meier - <pmeier82 at googlemail dot com>
+# 2010-04-21
 #
 
-"""positioning of tetrodes"""
+"""event protocol package"""
 __docformat__ = 'restructuredtext'
 
 
 ##---IMPORTS
 
-from PyQt4 import QtGui
-from nsim.io import MinimalClient
 
 
-##---CLASSES
+##---MODULE_ADMIN
 
-class TestClient(MinimalClient):
-    """test client"""
+__all__ = [
+    # constants
+    'T_UKN',
+    'T_STS',
+    'T_POS',
+    'T_REC',
+    'T_MAP',
+    'NOIDENT',
+    'NOFRAME',
+]
 
-    def handle_data(self, signal, noise, gtrth):
-        """abstract handler"""
 
-        try:
-            self.dataplot.set_data(signal)
-        except Exception, ex:
+##---EVENTS-TYPE-CODES
 
-            print
-            print ex
+T_UKN = 0 # unknown
+T_REC = 1 # recorder
+T_GTR = 2 # ground truth
+T_POS = 4 # positioning
+T_STS = 8 # status
+T_MAP = {
+    0   : 'T_UKN',
+    1   : 'T_REC',
+    2   : 'T_GRT',
+    4   : 'T_POS',
+    8   : 'T_STS',
+}
+NOIDENT = 0L
+NOFRAME = 0L
 
 
 ##---MAIN
 
-def main(ip_str='130.149.24.29'):
-
-    app = QtGui.QApplication([])
-
-    win = TestClient(addr=(ip_str, 31337))
-    win.initialize()
-    win.show()
-
-    return app.exec_()
-
-
 if __name__ == '__main__':
-
-    import sys
-    sys.exit(main())
+    pass

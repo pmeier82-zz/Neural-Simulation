@@ -37,6 +37,14 @@ from nsim.math import vector_norm
 # import all known NeuronData subclasses
 
 
+##---ALL
+
+__all__ = [
+    'BeyondHorizonError',
+    'NeuronData',
+    'NeuronDataContainer',
+]
+
 
 ##---CLASSES
 
@@ -216,14 +224,11 @@ class NeuronDataContainer(dict):
                 already present in the container.
         """
 
-        if isinstance(ndata_item, NeuronData):
-            if ndata_item.description in self:
-                return False
-            else:
-                self.__setitem__(ndata_item.description, ndata_item)
-                return True
-        else:
+        if ndata_item.description in self:
             return False
+        else:
+            self.__setitem__(ndata_item.description, ndata_item)
+            return True
 
     def _ndata_from_file(self, path):
         """try to load a NeuronData subclass from a file
@@ -274,9 +279,8 @@ class NeuronDataContainer(dict):
 
 ##---MAIN
 
-__all__ = ['NeuronData', 'NeuronDataContainer']
-
 if __name__ == '__main__':
 
     CONTI = NeuronDataContainer()
-    print CONTI.insert('/home/phil/Data/Einevoll/LFP-20100516_225124.h5')
+    print CONTI.insert('C:\\Users\\phil\\Development\\EspenData\\LFP-0-20110608_155038.h5')
+    print CONTI

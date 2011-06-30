@@ -40,7 +40,7 @@ __doctype__ = 'restructuredtext'
 ##---IMPORTS
 
 import sys, traceback
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 from nsim.gui import (
     Ui_AddNeuronDialog,
     Ui_AddRecorderDialog,
@@ -61,10 +61,10 @@ class SimQt4Delegate(QtCore.QObject, SimExternalDelegate):
 
     ## signals
 
-    sig_frame = QtCore.pyqtSignal(long)
-    sig_frame_size = QtCore.pyqtSignal(int)
-    sig_log = QtCore.pyqtSignal(str)
-    sig_sample_rate = QtCore.pyqtSignal(float)
+    sig_frame = QtCore.Signal(long)
+    sig_frame_size = QtCore.Signal(int)
+    sig_log = QtCore.Signal(str)
+    sig_sample_rate = QtCore.Signal(float)
 
     ## constructor
 
@@ -210,7 +210,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         """update complete infos"""
         pass
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def on_append_log(self, log_str):
         """log a sting"""
 
@@ -225,13 +225,13 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self._log_model.index(self._log_model.rowCount() - 1)
         )
 
-    @QtCore.pyqtSlot(long)
+    @QtCore.Slot(long)
     def on_update_frame(self, frame):
         """update frame index"""
 
         self.edt_frame.setText(str(frame))
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.Slot(int)
     def on_update_frame_size(self, frame_size):
         """update frame size"""
 
@@ -241,7 +241,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.cb_frame_size.findText(str(frame_size))
         )
 
-    @QtCore.pyqtSlot(float)
+    @QtCore.Slot(float)
     def on_update_sample_rate(self, sample_rate):
         """update sample rate"""
 
@@ -253,7 +253,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
     ## gui user input slots - command panel
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.Slot(int)
     def on_input_cmdpnl_frame_size(self, inp):
 
         try:
@@ -262,7 +262,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.cb_frame_size.clearFocus()
             self.scene_build_model()
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.Slot(int)
     def on_input_cmdpnl_sample_rate(self, inp):
 
         try:
@@ -271,17 +271,17 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             self.cb_sample_rate.clearFocus()
             self.scene_build_model()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_input_cmdpnl_reset(self):
 
         if self._timer.isActive():
             self.on_input_cmdpnl_timer()
         self._log_model.removeRows(0, self._log_model.rowCount())
-        self._sim.initialize()
+        self._sim.initialise()
         self.scene_build_model()
         self.io_build_model()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_input_cmdpnl_steps(self):
 
         try:
@@ -301,7 +301,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         self.progress.reset()
         self.progress.setVisible(False)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_input_cmdpnl_timer(self):
         if self._timer.isActive():
             # stop timer
@@ -323,7 +323,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
     ## scene dock slots
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_add_neuron_data(self):
 
         try:
@@ -359,7 +359,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_add_neuron(self):
 
         try:
@@ -421,7 +421,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_add_recorder(self):
 
         try:
@@ -461,7 +461,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_load(self):
 
         try:
@@ -475,7 +475,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_save(self):
 
         try:
@@ -488,7 +488,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_remove(self):
 
         try:
@@ -524,7 +524,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def scene_build_model(self):
 
         try:
@@ -657,18 +657,18 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
     ## output dock slots
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def io_restart(self):
 
         try:
 
-            self._sim.io_man.initialize()
+            self._sim.io_man.initialise()
             self.io_build_model()
 
         except:
             self.error_dialog()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def io_build_model(self):
 
         try:
@@ -688,7 +688,7 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
 
     ## dialog spawners
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_about(self):
         QtGui.QMessageBox.about(
             self,
@@ -709,12 +709,12 @@ class SimulationGui(QtGui.QMainWindow, Ui_SimGui):
             """
         )
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_about_qt(self):
 
         QtGui.QMessageBox.aboutQt(self)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def comming_soon(self):
 
         QtGui.QMessageBox.information(
@@ -784,7 +784,7 @@ class AddNeuronDialog(QtGui.QDialog, Ui_AddNeuronDialog):
         self.setupUi(self)
         self.populate_cb_data(ndata)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def populate_cb_data(self, ndata):
         self.cb_data.clear()
         for item in ndata.keys():
@@ -816,7 +816,6 @@ class RecorderNode(QtGui.QStandardItem):
 def main(args):
 
     app = QtGui.QApplication(args)
-#    app.lastWindowClosed.connect(app.quit)
 
     win = SimulationGui()
     win.show()
@@ -825,5 +824,4 @@ def main(args):
 
 if __name__ == '__main__':
 
-    import sys
     sys.exit(main(sys.argv))

@@ -45,6 +45,13 @@ from nsim.math import (
 )
 
 
+##---ALL
+
+__all__ = [
+    'SimObject',
+]
+
+
 ##---CLASSES
 
 class SimObject(object):
@@ -72,7 +79,7 @@ class SimObject(object):
                 Default=[0,0,0]
             sample_rate : float
                 The sample rate in Hertz.
-                Default=16000.0
+                Default=32000.0
         """
 
         # members
@@ -88,7 +95,7 @@ class SimObject(object):
         self.points = kwargs.get('points', None)
         self.position = kwargs.get('position', [0, 0, 0])
         self.orientation = kwargs.get('orientation', False)
-        self.sample_rate = kwargs.get('sample_rate', 16000.0)
+        self.sample_rate = kwargs.get('sample_rate', 32000.0)
 
     ## properties
 

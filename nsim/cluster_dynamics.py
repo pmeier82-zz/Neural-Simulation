@@ -36,6 +36,13 @@ import scipy as N
 from scene import Neuron
 
 
+##---ALL
+
+__all__ = [
+    'ClusterDynamics',
+]
+
+
 ##---CLASSES
 
 class ClusterDynamics(dict):

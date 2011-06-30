@@ -31,6 +31,15 @@ reduced to a concatenation of 1d linear interpolations."""
 __docformat__ = 'restructuredtext'
 
 
+##---ALL
+
+__all__ = [
+    'lerp1',
+    'lerp2',
+    'lerp3',
+]
+
+
 ##--FUNCTIONS
 
 def lerp1(alpha, v0, v1):
@@ -70,8 +79,6 @@ def lerp3(alpha_x, alpha_y, alpha_z,
 
 
 ##---MAIN
-
-__all__ = ['lerp1', 'lerp2', 'lerp3']
 
 if __name__ == '__main__':
     pass

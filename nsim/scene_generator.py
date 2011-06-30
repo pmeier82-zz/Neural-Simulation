@@ -90,7 +90,7 @@ __docformat__ = 'restructuredtext'
 
 import scipy as N
 from gui.Ui_scene_gen import Ui_SceneGenerator
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 from tables import openFile
 
 
@@ -205,7 +205,7 @@ class SceneGenerator(QtGui.QMainWindow, Ui_SceneGenerator):
 
         self.pushButton.clicked.connect(self.on_pb)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_pb(self):
         """bushButton clicked slot"""
 

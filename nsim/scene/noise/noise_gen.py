@@ -35,6 +35,13 @@ import scipy as N
 from scipy import random as NR
 
 
+##--ALL
+
+__all__ = [
+    'NoiseGen',
+]
+
+
 ##---CLASSES
 
 class NoiseGen(object):
@@ -94,8 +101,6 @@ class NoiseGen(object):
 
 
 ##---MAIN
-
-__all__ = ['NoiseGen']
 
 if __name__ == '__main__':
     pass

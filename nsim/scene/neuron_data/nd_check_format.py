@@ -34,6 +34,13 @@ from tables import openFile
 import sys, os
 
 
+##---ALL
+
+__all__ = [
+    'check_archive',
+]
+
+
 ##---FUNCTIONS
 
 def check_archive(arc_path):

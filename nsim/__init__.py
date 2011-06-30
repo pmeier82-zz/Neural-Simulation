@@ -49,6 +49,17 @@ __authors__ = 'Philipp Meier'
 __contact__ = 'pmeier82@googlemail.com'
 
 
+##---IMPORTS
+
+#from gui import *
+#from io import *
+#from math import *
+#from scene import *
+#from cluster_dynamics import *
+#from events import *
+#from simulation import *
+
+
 ##---MAIN
 
 if __name__ == '__main__':

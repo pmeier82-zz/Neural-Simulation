@@ -32,8 +32,16 @@ __docformat__ = 'restructuredtext'
 
 from tables import openFile
 import scipy as N
-from neuron_data import NeuronData
+from neuron_data_base import NeuronData
 from nsim.math import vector_norm
+
+
+##---ALL
+
+__all__ = [
+    'WaveformND',
+    'ScalingWaveformND',
+]
 
 
 ##---CLASSES
@@ -168,12 +176,6 @@ class ScalingWaveformND(WaveformND):
         """
 
         return 1.0 / (4.0 * N.pi * vector_norm(pos) ** 2)
-
-
-
-##---PACKAGE
-
-__all__ = ['ScalingWaveformND', 'WaveformND']
 
 
 ##---MAIN

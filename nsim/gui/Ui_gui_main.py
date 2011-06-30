@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/phil/SVN/Python/SpikePy/sim/gui/gui_main.ui'
+# Form implementation generated from reading ui file 'gui_main.ui'
 #
-# Created: Mon May 31 18:09:19 2010
-#      by: PyQt4 UI code generator 4.7.2
+# Created: Wed Jun 29 19:49:17 2011
+#      by: pyside-uic 0.2.10 running on PySide 1.0.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 
 class Ui_SimGui(object):
     def setupUi(self, SimGui):
@@ -22,7 +22,7 @@ class Ui_SimGui(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/neural_sim_server.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SimGui.setWindowIcon(icon)
         SimGui.setDockNestingEnabled(True)
-        SimGui.setDockOptions(QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AnimatedDocks)
+        SimGui.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AnimatedDocks)
         SimGui.setUnifiedTitleAndToolBarOnMac(True)
         self.centralwidget = QtGui.QWidget(SimGui)
         self.centralwidget.setObjectName("centralwidget")
@@ -216,6 +216,7 @@ class Ui_SimGui(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dock_scene.sizePolicy().hasHeightForWidth())
         self.dock_scene.setSizePolicy(sizePolicy)
+        self.dock_scene.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
         self.dock_scene.setObjectName("dock_scene")
         self.dock_scene_contents = QtGui.QWidget()
         self.dock_scene_contents.setObjectName("dock_scene_contents")
@@ -279,6 +280,7 @@ class Ui_SimGui(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dockWidget.sizePolicy().hasHeightForWidth())
         self.dockWidget.setSizePolicy(sizePolicy)
+        self.dockWidget.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
         self.dockWidget.setObjectName("dockWidget")
         self.dockWidgetContents_3 = QtGui.QWidget()
         self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
@@ -430,13 +432,3 @@ class Ui_SimGui(object):
         self.actionOutput_Manager.setText(QtGui.QApplication.translate("SimGui", "Output Manager", None, QtGui.QApplication.UnicodeUTF8))
 
 import res_rc
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    SimGui = QtGui.QMainWindow()
-    ui = Ui_SimGui()
-    ui.setupUi(SimGui)
-    SimGui.show()
-    sys.exit(app.exec_())
-
