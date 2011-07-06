@@ -43,7 +43,7 @@ __all__ = [
     # sampled neuron data
     'SampledND',
     # waveform neuron data
-    'ScalingWaveformND'
+    'ScalingWaveformND',
     'WaveformND',
 ]
 
