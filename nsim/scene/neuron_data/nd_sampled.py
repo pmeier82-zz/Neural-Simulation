@@ -82,9 +82,11 @@ class SampledND(NeuronData):
         # read in data - may raise IOError or NoSuchNodeError
         arc = openFile(path_to_arc, mode='r', rootUEP=rootUEP)
         soma_v = arc.getNode('/soma_v').read()
-        ap_phase = xrange(*get_eap_range(soma_v))
+        ap_phase = xrange(0, soma_v.size)
+#        ap_phase = xrange(*get_eap_range(soma_v))
         self.intra_v = arc.getNode('/soma_v').read()[..., ap_phase]
-        self.extra_v = arc.getNode('/LFP').read().T[..., ap_phase]
+#        self.extra_v = arc.getNode('/LFP').read().T[..., ap_phase]
+        self.extra_v = arc.getNode('/LFP').read()[..., ap_phase]
         # read temporary data
         x_pos = arc.getNode('/el_pos_x').read()
         y_pos = arc.getNode('/el_pos_y').read()

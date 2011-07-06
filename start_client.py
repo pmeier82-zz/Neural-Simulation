@@ -54,7 +54,7 @@ class TestClient(MinimalClient):
 
 ##---MAIN
 
-def main(ip_str='130.149.23.127'):
+def main(ip_str='localhost'):
 
     app = QtGui.QApplication([])
 
