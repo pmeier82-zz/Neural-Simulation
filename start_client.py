@@ -38,7 +38,7 @@ from nsim.data_io import MinimalClient
 
 ##---CLASSES
 
-class TestClient(MinimalClient):
+class SimpleClient(MinimalClient):
     """test client"""
 
     def handle_data(self, signal, noise, gtrth):
@@ -58,7 +58,7 @@ def main(ip_str='localhost'):
 
     app = QtGui.QApplication([])
 
-    win = TestClient(addr=(ip_str, 31337))
+    win = SimpleClient(addr=(ip_str, 31337))
     win.initialize()
     win.show()
 
